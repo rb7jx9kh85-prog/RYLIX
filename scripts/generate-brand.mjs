@@ -64,7 +64,10 @@ const faviconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${SIZE}
 
 await fs.writeFile(path.join(PUBLIC, 'favicon.svg'), faviconSvg)
 const faviconBuf = Buffer.from(faviconSvg)
-await sharp(faviconBuf, { density: 384 }).resize(32, 32).png().toFile(path.join(PUBLIC, 'favicon-32.png'))
+await sharp(faviconBuf, { density: 384 })
+  .resize(32, 32)
+  .png()
+  .toFile(path.join(PUBLIC, 'favicon-32.png'))
 await sharp(faviconBuf, { density: 384 })
   .resize(180, 180)
   .png()
@@ -83,9 +86,7 @@ const COVER_SIZE = 430
 const COVER_X = OG_W - COVER_SIZE - 80
 const COVER_Y = (OG_H - COVER_SIZE) / 2
 
-const cover = await sharp(COVER)
-  .resize(COVER_SIZE, COVER_SIZE, { fit: 'cover' })
-  .toBuffer()
+const cover = await sharp(COVER).resize(COVER_SIZE, COVER_SIZE, { fit: 'cover' }).toBuffer()
 
 const logo = word('RYLIX')
 const logoX = 80

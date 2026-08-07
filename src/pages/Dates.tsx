@@ -1,10 +1,10 @@
 import { Seo } from '@/components/Seo'
 import { PageHeader } from '@/components/PageHeader'
-import { Reveal } from '@/components/PageTransition'
+import { Reveal, RuleReveal } from '@/components/PageTransition'
 import { site, tourDates } from '@/lib/content'
 import { formatShortDate, getYear, isUpcoming } from '@/lib/format'
 
-export default function Tour() {
+export default function Dates() {
   const upcoming = tourDates
     .filter((d) => isUpcoming(d.date))
     .sort((a, b) => a.date.localeCompare(b.date))
@@ -25,7 +25,11 @@ export default function Tour() {
               location: {
                 '@type': 'Place',
                 name: d.venue,
-                address: { '@type': 'PostalAddress', addressLocality: d.city, addressCountry: 'CH' },
+                address: {
+                  '@type': 'PostalAddress',
+                  addressLocality: d.city,
+                  addressCountry: 'CH',
+                },
               },
               performer: { '@type': 'MusicGroup', name: site.name },
             },
@@ -36,7 +40,7 @@ export default function Tour() {
   return (
     <>
       <Seo
-        title="Tournée"
+        title="Dates"
         description={
           upcoming.length > 0
             ? `Prochaines dates de RYLIX — ${upcoming.length} date${upcoming.length > 1 ? 's' : ''} confirmée${upcoming.length > 1 ? 's' : ''}.`
@@ -45,14 +49,14 @@ export default function Tour() {
         jsonLd={jsonLd}
       />
 
-      <PageHeader eyebrow="Tournée" title="Dates" />
+      <PageHeader eyebrow="Dates" title="Prochaines dates" />
 
       <section className="container-rylix pb-lg md:pb-xl">
         {upcoming.length === 0 ? (
           <Reveal>
-            <hr className="rule" />
+            <RuleReveal />
             <p className="py-lg text-fg-muted">Aucune date confirmée pour le moment.</p>
-            <hr className="rule" />
+            <RuleReveal />
           </Reveal>
         ) : (
           <ol className="flex flex-col">

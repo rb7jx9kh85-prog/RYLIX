@@ -2,7 +2,7 @@
 
 Site artiste de RYLIX, producteur suisse (Valais). Site statique multipage, sans backend.
 
-- **Stack** : Vite + React 18 + TypeScript, React Router v6, Tailwind CSS, Framer Motion
+- **Stack** : Vite + React 18 + TypeScript, React Router v6, Tailwind CSS, Framer Motion, Lenis
 - **Hébergement** : Vercel (statique, `dist/`)
 - **Formulaire** : Formspree (aucun serveur à maintenir)
 - **Aucune clé secrète côté client** — voir [Variables d'environnement](#variables-denvironnement)
@@ -25,7 +25,7 @@ npm run dev                  # http://localhost:5173
 | `npm run typecheck` | Vérification TypeScript seule |
 | `npm run images` | Régénère les WebP responsive depuis `assets/photos/` |
 | `npm run brand` | Régénère le favicon et l'image Open Graph |
-| `npm run fonts` | Re-télécharge les woff2 self-hostés (Inter + Syne) |
+| `npm run fonts` | Re-télécharge le woff2 self-hosté (Syne) |
 
 ---
 
@@ -34,11 +34,12 @@ npm run dev                  # http://localhost:5173
 ```
 assets/photos/         Photos sources (JPG/PNG haute résolution) — non servies
 assets/syne-glyphs.json  Tracés Syne vectorisés (favicon + logotype OG)
-public/fonts/          Inter + Syne en woff2, self-hostés
+public/fonts/          Syne en woff2 (variable), self-hostée
 public/images/         WebP responsive générés — ne pas éditer à la main
 public/og/             Image Open Graph générée
 scripts/               Pipelines images, polices, assets de marque
-src/lib/content.ts     Contenu éditorial : liens, sortie, dates, réseaux
+src/lib/content.ts     Contenu éditorial : liens, sortie, dates, parcours, cadrage du hero
+src/lib/motion.ts      Courbe, durées et variantes d'animation partagées
 src/lib/images.generated.ts  Manifeste d'images généré — ne pas éditer
 src/components/        Layout, header, footer, image, lightbox, SEO
 src/pages/             Une page par route
@@ -48,11 +49,14 @@ src/pages/             Une page par route
 
 | Route | Page |
 |---|---|
-| `/` | Accueil — hero, teaser dernière sortie, bio |
+| `/` | Accueil — hero, présentation, teaser dernière sortie |
 | `/musique` | Better Days : pochette, player Spotify, plateformes |
 | `/galerie` | Grille asymétrique + lightbox |
-| `/tournee` | Dates confirmées, ou état vide |
-| `/contact` | Formulaire Formspree + réseaux |
+| `/dates` | Dates confirmées, ou état vide |
+| `/parcours` | Lieux, événements et marques |
+| `/contact` | Formulaire Formspree, email et réseaux |
+
+`/tournee` redirige vers `/dates` : l'ancienne URL reste valide.
 
 ---
 
@@ -61,7 +65,7 @@ src/pages/             Une page par route
 Tout le contenu éditorial est dans **`src/lib/content.ts`** — aucune URL n'est écrite en dur
 dans les pages.
 
-### Ajouter une date de tournée
+### Ajouter une date
 
 ```ts
 export const tourDates: TourDate[] = [
@@ -72,6 +76,20 @@ export const tourDates: TourDate[] = [
 
 Les dates passées sont masquées automatiquement. Liste vide → la page affiche
 « Aucune date confirmée pour le moment. »
+
+### Ajouter une entrée au parcours
+
+```ts
+export const parcours: ParcoursEntry[] = [
+  {
+    title: "Ima'Gin Suisse",
+    role: 'Événements pour la marque',
+    location: 'Les Voëttes, Valais',
+    period: '2026',          // facultatif
+    url: 'https://ima-gin.swiss/',
+  },
+]
+```
 
 ### Ajouter une sortie
 
@@ -90,9 +108,21 @@ pochette dans `assets/photos/`, puis `npm run images`.
 
 `span` vaut `wide`, `tall` ou `square` — c'est ce qui produit la grille asymétrique.
 
-> **À faire** : la galerie ne contient pour l'instant que deux visuels (la photo
-> d'artiste et la pochette de Better Days), les seuls disponibles publiquement.
-> Prévoir 4 à 6 photos comme prévu par la direction artistique.
+### Visuels attendus
+
+Le contenu référence quatre visuels par leur nom de fichier. Déposer chacun dans
+`assets/photos/` sous ce nom exact, puis lancer `npm run images` — ils
+apparaissent sans aucune modification de code.
+
+| Fichier | Emplacement | En attendant |
+|---|---|---|
+| `image-1.jpg` | Hero de l'accueil | La photo d'artiste existante sert de repli |
+| `image-2.jpg` | Galerie | L'entrée est ignorée |
+| `image-3.jpg` | Section présentation | Un cadre vide est rendu |
+| `image-4.jpg` | Galerie | L'entrée est ignorée |
+
+Une entrée de galerie dont l'image n'existe pas n'est pas affichée : on peut donc
+déclarer un visuel avant de l'avoir.
 
 ---
 
@@ -105,7 +135,7 @@ Ne jamais y placer de secret. Voir `.env.example`.
 |---|---|---|
 | `VITE_SITE_URL` | URL canonique de production, sans slash final. Alimente les balises canonical, Open Graph, `robots.txt` et `sitemap.xml`. | Oui en production |
 | `VITE_FORMSPREE_ID` | Identifiant du formulaire Formspree (partie après `/f/`). Sans lui, le formulaire s'affiche désactivé. | Pour le formulaire |
-| `VITE_CONTACT_EMAIL` | Adresse affichée sous le formulaire. | Non |
+| `VITE_CONTACT_EMAIL` | Remplace l'adresse de contact. Par défaut `contact@rylix.ch`. | Non |
 
 > `VITE_SITE_URL` vaut `https://rylix.ch` par défaut. **Le remplacer par le domaine réel**
 > avant la mise en production, sinon les balises canonical et le sitemap pointeront vers
@@ -179,13 +209,49 @@ Tokens définis dans `src/index.css`, exposés à Tailwind via `tailwind.config.
 Chaque couleur existe aussi en canaux RGB (`--rylix-navy-rgb`, …) : c'est ce que Tailwind
 consomme, ce qui rend possible les modificateurs d'opacité (`text-cream/80`).
 
-- **Titres** : Syne 700/800, majuscules
-- **Texte courant** : Inter 400/500
+- **Typographie** : Syne sur tout le site, du corps de texte au logotype.
+  400/500 pour le texte courant, 700/800 pour les titres. Syne étant une police
+  de titrage, l'interligne et l'interlettrage du texte courant sont ouverts dans
+  la couche `base` de `src/index.css` pour rester lisibles.
 - **Photos** : `filter: grayscale(10%) contrast(1.05) brightness(0.95)` via la classe `.photo`
 - **Animations** : fondu + translation courte uniquement ; `prefers-reduced-motion` respecté
 
-Les polices sont self-hostées (`public/fonts/`, sous-ensembles latin + latin-ext) : aucune
-requête vers un domaine tiers, et pas de Google Fonts au runtime.
+La police est self-hostée (`public/fonts/`, sous-ensembles latin + latin-ext, fichier
+variable 400-800) : aucune requête vers un domaine tiers, pas de Google Fonts au runtime.
+
+### Animation
+
+Tout le vocabulaire d'animation est centralisé dans `src/lib/motion.ts` : une seule
+courbe (`cubic-bezier(0.22, 1, 0.36, 1)`), trois durées. Les pages n'écrivent pas
+de valeur d'animation en dur.
+
+- défilement amorti (Lenis), désactivé sous `prefers-reduced-motion`
+- révélations au scroll jouées une fois, titres révélés mot à mot derrière un masque
+- parallaxe sur le hero, la section présentation et les tuiles de galerie
+- filet d'avancement de lecture en haut de page, header qui s'efface en descendant
+- survols : fond du CTA qui monte, filet de lien qui se trace, lignes qui se décalent
+
+#### Le « X » derrière l'artiste
+
+Le hero (`src/components/Hero.tsx`) superpose trois calques : la photo, le
+logotype, puis **la même photo** découpée à l'ellipse du sujet. Le troisième
+calque affiche exactement les mêmes pixels que le premier au même endroit : il
+est donc invisible, mais il remet l'artiste au premier plan et le « X » passe
+derrière lui.
+
+La position du « X » n'est pas codée en dur : elle est mesurée au rendu
+(`useMarkAlignment`) et le logotype est décalé pour que le centre du glyphe tombe
+sur `hero.markX`, en pourcentage de la largeur de la fenêtre. Le calcul est refait
+au redimensionnement et une fois la police chargée, donc l'alignement tient à
+toutes les largeurs malgré le `clamp()` typographique.
+
+Trois valeurs à ajuster dans `src/lib/content.ts` quand la photo change :
+
+| Champ | Effet |
+|---|---|
+| `hero.objectPosition` | Recadrage — sur desktop, descendre pour garder tête et buste |
+| `hero.subject` | Ellipse du sujet (centre + rayons), par point de rupture |
+| `hero.markX` | Où doit tomber le centre du « X » — plus bas = moins masqué |
 
 ---
 

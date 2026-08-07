@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { nav, site } from '@/lib/content'
+import { contactEmail, nav, site } from '@/lib/content'
 import { SocialLinks } from './SocialLinks'
 
 export function Footer() {
@@ -14,6 +14,9 @@ export function Footer() {
             RYLIX
           </Link>
           <p className="text-sm text-fg-muted/80">{site.tagline}</p>
+          <a href={`mailto:${contactEmail}`} className="link-quiet mt-1 self-start text-sm">
+            {contactEmail}
+          </a>
         </div>
 
         <nav aria-label="Navigation de pied de page">

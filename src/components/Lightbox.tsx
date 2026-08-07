@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { images, type ImageKey } from '@/lib/images.generated'
+import { resolveImage } from '@/lib/images'
 
-export type LightboxItem = { key: ImageKey; alt: string }
+export type LightboxItem = { key: string; alt: string }
 
 type Props = {
   items: LightboxItem[]
@@ -57,10 +57,11 @@ export function Lightbox({ items, index, onClose, onNavigate }: Props) {
   }, [open, onClose, go])
 
   const item = index === null ? null : items[index]
+  const picture = item ? resolveImage(item.key) : null
 
   return (
     <AnimatePresence>
-      {item && (
+      {item && picture && (
         <motion.div
           role="dialog"
           aria-modal="true"
@@ -124,11 +125,11 @@ export function Lightbox({ items, index, onClose, onNavigate }: Props) {
             className="flex max-h-full max-w-5xl flex-col gap-4"
           >
             <img
-              src={images[item.key].src}
-              srcSet={images[item.key].srcSet}
+              src={picture.src}
+              srcSet={picture.srcSet}
               sizes="(max-width: 768px) 92vw, 80vw"
-              width={images[item.key].width}
-              height={images[item.key].height}
+              width={picture.width}
+              height={picture.height}
               alt={item.alt}
               className="photo max-h-[78vh] w-auto object-contain"
             />

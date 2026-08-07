@@ -48,7 +48,11 @@
   body {
     @apply bg-navy font-sans text-cream antialiased;
     font-size: 1rem;
-    line-height: 1.6;
+    /* Syne est une police de titrage : on ouvre l'interligne et l'interlettrage
+       du texte courant pour garder une lecture confortable. */
+    line-height: 1.7;
+    letter-spacing: 0.005em;
+    font-weight: 400;
     text-rendering: optimizeLegibility;
   }
 
@@ -83,21 +87,59 @@
     @apply font-sans text-label font-medium uppercase tracking-[0.14em] text-fg-muted;
   }
 
-  /* Lien texte discret */
+  /* Lien texte discret — le filet se trace de gauche à droite au survol */
   .link-quiet {
-    @apply text-cream/80 underline decoration-slate/60 decoration-1 underline-offset-4
-           transition-colors duration-200 ease-rylix hover:text-pale hover:decoration-pale;
+    @apply relative inline-block text-cream/85 transition-colors duration-300 ease-rylix
+           hover:text-pale;
   }
 
-  /* CTA principal — contour, jamais de bloc coloré */
+  .link-quiet::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    height: 1px;
+    width: 100%;
+    background: currentColor;
+    transform: scaleX(0.35);
+    transform-origin: left;
+    opacity: 0.5;
+    transition:
+      transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .link-quiet:hover::after,
+  .link-quiet:focus-visible::after {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+
+  /* CTA principal — contour, jamais de bloc coloré. Le fond crème monte
+     depuis le bas au survol plutôt que d'apparaître d'un coup. */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-sm border border-cream/40
-           px-7 py-3 font-sans text-label font-medium uppercase tracking-[0.14em] text-cream
-           transition-colors duration-300 ease-rylix
-           hover:border-cream hover:bg-cream hover:text-navy
+    @apply relative isolate inline-flex items-center justify-center gap-2 overflow-hidden
+           rounded-sm border border-cream/40 px-7 py-3 font-sans text-label font-medium
+           uppercase tracking-[0.14em] text-cream
+           transition-[color,border-color] duration-500 ease-rylix
+           hover:border-cream hover:text-navy
            disabled:cursor-not-allowed disabled:border-slate/40 disabled:text-fg-muted/50
-           disabled:hover:border-slate/40 disabled:hover:bg-transparent
-           disabled:hover:text-fg-muted/50;
+           disabled:hover:border-slate/40 disabled:hover:text-fg-muted/50;
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--rylix-cream);
+    transform: translateY(101%);
+    transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .btn:hover:not(:disabled)::before,
+  .btn:focus-visible:not(:disabled)::before {
+    transform: translateY(0);
   }
 
   .btn-quiet {

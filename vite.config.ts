@@ -2,7 +2,7 @@ import { defineConfig, loadEnv, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'node:path'
 
-const ROUTES = ['/', '/musique', '/galerie', '/tournee', '/contact']
+const ROUTES = ['/', '/musique', '/galerie', '/dates', '/parcours', '/contact']
 
 /**
  * Émet robots.txt et sitemap.xml dans dist/ à partir de VITE_SITE_URL, pour que

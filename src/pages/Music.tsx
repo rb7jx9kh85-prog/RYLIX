@@ -1,7 +1,7 @@
 import { Seo } from '@/components/Seo'
 import { Image } from '@/components/Image'
 import { PageHeader } from '@/components/PageHeader'
-import { Reveal } from '@/components/PageTransition'
+import { Reveal, RuleReveal } from '@/components/PageTransition'
 import { artist, release, site } from '@/lib/content'
 import { formatReleaseDate } from '@/lib/format'
 
@@ -105,10 +105,15 @@ export default function Music() {
         </div>
 
         <Reveal delay={0.16}>
-          <hr className="rule my-lg" />
+          <RuleReveal className="my-lg" />
           <p className="max-w-prose text-fg-muted">
             Discographie complète et mises à jour sur{' '}
-            <a href={artist.spotifyUrl} target="_blank" rel="noreferrer noopener" className="link-quiet">
+            <a
+              href={artist.spotifyUrl}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="link-quiet"
+            >
               Spotify
             </a>{' '}
             et sur la{' '}

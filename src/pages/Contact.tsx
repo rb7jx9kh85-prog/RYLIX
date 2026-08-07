@@ -33,7 +33,9 @@ export default function Contact() {
       })
 
       if (!res.ok) {
-        const body = (await res.json().catch(() => null)) as { errors?: { message: string }[] } | null
+        const body = (await res.json().catch(() => null)) as {
+          errors?: { message: string }[]
+        } | null
         throw new Error(body?.errors?.[0]?.message ?? "L'envoi a échoué.")
       }
 
@@ -136,7 +138,11 @@ export default function Contact() {
 
             {!configured && (
               <p className="mt-6 text-sm text-fg-muted/70">
-                Formulaire momentanément indisponible — écrire via les réseaux.
+                Formulaire momentanément indisponible — écrire à{' '}
+                <a href={`mailto:${contactEmail}`} className="link-quiet">
+                  {contactEmail}
+                </a>
+                .
                 {import.meta.env.DEV && (
                   <span className="mt-2 block text-pale/70">
                     (dev : définir <code>VITE_FORMSPREE_ID</code> pour l'activer)
@@ -144,22 +150,35 @@ export default function Contact() {
                 )}
               </p>
             )}
+          </Reveal>
 
-            {contactEmail && (
-              <p className="mt-8 text-sm text-fg-muted/70">
-                Ou par email :{' '}
-                <a href={`mailto:${contactEmail}`} className="link-quiet">
+          {/* Email + réseaux */}
+          <div className="flex flex-col gap-12 md:col-span-5">
+            <Reveal delay={0.08}>
+              <h2 className="label mb-4">Email</h2>
+              <a
+                href={`mailto:${contactEmail}`}
+                className="group flex items-center justify-between border-y border-slate/20 py-4"
+              >
+                <span className="font-display text-h3 font-bold text-cream transition-colors duration-300 ease-rylix group-hover:text-pale">
                   {contactEmail}
-                </a>
-              </p>
-            )}
-          </Reveal>
+                </span>
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden
+                  fill="none"
+                  className="h-4 w-4 shrink-0 stroke-slate transition-all duration-500 ease-rylix group-hover:translate-x-1 group-hover:stroke-pale"
+                >
+                  <path d="M7 17L17 7M9 7h8v8" strokeWidth="1.25" />
+                </svg>
+              </a>
+            </Reveal>
 
-          {/* Réseaux */}
-          <Reveal delay={0.08} className="md:col-span-5">
-            <h2 className="label mb-4">Réseaux</h2>
-            <SocialLinks variant="list" />
-          </Reveal>
+            <Reveal delay={0.14}>
+              <h2 className="label mb-4">Réseaux</h2>
+              <SocialLinks variant="list" />
+            </Reveal>
+          </div>
         </div>
       </section>
     </>
