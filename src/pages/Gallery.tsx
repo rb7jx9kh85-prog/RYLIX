@@ -9,9 +9,10 @@ import { hasImage } from '@/lib/images'
 
 /** Grille asymétrique : chaque photo occupe une empreinte différente. */
 const spanClass: Record<string, string> = {
-  wide: 'md:col-span-8 aspect-[16/10]',
   tall: 'md:col-span-5 aspect-[3/4]',
-  square: 'md:col-span-7 aspect-square md:aspect-[4/3]',
+  portrait: 'md:col-span-7 aspect-[3/4]',
+  square: 'md:col-span-5 aspect-square',
+  wide: 'md:col-span-7 aspect-[16/10]',
 }
 
 export default function Gallery() {

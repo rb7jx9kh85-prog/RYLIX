@@ -108,21 +108,20 @@ pochette dans `assets/photos/`, puis `npm run images`.
 
 `span` vaut `wide`, `tall` ou `square` — c'est ce qui produit la grille asymétrique.
 
-### Visuels attendus
+### Visuels en place
 
-Le contenu référence quatre visuels par leur nom de fichier. Déposer chacun dans
-`assets/photos/` sous ce nom exact, puis lancer `npm run images` — ils
-apparaissent sans aucune modification de code.
+| Fichier source | Emplacement |
+|---|---|
+| `image-1.jpg` | Hero de l'accueil, et galerie |
+| `image-2.jpg` | Galerie |
+| `image-3.jpg` | Section présentation de l'accueil |
+| `image-4.jpg` | Galerie |
+| `better-days-cover.png` | Pochette : accueil, `/musique`, galerie, image Open Graph |
 
-| Fichier | Emplacement | En attendant |
-|---|---|---|
-| `image-1.jpg` | Hero de l'accueil | La photo d'artiste existante sert de repli |
-| `image-2.jpg` | Galerie | L'entrée est ignorée |
-| `image-3.jpg` | Section présentation | Un cadre vide est rendu |
-| `image-4.jpg` | Galerie | L'entrée est ignorée |
-
-Une entrée de galerie dont l'image n'existe pas n'est pas affichée : on peut donc
-déclarer un visuel avant de l'avoir.
+Une entrée de galerie dont l'image n'existe pas dans le manifeste n'est pas
+affichée, et la section présentation rend un cadre vide : on peut donc déclarer
+un visuel avant de l'avoir, il apparaîtra dès que le fichier sera déposé et
+`npm run images` relancé.
 
 ---
 

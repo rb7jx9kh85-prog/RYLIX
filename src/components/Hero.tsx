@@ -61,7 +61,6 @@ export function Hero() {
       <motion.div style={{ y: photoY, scale: photoScale }} className="absolute inset-0 z-0">
         <Image
           imageKey={hero.imageKey}
-          fallbackKey={hero.fallbackImageKey}
           alt={hero.alt}
           sizes="100vw"
           priority
@@ -99,7 +98,6 @@ export function Hero() {
       >
         <Image
           imageKey={hero.imageKey}
-          fallbackKey={hero.fallbackImageKey}
           alt=""
           sizes="100vw"
           priority

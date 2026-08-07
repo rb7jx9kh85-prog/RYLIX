@@ -78,7 +78,7 @@ console.log('favicon.svg / favicon-32.png / apple-touch-icon.png')
 
 const OG_W = 1200
 const OG_H = 630
-const COVER = path.join(ROOT, 'assets/photos/better-days-cover.jpg')
+const COVER = path.join(ROOT, 'assets/photos/better-days-cover.png')
 
 // Composition : fond navy, logotype vectorisé à gauche, pochette à droite.
 // Pas de texte hors Syne vectorisé — le rendu ne dépend d'aucune police système.

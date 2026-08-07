@@ -26,7 +26,7 @@ export const presentation = {
   eyebrow: 'Présentation',
   text: 'pas de texte pour le moment',
   imageKey: 'image-3',
-  imageAlt: 'RYLIX — visuel de présentation.',
+  imageAlt: 'RYLIX assis devant un mur de pierres sèches, à travers les herbes hautes.',
 } as const
 
 export type NavItem = { label: string; to: string }
@@ -46,9 +46,7 @@ export const nav: NavItem[] = [
  */
 export const hero = {
   imageKey: 'image-1',
-  /** Repli tant que l'image 1 n'est pas fournie. */
-  fallbackImageKey: 'rylix-portrait-valais',
-  alt: 'RYLIX devant un massif alpin valaisan.',
+  alt: 'RYLIX de profil devant un massif alpin valaisan.',
   /**
    * Recadrage (object-position) par point de rupture. Sur grand écran le
    * cadrage est descendu pour que la tête ET le buste de l'artiste tiennent
@@ -164,8 +162,8 @@ export type GalleryPhoto = {
   key: string
   /** Texte alternatif factuel — accessibilité, pas de storytelling. */
   alt: string
-  /** Poids dans la grille asymétrique. */
-  span: 'wide' | 'tall' | 'square'
+  /** Empreinte dans la grille asymétrique. */
+  span: 'tall' | 'portrait' | 'square' | 'wide'
 }
 
 /**
@@ -175,24 +173,24 @@ export type GalleryPhoto = {
  */
 export const gallery: GalleryPhoto[] = [
   {
-    key: 'rylix-portrait-valais',
+    key: 'image-1',
     alt: 'RYLIX de profil devant un massif alpin valaisan, lumière de fin de journée.',
     span: 'tall',
   },
   {
     key: 'image-2',
-    alt: 'RYLIX — visuel 2.',
-    span: 'square',
-  },
-  {
-    key: 'better-days-cover',
-    alt: 'Pochette du single Better Days : silhouette de dos face à une vallée alpine.',
-    span: 'square',
+    alt: 'RYLIX de profil au pied d\u2019une tour médiévale, drapeaux suisse et valaisan en haut.',
+    span: 'portrait',
   },
   {
     key: 'image-4',
-    alt: 'RYLIX — visuel 4.',
-    span: 'wide',
+    alt: 'RYLIX assis, aper\u00e7u \u00e0 travers des herbes hautes.',
+    span: 'portrait',
+  },
+  {
+    key: 'better-days-cover',
+    alt: 'Pochette du single Better Days : silhouette de dos face \u00e0 une vall\u00e9e alpine.',
+    span: 'square',
   },
 ]
 
