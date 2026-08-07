@@ -1,0 +1,135 @@
+@import './styles/fonts.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Palette "Alpine Crouch" */
+    --rylix-navy: #10151a; /* fond principal */
+    --rylix-navy-alt: #171d24; /* fond alternatif */
+    --rylix-slate: #4a6572; /* bleu-ardoise, bordures, icônes */
+    --rylix-green: #7a9b6e; /* vert feuillage, touches ponctuelles */
+    --rylix-pale: #a8c4cf; /* bleu pâle, liens/hover */
+    --rylix-cream: #e8e4d8; /* blanc chaud, texte sur navy */
+
+    /* Mêmes couleurs en canaux RGB : Tailwind en a besoin pour les
+       modificateurs d'opacité (text-cream/80, border-slate/20, ...). */
+    --rylix-navy-rgb: 16 21 26;
+    --rylix-navy-alt-rgb: 23 29 36;
+    --rylix-slate-rgb: 74 101 114;
+    --rylix-green-rgb: 122 155 110;
+    --rylix-pale-rgb: 168 196 207;
+    --rylix-cream-rgb: 232 228 216;
+
+    /* Chrome mobile / barre d'adresse */
+    color-scheme: dark;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    @apply bg-navy font-sans text-cream antialiased;
+    font-size: 1rem;
+    line-height: 1.6;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+    font-weight: 700;
+  }
+
+  /* Focus visible cohérent, jamais supprimé (accessibilité) */
+  :focus-visible {
+    outline: 2px solid var(--rylix-pale);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background: var(--rylix-green);
+    color: var(--rylix-navy);
+  }
+}
+
+@layer components {
+  /* Conteneur de page standard */
+  .container-rylix {
+    @apply mx-auto w-full max-w-content px-6 md:px-10;
+  }
+
+  /* Label majuscule espacé — nav, tags, sur-titres */
+  .label {
+    @apply font-sans text-label font-medium uppercase tracking-[0.14em] text-fg-muted;
+  }
+
+  /* Lien texte discret */
+  .link-quiet {
+    @apply text-cream/80 underline decoration-slate/60 decoration-1 underline-offset-4
+           transition-colors duration-200 ease-rylix hover:text-pale hover:decoration-pale;
+  }
+
+  /* CTA principal — contour, jamais de bloc coloré */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-sm border border-cream/40
+           px-7 py-3 font-sans text-label font-medium uppercase tracking-[0.14em] text-cream
+           transition-colors duration-300 ease-rylix
+           hover:border-cream hover:bg-cream hover:text-navy
+           disabled:cursor-not-allowed disabled:border-slate/40 disabled:text-fg-muted/50
+           disabled:hover:border-slate/40 disabled:hover:bg-transparent
+           disabled:hover:text-fg-muted/50;
+  }
+
+  .btn-quiet {
+    @apply inline-flex items-center gap-2 font-sans text-label font-medium uppercase
+           tracking-[0.14em] text-fg-muted transition-colors duration-200 ease-rylix
+           hover:text-cream;
+  }
+
+  /* Filet de séparation */
+  .rule {
+    @apply h-px w-full border-0 bg-slate/25;
+  }
+
+  /* Traitement photo unifié — voir design system §5 */
+  .photo {
+    filter: grayscale(10%) contrast(1.05) brightness(0.95);
+  }
+}
+
+@layer utilities {
+  /* Grain léger appliqué en overlay sur le hero */
+  .grain::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.16;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
