@@ -1,0 +1,23 @@
+node_modules
+dist
+dist-ssr
+.vercel
+
+# Environnement — ne jamais committer de valeurs réelles
+.env
+.env.*
+!.env.example
+
+# Éditeurs / OS
+.DS_Store
+Thumbs.db
+*.local
+.idea
+.vscode/*
+!.vscode/extensions.json
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
