@@ -112,10 +112,10 @@ pochette dans `assets/photos/`, puis `npm run images`.
 
 | Fichier source | Emplacement |
 |---|---|
-| `image-1.jpg` | Hero de l'accueil, et galerie |
+| `image-1.jpg` | Section présentation de l'accueil, et galerie |
 | `image-2.jpg` | Galerie |
-| `image-3.jpg` | Section présentation de l'accueil |
-| `image-4.jpg` | Galerie |
+| `image-3.jpg` | Hero (cadre 01), et galerie |
+| `image-4.jpg` | Hero (cadre 02), et galerie |
 | `better-days-cover.png` | Pochette : accueil, `/musique`, galerie, image Open Graph |
 
 Une entrée de galerie dont l'image n'existe pas dans le manifeste n'est pas
@@ -203,14 +203,18 @@ Ne pas oublier de mettre `VITE_SITE_URL` à jour avec le domaine réel, puis de 
 
 Tokens définis dans `src/index.css`, exposés à Tailwind via `tailwind.config.js`.
 
+Palette « Ink & Acid » — encre chaude, papier, accent acide. Les noms de
+tokens historiques sont conservés (seules les valeurs ont changé), donc les
+classes Tailwind existantes restent valables.
+
 | Token | Valeur | Usage |
 |---|---|---|
-| `--rylix-navy` | `#10151a` | Fond principal |
-| `--rylix-navy-alt` | `#171d24` | Fond alternatif |
-| `--rylix-slate` | `#4a6572` | Bordures, icônes |
-| `--rylix-green` | `#7a9b6e` | Accent ponctuel |
-| `--rylix-pale` | `#a8c4cf` | Texte secondaire, hover |
-| `--rylix-cream` | `#e8e4d8` | Texte principal |
+| `--rylix-navy` | `#11120f` | Encre — fond principal |
+| `--rylix-navy-alt` | `#1a1c17` | Encre claire — fond alternatif |
+| `--rylix-slate` | `#6f7466` | Gris chaud — bordures, icônes |
+| `--rylix-green` | `#d9ff43` | Jaune acide — accent (classes `accent`/`green`) |
+| `--rylix-pale` | `#c8cbbc` | Papier grisé — texte secondaire |
+| `--rylix-cream` | `#f2f0e8` | Papier — texte principal |
 
 Chaque couleur existe aussi en canaux RGB (`--rylix-navy-rgb`, …) : c'est ce que Tailwind
 consomme, ce qui rend possible les modificateurs d'opacité (`text-cream/80`).
@@ -219,7 +223,7 @@ consomme, ce qui rend possible les modificateurs d'opacité (`text-cream/80`).
   400/500 pour le texte courant, 700/800 pour les titres. Syne étant une police
   de titrage, l'interligne et l'interlettrage du texte courant sont ouverts dans
   la couche `base` de `src/index.css` pour rester lisibles.
-- **Photos** : `filter: grayscale(10%) contrast(1.05) brightness(0.95)` via la classe `.photo`
+- **Photos** : `filter: saturate(0.72) contrast(1.04) brightness(0.92)` via la classe `.photo` — désaturation douce, accordée au grain pellicule du hero
 - **Animations** : fondu + translation courte uniquement ; `prefers-reduced-motion` respecté
 
 La police est self-hostée (`public/fonts/`, sous-ensembles latin + latin-ext, fichier
@@ -237,29 +241,24 @@ de valeur d'animation en dur.
 - filet d'avancement de lecture en haut de page, header qui s'efface en descendant
 - survols : fond du CTA qui monte, filet de lien qui se trace, lignes qui se décalent
 
-#### Le « X » derrière l'artiste
+#### Le hero
 
-Le hero (`src/components/Hero.tsx`) superpose trois calques : la photo, le
-logotype, puis **la même photo** découpée à l'ellipse du sujet. Le troisième
-calque affiche exactement les mêmes pixels que le premier au même endroit : il
-est donc invisible, mais il remet l'artiste au premier plan et le « X » passe
-derrière lui.
+`src/components/Hero.tsx` — section épinglée sur 230svh, entièrement en
+Framer Motion :
 
-La position du « X » n'est pas codée en dur : elle est mesurée au rendu
-(`useMarkAlignment`) et le logotype est décalé pour que le centre du glyphe tombe
-sur `hero.markX`, en pourcentage de la largeur de la fenêtre. Le calcul est refait
-au redimensionnement et une fois la police chargée, donc l'alignement tient à
-toutes les largeurs malgré le `clamp()` typographique.
+- à l'entrée : deux rideaux papier s'ouvrent, les cadres photo se dévoilent
+  par clip-path, les lettres de RYLIX montent une à une derrière leur masque
+- au défilement : les deux cadres dérivent à des vitesses différentes, leurs
+  photos glissent en sens inverse à l'intérieur (double parallaxe), le mot se
+  compresse, et le chapitre d'ouverture cède la place à l'annonce de la sortie
+  en accent acide
+- au pointeur : les cadres réagissent en sens opposés
+- le mot est en `mix-blend-difference` : il s'inverse en passant sur les cadres
+- grain pellicule animé (écrans à pointeur fin uniquement), statique ailleurs
+- scène complète et statique sous `prefers-reduced-motion`
 
-Trois valeurs à ajuster dans `src/lib/content.ts` quand la photo change :
-
-| Champ | Effet |
-|---|---|
-| `hero.objectPosition` | Recadrage — sur desktop, descendre pour garder tête et buste |
-| `hero.subject` | Ellipse du sujet (centre + rayons), par point de rupture |
-| `hero.markX` | Où doit tomber le centre du « X » — plus bas = moins masqué |
-
----
+Le contenu du hero (images des cadres, accroche, pastilles, annonce, 
+coordonnées) est dans `hero` (`src/lib/content.ts`).
 
 ## Performance
 

@@ -1,238 +1,308 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { motion, useScroll, useSpring, useTransform } from 'framer-motion'
-import { Image } from './Image'
+import { motion, useMotionValue, useScroll, useSpring, useTransform } from 'framer-motion'
+import { resolveImage } from '@/lib/images'
 import { hero, site } from '@/lib/content'
-import { DURATION, EASE, transition, usePrefersReducedMotion } from '@/lib/motion'
-import { MD, useMediaQuery } from '@/lib/useMediaQuery'
+import { EASE, usePrefersReducedMotion } from '@/lib/motion'
 
-const veil = 'bg-gradient-to-t from-navy via-navy/45 to-navy/20'
+const LETTERS = 'RYLIX'.split('')
+
+/** Courbe d'intro commune — sortie franche, sans rebond. */
+const intro = (duration: number, delay: number) => ({ duration, delay, ease: EASE })
 
 /**
- * Hero à deux images, superposées en profondeur et reliées par le scroll :
+ * Hero éditorial, épinglé sur 230svh :
  *
- *   1. `background` — la photo de fond, avec une légère dérive de parallaxe
- *   2. le logotype RYLIX
- *   3. `background` une seconde fois, découpée à l'ellipse du sujet : ce
- *      calque repasse l'artiste par-dessus le logotype (le « X » se glisse
- *      derrière lui)
- *   4. `reveal` — une seconde photo, ancrée en bas de l'écran, qui monte et
- *      recouvre toute la scène au fil du défilement : la transition entre
- *      les deux images se fait au geste du visiteur, pas sur un minuteur
+ *  - à l'entrée, deux rideaux papier s'ouvrent verticalement, les cadres se
+ *    dévoilent par clip-path et les lettres de RYLIX montent une à une
+ *    derrière leur masque
+ *  - au défilement (section épinglée), les deux cadres dérivent à des vitesses
+ *    et amplitudes différentes, leurs photos glissent en sens inverse à
+ *    l'intérieur (double parallaxe), le mot se compresse, et le chapitre
+ *    d'ouverture cède la place à l'annonce de la sortie en accent acide
+ *  - au pointeur, les cadres réagissent en sens opposés — la scène respire
  *
- * Les deux photos dérivent à des vitesses différentes (voir `photoY` et
- * `revealY`) : c'est cet écart qui donne la sensation de profondeur.
+ * Chaque cadre superpose trois couches de mouvement indépendantes : la dérive
+ * de scroll (conteneur externe), l'intro clip-path (figure), la parallaxe
+ * pointeur (interne). Le mot est en mix-blend-difference : il s'inverse en
+ * passant sur les cadres. Tout est statique sous prefers-reduced-motion.
  */
 export function Hero() {
-  const sectionRef = useRef<HTMLElement>(null)
-  const markRef = useRef<HTMLHeadingElement>(null)
-  const xRef = useRef<HTMLSpanElement>(null)
-
   const reduce = usePrefersReducedMotion()
-  const isDesktop = useMediaQuery(MD)
-  const subject = isDesktop ? hero.subject.desktop : hero.subject.mobile
-  const markX = isDesktop ? hero.markX.desktop : hero.markX.mobile
-  const bgPosition = isDesktop ? hero.background.objectPosition.desktop : hero.background.objectPosition.mobile
-  const revealPosition = isDesktop ? hero.reveal.objectPosition.desktop : hero.reveal.objectPosition.mobile
+  const sectionRef = useRef<HTMLElement>(null)
 
-  // La section fait 220svh : la progression couvre toute cette hauteur, pas
-  // seulement un écran — c'est la réserve de défilement qui permet au
-  // contenu épinglé (ci-dessous) de jouer sa transition sans être poussé
-  // hors champ en même temps.
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ['start start', 'end end'],
   })
-  const progress = useSpring(scrollYProgress, { stiffness: 110, damping: 30, mass: 0.3 })
+  const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 32, mass: 0.3 })
 
-  // Le fond dérive lentement ; le logotype remonte plus vite — c'est ce
-  // différentiel qui glisse le X derrière l'artiste dès les premiers pixels
-  // de défilement.
-  const photoY = useTransform(progress, [0, 1], reduce ? ['0%', '0%'] : ['0%', '10%'])
-  const photoScale = useTransform(progress, [0, 1], reduce ? [1, 1] : [1, 1.05])
-  const markY = useTransform(progress, [0, 1], reduce ? [0, 0] : [0, -120])
-  const metaOpacity = useTransform(progress, [0, 0.45], [1, 0])
+  // --- Dérives liées au scroll (immobiles sous reduced-motion) ---
+  const pct = (from: number, to: number) =>
+    useTransform(progress, [0, 1], reduce ? [`${from}%`, `${from}%`] : [`${from}%`, `${to}%`])
+  const num = (from: number, to: number) =>
+    useTransform(progress, [0, 1], reduce ? [from, from] : [from, to])
 
-  // Le panneau de révélation monte depuis le bas et recouvre tout à
-  // `revealEnd` : une vitesse nettement différente de celle du fond, pour que
-  // les deux images se déplacent visiblement l'une par rapport à l'autre.
-  const revealStops = [0, hero.revealEnd, 1]
-  const revealY = useTransform(progress, revealStops, reduce ? ['100%', '100%', '100%'] : ['100%', '0%', '0%'])
-  const revealScale = useTransform(progress, revealStops, reduce ? [1, 1, 1] : [1.08, 1, 1])
-  // Fondu sur les 12 premiers % de la hauteur du panneau, pour que son bord
-  // avant se dissolve dans le calque du dessous plutôt que de le trancher.
-  const revealMask = 'linear-gradient(to bottom, transparent 0%, #000 12%)'
+  const primaryX = pct(0, -34)
+  const primaryY = pct(0, -8)
+  const primaryScale = num(1, 0.72)
+  const primaryRotate = num(0, -2.2)
+  const primaryImgY = pct(0, 12)
 
-  const markOffset = useMarkAlignment({ markRef, xRef, targetX: markX })
+  const secondaryX = pct(0, -47)
+  const secondaryY = pct(0, -4)
+  const secondaryScale = num(1, 1.5)
+  const secondaryRotate = num(2.5, 1.2)
+  const secondaryImgY = pct(0, -8)
 
-  const solid = Math.max(0, 100 - hero.subjectFeather)
-  const subjectMask = `radial-gradient(ellipse ${subject.rx}% ${subject.ry}% at ${subject.x}% ${subject.y}%, #000 ${solid}%, transparent 100%)`
+  const wordY = pct(0, -18)
+  const wordScale = num(1, 0.88)
+
+  const chapterOneOpacity = useTransform(progress, [0.05, 0.3], reduce ? [1, 1] : [1, 0])
+  const chapterOneY = pct(0, -12)
+  const chapterTwoOpacity = useTransform(progress, [0.38, 0.62], reduce ? [0, 0] : [0, 1])
+  const chapterTwoY = useTransform(progress, [0.38, 0.62], reduce ? [0, 0] : [28, 0])
+  // Le CTA du second chapitre n'est cliquable que lorsqu'il est visible.
+  const chapterTwoEvents = useTransform(chapterTwoOpacity, (v) =>
+    v > 0.5 ? ('auto' as const) : ('none' as const)
+  )
+
+  // --- Parallaxe au pointeur, en sens opposés ---
+  const pointerX = useMotionValue(0)
+  const pointerY = useMotionValue(0)
+  const springPX = useSpring(pointerX, { stiffness: 60, damping: 20, mass: 0.4 })
+  const springPY = useSpring(pointerY, { stiffness: 60, damping: 20, mass: 0.4 })
+  const primaryPointerX = useTransform(springPX, (v) => v * 14)
+  const primaryPointerY = useTransform(springPY, (v) => v * 10)
+  const secondaryPointerX = useTransform(springPX, (v) => v * -10)
+  const secondaryPointerY = useTransform(springPY, (v) => v * -8)
+
+  useEffect(() => {
+    if (reduce) return
+    const onMove = (e: PointerEvent) => {
+      pointerX.set(e.clientX / window.innerWidth - 0.5)
+      pointerY.set(e.clientY / window.innerHeight - 0.5)
+    }
+    window.addEventListener('pointermove', onMove, { passive: true })
+    return () => window.removeEventListener('pointermove', onMove)
+  }, [reduce, pointerX, pointerY])
+
+  const primary = resolveImage(hero.primary.imageKey)
+  const secondary = resolveImage(hero.secondary.imageKey)
 
   return (
-    // Épinglé : le wrapper est plus haut que l'écran (220svh) pour ménager
-    // une vraie zone de défilement pendant laquelle le contenu visuel, lui,
-    // reste fixe (sticky) — sans cette réserve de hauteur, la révélation et
-    // le défilement de la page se superposeraient et brouilleraient l'effet.
-    <section ref={sectionRef} className="relative h-[220svh]">
-      <div className="grain sticky top-0 isolate flex h-[100svh] flex-col justify-end overflow-hidden">
-        {/* 1 — photo de fond */}
-        <motion.div style={{ y: photoY, scale: photoScale }} className="absolute inset-0 z-0">
-          <Image
-            imageKey={hero.background.imageKey}
-            alt={hero.background.alt}
-            sizes="100vw"
-            priority
-            className="h-full w-full"
-            objectPosition={bgPosition}
-          />
-        </motion.div>
-        <div aria-hidden className={`absolute inset-0 z-[1] ${veil}`} />
+    <section
+      ref={sectionRef}
+      className="relative h-[230svh] min-h-[1400px] bg-navy"
+      aria-label="RYLIX — introduction"
+    >
+      <div className="sticky top-0 isolate h-[100svh] min-h-[640px] overflow-hidden bg-navy">
+        {/* Grain pellicule */}
+        <div className="grain-live" aria-hidden />
 
-        {/* 2 — logotype */}
-        <div className="container-rylix relative z-[2] pb-16 md:pb-24">
-          <motion.h1
-            ref={markRef}
-            style={{ y: markY, marginLeft: markOffset }}
-            initial={reduce ? { opacity: 0 } : { opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: reduce ? 0.2 : DURATION.slow, ease: EASE }}
-            className="w-fit font-display text-hero font-extrabold uppercase leading-none text-cream"
+        {/* Rideaux d'ouverture */}
+        {!reduce && (
+          <>
+            <motion.div
+              aria-hidden
+              initial={{ y: '0%' }}
+              animate={{ y: '-102%' }}
+              transition={intro(1.3, 0.1)}
+              className="pointer-events-none absolute left-0 top-0 z-30 h-[50.5%] w-full bg-cream"
+            />
+            <motion.div
+              aria-hidden
+              initial={{ y: '0%' }}
+              animate={{ y: '102%' }}
+              transition={intro(1.3, 0.1)}
+              className="pointer-events-none absolute bottom-0 left-0 z-30 h-[50.5%] w-full bg-cream"
+            />
+          </>
+        )}
+
+        {/* Cadres photo */}
+        <div className="absolute inset-0 z-[2]" aria-hidden>
+          {/* 01 — grand cadre : dérive scroll sur le conteneur, intro sur la
+              figure, pointeur à l'intérieur — trois couches indépendantes. */}
+          <motion.div
+            style={{ x: primaryX, y: primaryY, scale: primaryScale, rotate: primaryRotate }}
+            className="absolute left-[12vw] top-[18vh] h-[58vh] w-[67vw]
+                       md:left-[28vw] md:top-[13vh] md:h-[min(74vh,830px)] md:w-[min(38vw,610px)]"
           >
-            RYLI<span ref={xRef}>X</span>
-          </motion.h1>
+            <motion.figure
+              initial={reduce ? false : { clipPath: 'inset(50% 0% 50% 0%)', scale: 1.12 }}
+              animate={{ clipPath: 'inset(0% 0% 0% 0%)', scale: 1 }}
+              transition={intro(1.7, 0.18)}
+              className="m-0 h-full w-full overflow-hidden bg-navy-alt shadow-[0_36px_90px_rgba(0,0,0,0.38)]"
+            >
+              <motion.div style={{ x: primaryPointerX, y: primaryPointerY }} className="h-full w-full">
+                {primary && (
+                  <motion.img
+                    src={primary.src}
+                    srcSet={primary.srcSet}
+                    sizes="(max-width: 768px) 67vw, 38vw"
+                    width={primary.width}
+                    height={primary.height}
+                    alt=""
+                    fetchPriority="high"
+                    style={{ y: primaryImgY, objectPosition: 'center 48%' }}
+                    className="photo h-[115%] w-full object-cover"
+                  />
+                )}
+              </motion.div>
+              <span className="pointer-events-none absolute inset-0 bg-gradient-to-b from-navy/5 via-transparent to-navy/30" />
+              <span className="absolute bottom-2.5 right-3 z-[2] font-sans text-[9px] tracking-[0.16em] text-accent">
+                {hero.primary.index}
+              </span>
+            </motion.figure>
+          </motion.div>
+
+          {/* 02 — petit cadre incliné */}
+          <motion.div
+            style={{ x: secondaryX, y: secondaryY, scale: secondaryScale, rotate: secondaryRotate }}
+            className="absolute left-[72vw] top-[32vh] h-[35vh] w-[36vw]
+                       md:top-[26vh] md:h-[min(50vh,570px)] md:w-[min(21vw,350px)]"
+          >
+            <motion.figure
+              initial={reduce ? false : { clipPath: 'inset(100% 0% 0% 0%)', y: '12%' }}
+              animate={{ clipPath: 'inset(0% 0% 0% 0%)', y: '0%' }}
+              transition={intro(1.45, 0.48)}
+              className="m-0 h-full w-full overflow-hidden bg-navy-alt shadow-[0_36px_90px_rgba(0,0,0,0.38)]"
+            >
+              <motion.div
+                style={{ x: secondaryPointerX, y: secondaryPointerY }}
+                className="h-full w-full"
+              >
+                {secondary && (
+                  <motion.img
+                    src={secondary.src}
+                    srcSet={secondary.srcSet}
+                    sizes="(max-width: 768px) 36vw, 21vw"
+                    width={secondary.width}
+                    height={secondary.height}
+                    alt=""
+                    fetchPriority="high"
+                    style={{ y: secondaryImgY, objectPosition: 'center 46%' }}
+                    className="photo h-[115%] w-full object-cover"
+                  />
+                )}
+              </motion.div>
+              <span className="pointer-events-none absolute inset-0 bg-gradient-to-b from-navy/5 via-transparent to-navy/30" />
+              <span className="absolute bottom-2.5 right-3 z-[2] font-sans text-[9px] tracking-[0.16em] text-accent">
+                {hero.secondary.index}
+              </span>
+            </motion.figure>
+          </motion.div>
         </div>
 
-        {/* 3 — l'artiste, repassé par-dessus le logotype */}
-        <motion.div
-          aria-hidden
-          style={{ y: photoY, scale: photoScale, maskImage: subjectMask, WebkitMaskImage: subjectMask }}
-          className="pointer-events-none absolute inset-0 z-[3]"
+        {/* RYLIX — étalé lettre par lettre, inversé sur les cadres */}
+        <motion.h1
+          style={{ y: wordY, scale: wordScale }}
+          className="pointer-events-none absolute inset-x-[3vw] top-[48%] z-[6] flex items-center
+                     justify-between font-display font-extrabold uppercase leading-[0.7]
+                     text-cream mix-blend-difference md:inset-x-[2.2vw] md:top-[47%]"
+          aria-label="RYLIX"
         >
-          <Image
-            imageKey={hero.background.imageKey}
-            alt=""
-            sizes="100vw"
-            priority
-            className="h-full w-full"
-            objectPosition={bgPosition}
-          />
-          <div className={`absolute inset-0 ${veil}`} />
+          {LETTERS.map((letter, i) => (
+            <span
+              key={`${letter}-${i}`}
+              aria-hidden
+              className="inline-flex overflow-hidden px-[0.02em] py-[0.12em]"
+            >
+              <motion.span
+                initial={reduce ? false : { y: '118%', rotate: 3 }}
+                animate={{ y: '0%', rotate: 0 }}
+                transition={intro(1.05, 0.38 + i * 0.045)}
+                className="inline-block text-[24vw] tracking-[-0.06em] md:text-[clamp(7rem,19vw,21rem)]"
+              >
+                {letter}
+              </motion.span>
+            </span>
+          ))}
+        </motion.h1>
+
+        {/* Accroche, haut gauche */}
+        <motion.div
+          initial={reduce ? false : { opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={intro(0.8, 0.76)}
+          className="absolute left-[18px] top-[13%] z-10 md:left-[30px] md:top-[24%]"
+        >
+          <motion.p
+            style={{ opacity: chapterOneOpacity, y: chapterOneY }}
+            className="m-0 font-display text-[17px] font-bold leading-[1.05] tracking-[-0.02em]
+                       text-cream md:text-[clamp(18px,1.5vw,26px)]"
+          >
+            {hero.intro.map((line) => (
+              <span key={line} className="block">
+                {line}
+              </span>
+            ))}
+          </motion.p>
         </motion.div>
 
-        {/* 4 — panneau de révélation, monte au scroll */}
+        {/* Chapitre 1 — pastilles factuelles */}
         <motion.div
-          style={{
-            y: revealY,
-            scale: revealScale,
-            // Bord supérieur adouci : sans ce dégradé, la jonction avec le
-            // calque du dessous serait une ligne nette, plutôt qu'un fondu.
-            maskImage: revealMask,
-            WebkitMaskImage: revealMask,
-          }}
-          className="absolute inset-0 z-[4]"
+          initial={reduce ? false : { opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={intro(0.8, 0.83)}
+          className="absolute bottom-[12vh] left-[18px] z-10 md:bottom-[11vh] md:left-[30px]"
         >
-          <Image
-            imageKey={hero.reveal.imageKey}
-            alt={hero.reveal.alt}
-            sizes="100vw"
-            className="h-full w-full"
-            objectPosition={revealPosition}
-          />
-          <div aria-hidden className={`absolute inset-0 ${veil}`} />
+          <motion.div
+            style={{ opacity: chapterOneOpacity, y: chapterOneY }}
+            className="flex gap-1.5 md:gap-2"
+          >
+            {hero.chips.map((chip) => (
+              <span
+                key={chip}
+                className="rounded-full border border-cream/45 px-2.5 py-1.5 font-sans text-[8px]
+                           uppercase tracking-[0.08em] text-cream md:text-[10px]"
+              >
+                {chip}
+              </span>
+            ))}
+          </motion.div>
         </motion.div>
 
-        {/* Baseline + CTA — toujours au-dessus */}
+        {/* Chapitre 2 — l'annonce de la sortie, révélée au scroll */}
         <motion.div
-          style={{ opacity: metaOpacity }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={transition(DURATION.base, 0.45)}
-          className="container-rylix relative z-[5] flex flex-col gap-6 pb-16 md:flex-row
-                     md:items-center md:justify-between md:pb-24"
+          style={{ opacity: chapterTwoOpacity, y: chapterTwoY, pointerEvents: chapterTwoEvents }}
+          className="absolute bottom-[12vh] left-[18px] z-10 max-w-[320px] md:bottom-[11vh] md:left-[30px]"
         >
-          <p className="label text-cream/80">{site.tagline}</p>
-          <Link to="/musique" className="btn self-start md:self-auto">
-            Écouter
+          <p className="m-0 font-display text-[clamp(24px,2.4vw,39px)] font-bold leading-[0.95] tracking-[-0.03em] text-accent">
+            {hero.outro.title}
+          </p>
+          <p className="mb-0 mt-[15px] font-sans text-xs leading-[1.35] text-cream/70">
+            {hero.outro.text}
+          </p>
+          <Link to={hero.outro.to} className="btn-quiet mt-5 text-cream hover:text-accent">
+            {hero.outro.ctaLabel}
+            <svg viewBox="0 0 24 24" aria-hidden fill="none" className="h-3.5 w-3.5 stroke-current">
+              <path d="M7 17L17 7M9 7h8v8" strokeWidth="1.5" />
+            </svg>
           </Link>
         </motion.div>
 
-        <ScrollHint />
+        {/* Bandeau bas : repère / progression / coordonnées */}
+        <motion.div
+          initial={reduce ? false : { opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={intro(0.8, 0.9)}
+          className="absolute bottom-[18px] left-[18px] right-[18px] z-[12] grid
+                     grid-cols-[auto,1fr] items-center gap-[18px] font-sans text-[9px] uppercase
+                     tracking-[0.1em] text-cream/80 md:bottom-6 md:left-[30px] md:right-[30px]
+                     md:grid-cols-[auto,1fr,auto]"
+        >
+          <span>{site.tagline}</span>
+          <span className="h-px overflow-hidden bg-cream/25">
+            <motion.span
+              style={{ scaleX: progress }}
+              className="block h-full w-full origin-left bg-accent"
+            />
+          </span>
+          <span className="hidden md:block">{hero.coordinates}</span>
+        </motion.div>
       </div>
     </section>
-  )
-}
-
-/**
- * Décale horizontalement le logotype pour que le centre du « X » tombe
- * exactement sur `targetX` (en % de la largeur de la fenêtre). Le décalage
- * est borné pour que le mot reste entièrement visible.
- *
- * Recalculé au redimensionnement et au chargement de la police, plutôt que
- * codé en dur : la valeur dépend de la largeur de rendu réelle du logotype,
- * qui varie avec le clamp() typographique.
- */
-function useMarkAlignment({
-  markRef,
-  xRef,
-  targetX,
-}: {
-  markRef: React.RefObject<HTMLElement>
-  xRef: React.RefObject<HTMLElement>
-  targetX: number
-}): number {
-  const [offset, setOffset] = useState(0)
-
-  const measure = useCallback(() => {
-    const mark = markRef.current
-    const x = xRef.current
-    if (!mark || !x) return
-
-    // On mesure à décalage nul pour obtenir la position naturelle du X.
-    const previous = mark.style.marginLeft
-    mark.style.marginLeft = '0px'
-    const xCenter = x.getBoundingClientRect().left + x.getBoundingClientRect().width / 2
-    const markLeft = mark.getBoundingClientRect().left
-    const markWidth = mark.getBoundingClientRect().width
-    mark.style.marginLeft = previous
-
-    const target = (window.innerWidth * targetX) / 100
-    const raw = target - xCenter
-
-    // Le logotype ne doit ni sortir de la fenêtre à droite, ni reculer à gauche
-    // au-delà de sa marge de conteneur.
-    const maxRight = window.innerWidth - 24 - (markLeft + markWidth)
-    setOffset(Math.round(Math.max(0, Math.min(raw, maxRight))))
-  }, [markRef, xRef, targetX])
-
-  useLayoutEffect(measure, [measure])
-
-  useEffect(() => {
-    window.addEventListener('resize', measure)
-    const fonts = (document as Document & { fonts?: FontFaceSet }).fonts
-    fonts?.ready.then(measure)
-    return () => window.removeEventListener('resize', measure)
-  }, [measure])
-
-  return offset
-}
-
-/** Repère de défilement discret, effacé dès que la page bouge. */
-function ScrollHint() {
-  const reduce = usePrefersReducedMotion()
-  const { scrollY } = useScroll()
-  const opacity = useTransform(scrollY, [0, 120], [1, 0])
-
-  return (
-    <motion.div
-      aria-hidden
-      style={{ opacity }}
-      className="pointer-events-none absolute inset-x-0 bottom-5 z-[5] flex justify-center"
-    >
-      <motion.span
-        className="block h-8 w-px bg-gradient-to-b from-transparent via-cream/50 to-transparent"
-        animate={reduce ? undefined : { scaleY: [0.4, 1, 0.4], opacity: [0.35, 1, 0.35] }}
-        transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
-      />
-    </motion.div>
   )
 }

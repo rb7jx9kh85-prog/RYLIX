@@ -21,12 +21,13 @@ export const site = {
 /**
  * Section de présentation, juste sous le hero de l'accueil.
  * `imageKey` pointe vers une clé du manifeste généré par `npm run images`.
+ * (image-1 ici : les images 3 et 4 sont déjà les deux cadres du hero.)
  */
 export const presentation = {
   eyebrow: 'Présentation',
   text: 'pas de texte pour le moment',
-  imageKey: 'image-3',
-  imageAlt: 'RYLIX assis devant un mur de pierres sèches, à travers les herbes hautes.',
+  imageKey: 'image-1',
+  imageAlt: 'RYLIX de profil devant un massif alpin valaisan.',
 } as const
 
 export type NavItem = { label: string; to: string }
@@ -39,65 +40,47 @@ export const nav: NavItem[] = [
   { label: 'Contact', to: '/contact' },
 ]
 
-export type HeroSubject = {
-  mobile: { x: number; y: number; rx: number; ry: number }
-  desktop: { x: number; y: number; rx: number; ry: number }
-}
-
-export type HeroLayer = {
+export type HeroFrame = {
   /** Clé dans src/lib/images.generated.ts */
   imageKey: string
   alt: string
-  /** Recadrage (object-position) par point de rupture. */
-  objectPosition: { mobile: string; desktop: string }
+  /** Numéro affiché dans le coin du cadre. */
+  index: string
 }
 
 /**
- * Hero à deux images superposées en profondeur, reliées par le scroll plutôt
- * que par une bascule automatique :
- *
- *  - `background` reste en place, avec l'effet signature du site — le « X »
- *    du logo qui se glisse derrière l'artiste
- *  - `reveal` monte depuis le bas au fil du scroll et recouvre le fond, comme
- *    un panneau qui glisse devant la scène — une vraie transition « au geste »
- *    plutôt qu'un minuteur
+ * Hero éditorial : deux cadres photo flottants, RYLIX géant étalé lettre par
+ * lettre en mix-blend-difference, section épinglée au scroll. À l'entrée,
+ * deux rideaux papier s'ouvrent ; au défilement, les cadres dérivent, le mot
+ * se compresse, et le chapitre d'ouverture cède la place à l'annonce de la
+ * sortie en accent acide.
  */
 export const hero = {
-  background: {
-    imageKey: 'image-1',
-    alt: 'RYLIX de profil devant un massif alpin valaisan.',
-    // Sur grand écran le cadrage est descendu pour que la tête ET le buste
-    // de l'artiste tiennent dans le format paysage.
-    objectPosition: { mobile: '50% 30%', desktop: '52% 58%' },
-  } satisfies HeroLayer,
-  /**
-   * Zone occupée par l'artiste dans `background`, en % de la boîte affichée.
-   * x/y = centre de l'ellipse, rx/ry = rayons — découpe le calque qui repasse
-   * l'artiste par-dessus le logotype.
-   */
-  subject: {
-    mobile: { x: 68, y: 52, rx: 20, ry: 32 },
-    desktop: { x: 66, y: 64, rx: 13, ry: 36 },
-  } satisfies HeroSubject,
-  /** Douceur du bord de l'ellipse d'occlusion, en % du rayon. */
-  subjectFeather: 38,
-  reveal: {
+  /** Grand cadre, centre-gauche. */
+  primary: {
+    imageKey: 'image-3',
+    alt: 'RYLIX assis devant un mur de pierres sèches, à travers les herbes hautes.',
+    index: '01',
+  } satisfies HeroFrame,
+  /** Petit cadre, droite, légèrement incliné. */
+  secondary: {
     imageKey: 'image-4',
     alt: 'RYLIX assis, aperçu à travers des herbes hautes.',
-    objectPosition: { mobile: '50% 38%', desktop: '50% 44%' },
-  } satisfies HeroLayer,
-  /**
-   * Portion du défilement du hero (0 à 1) sur laquelle `reveal` monte et
-   * recouvre entièrement `background`. Le reste du scroll laisse `reveal`
-   * au repos avant que le hero ne quitte l'écran.
-   */
-  revealEnd: 0.6,
-  /**
-   * Position visée pour le centre du « X », en % de la largeur de la fenêtre.
-   * Calée sur l'ellipse du sujet : seule la fin du mot passe derrière
-   * l'artiste, le reste du logotype reste entièrement lisible.
-   */
-  markX: { mobile: 48, desktop: 53 },
+    index: '02',
+  } satisfies HeroFrame,
+  /** Accroche en haut à gauche, une ligne par entrée. */
+  intro: ['Paysages alpins,', 'production électronique.'],
+  /** Pastilles factuelles du premier chapitre. */
+  chips: ['Producteur', 'Valais', 'Suisse'],
+  /** Second chapitre, révélé au scroll — l'annonce de la sortie. */
+  outro: {
+    title: 'Better Days',
+    text: 'Premier single — disponible sur toutes les plateformes.',
+    ctaLabel: 'Écouter',
+    to: '/musique',
+  },
+  /** Coordonnées du Valais (Sion), affichées dans le bandeau bas. */
+  coordinates: '46.2331° N / 7.3606° E',
 } as const
 
 export type Platform = { name: string; url: string }

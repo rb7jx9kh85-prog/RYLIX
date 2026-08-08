@@ -18,8 +18,8 @@ import sharp from 'sharp'
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const PUBLIC = path.join(ROOT, 'public')
 
-const NAVY = '#10151a'
-const CREAM = '#e8e4d8'
+const NAVY = '#11120f'
+const CREAM = '#f2f0e8'
 const CAP = 640 // hauteur de capitale dans l'unité de la police
 const LETTER_SPACING = 90 // interlettrage, en unités de police
 
@@ -101,7 +101,7 @@ const background = `<svg xmlns="http://www.w3.org/2000/svg" width="${OG_W}" heig
   <g fill="${CREAM}" transform="translate(${logoX} ${logoBaseline}) scale(${logoScale.toFixed(5)} -${logoScale.toFixed(5)})">
     ${logo.markup}
   </g>
-  <rect x="${logoX}" y="${(logoBaseline + 40).toFixed(0)}" width="${logoW.toFixed(0)}" height="1" fill="#4a6572"/>
+  <rect x="${logoX}" y="${(logoBaseline + 40).toFixed(0)}" width="${logoW.toFixed(0)}" height="1" fill="#d9ff43"/>
 </svg>
 `
 

@@ -6,22 +6,25 @@
 
 @layer base {
   :root {
-    /* Palette "Alpine Crouch" */
-    --rylix-navy: #10151a; /* fond principal */
-    --rylix-navy-alt: #171d24; /* fond alternatif */
-    --rylix-slate: #4a6572; /* bleu-ardoise, bordures, icônes */
-    --rylix-green: #7a9b6e; /* vert feuillage, touches ponctuelles */
-    --rylix-pale: #a8c4cf; /* bleu pâle, liens/hover */
-    --rylix-cream: #e8e4d8; /* blanc chaud, texte sur navy */
+    /* Palette "Ink & Acid" — encre chaude, papier, accent acide.
+       Les noms de tokens historiques (navy/slate/green/pale/cream) sont
+       conservés pour ne pas casser les classes existantes ; seules les
+       valeurs changent. green = l'accent acide. */
+    --rylix-navy: #11120f; /* encre — fond principal */
+    --rylix-navy-alt: #1a1c17; /* encre claire — fond alternatif */
+    --rylix-slate: #6f7466; /* gris chaud — bordures, icônes */
+    --rylix-green: #d9ff43; /* jaune acide — accent */
+    --rylix-pale: #c8cbbc; /* papier grisé — texte secondaire */
+    --rylix-cream: #f2f0e8; /* papier — texte principal */
 
     /* Mêmes couleurs en canaux RGB : Tailwind en a besoin pour les
        modificateurs d'opacité (text-cream/80, border-slate/20, ...). */
-    --rylix-navy-rgb: 16 21 26;
-    --rylix-navy-alt-rgb: 23 29 36;
-    --rylix-slate-rgb: 74 101 114;
-    --rylix-green-rgb: 122 155 110;
-    --rylix-pale-rgb: 168 196 207;
-    --rylix-cream-rgb: 232 228 216;
+    --rylix-navy-rgb: 17 18 15;
+    --rylix-navy-alt-rgb: 26 28 23;
+    --rylix-slate-rgb: 111 116 102;
+    --rylix-green-rgb: 217 255 67;
+    --rylix-pale-rgb: 200 203 188;
+    --rylix-cream-rgb: 242 240 232;
 
     /* Chrome mobile / barre d'adresse */
     color-scheme: dark;
@@ -115,14 +118,13 @@
     opacity: 1;
   }
 
-  /* CTA principal — contour, jamais de bloc coloré. Le fond crème monte
-     depuis le bas au survol plutôt que d'apparaître d'un coup. */
+  /* CTA principal — contour au repos, fond acide qui monte au survol. */
   .btn {
     @apply relative isolate inline-flex items-center justify-center gap-2 overflow-hidden
            rounded-sm border border-cream/40 px-7 py-3 font-sans text-label font-medium
            uppercase tracking-[0.14em] text-cream
            transition-[color,border-color] duration-500 ease-rylix
-           hover:border-cream hover:text-navy
+           hover:border-accent hover:text-navy
            disabled:cursor-not-allowed disabled:border-slate/40 disabled:text-fg-muted/50
            disabled:hover:border-slate/40 disabled:hover:text-fg-muted/50;
   }
@@ -132,7 +134,7 @@
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: var(--rylix-cream);
+    background: var(--rylix-green);
     transform: translateY(101%);
     transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
   }
@@ -153,14 +155,15 @@
     @apply h-px w-full border-0 bg-slate/25;
   }
 
-  /* Traitement photo unifié — voir design system §5 */
+  /* Traitement photo unifié — désaturation douce, contraste léger,
+     cohérent avec le grain argentique du hero. */
   .photo {
-    filter: grayscale(10%) contrast(1.05) brightness(0.95);
+    filter: saturate(0.72) contrast(1.04) brightness(0.92);
   }
 }
 
 @layer utilities {
-  /* Grain léger appliqué en overlay sur le hero */
+  /* Grain statique — overlay discret sur les sections photo */
   .grain::after {
     content: '';
     position: absolute;
@@ -169,6 +172,35 @@
     opacity: 0.16;
     mix-blend-mode: overlay;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Grain animé, façon pellicule — réservé au hero. L'élément déborde de 50%
+     pour que ses déplacements ne laissent jamais voir un bord. Animé sur les
+     écrans à pointeur fin uniquement : sur mobile le grain reste statique,
+     même rendu à l'œil, zéro travail d'animation. Figé partout sous
+     prefers-reduced-motion par la règle globale plus haut. */
+  .grain-live {
+    position: absolute;
+    inset: -50%;
+    z-index: 20;
+    pointer-events: none;
+    opacity: 0.045;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.9'/%3E%3C/svg%3E");
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .grain-live {
+      will-change: transform;
+      animation: rylix-grain 0.22s steps(2) infinite;
+    }
+  }
+
+  @keyframes rylix-grain {
+    0% { transform: translate3d(0, 0, 0); }
+    25% { transform: translate3d(2%, -3%, 0); }
+    50% { transform: translate3d(-3%, 2%, 0); }
+    75% { transform: translate3d(3%, 4%, 0); }
+    100% { transform: translate3d(-2%, -2%, 0); }
   }
 
   .text-balance {

@@ -74,7 +74,7 @@ export function Header() {
                       <span
                         aria-hidden
                         className={`absolute -bottom-0.5 left-0 block h-px w-full origin-left
-                                    bg-cream transition-transform duration-500 ease-rylix
+                                    bg-accent transition-transform duration-500 ease-rylix
                                     group-hover:scale-x-100 ${
                                       isActive ? 'scale-x-100' : 'scale-x-0'
                                     }`}

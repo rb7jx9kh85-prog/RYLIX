@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { contactEmail, nav, site } from '@/lib/content'
+import { contactEmail, hero, nav, site } from '@/lib/content'
 import { SocialLinks } from './SocialLinks'
 
 export function Footer() {
@@ -34,9 +34,12 @@ export function Footer() {
         <SocialLinks />
       </div>
 
-      <div className="container-rylix pb-8">
+      <div className="container-rylix flex items-baseline justify-between gap-6 pb-8">
         <p className="text-sm text-fg-muted/70">
           © {new Date().getFullYear()} {site.name}
+        </p>
+        <p className="font-sans text-[9px] uppercase tracking-[0.1em] text-fg-muted/60">
+          {hero.coordinates}
         </p>
       </div>
     </footer>
