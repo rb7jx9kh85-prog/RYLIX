@@ -199,9 +199,13 @@ export const gallery: GalleryPhoto[] = [
   },
 ]
 
-/** Endpoint Formspree. Défini dans Vercel (VITE_FORMSPREE_ID) — jamais de secret ici. */
-export const formspreeId = import.meta.env.VITE_FORMSPREE_ID ?? ''
-export const formspreeEndpoint = formspreeId ? `https://formspree.io/f/${formspreeId}` : ''
+/**
+ * Clé d'accès Web3Forms — publique par conception (comme un identifiant de
+ * formulaire Formspree) : elle sert à router l'email et à appliquer le
+ * filtrage anti-spam côté Web3Forms, pas à authentifier un compte.
+ * Surchargeable par VITE_WEB3FORMS_KEY si la clé change.
+ */
+export const web3formsKey = import.meta.env.VITE_WEB3FORMS_KEY || '835ba476-97db-4c8c-bf81-72b4421ec4f8'
 
 /** Adresse professionnelle. Surchargeable par VITE_CONTACT_EMAIL. */
 export const contactEmail = import.meta.env.VITE_CONTACT_EMAIL || 'contact@rylix.ch'

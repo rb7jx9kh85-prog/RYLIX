@@ -4,7 +4,7 @@ Site artiste de RYLIX, producteur suisse (Valais). Site statique multipage, sans
 
 - **Stack** : Vite + React 18 + TypeScript, React Router v6, Tailwind CSS, Framer Motion, Lenis
 - **Hébergement** : Vercel (statique, `dist/`)
-- **Formulaire** : Formspree (aucun serveur à maintenir)
+- **Formulaire** : Web3Forms (aucun serveur à maintenir)
 - **Aucune clé secrète côté client** — voir [Variables d'environnement](#variables-denvironnement)
 
 ---
@@ -54,7 +54,7 @@ src/pages/             Une page par route
 | `/galerie` | Grille asymétrique + lightbox |
 | `/dates` | Dates confirmées, ou état vide |
 | `/parcours` | Lieux, événements et marques |
-| `/contact` | Formulaire Formspree, email et réseaux |
+| `/contact` | Formulaire Web3Forms, email et réseaux |
 
 `/tournee` redirige vers `/dates` : l'ancienne URL reste valide.
 
@@ -133,21 +133,28 @@ Ne jamais y placer de secret. Voir `.env.example`.
 | Variable | Rôle | Requise |
 |---|---|---|
 | `VITE_SITE_URL` | URL canonique de production, sans slash final. Alimente les balises canonical, Open Graph, `robots.txt` et `sitemap.xml`. | Oui en production |
-| `VITE_FORMSPREE_ID` | Identifiant du formulaire Formspree (partie après `/f/`). Sans lui, le formulaire s'affiche désactivé. | Pour le formulaire |
+| `VITE_WEB3FORMS_KEY` | Clé d'accès Web3Forms. Une valeur par défaut est déjà en dur dans le code. | Non |
 | `VITE_CONTACT_EMAIL` | Remplace l'adresse de contact. Par défaut `contact@rylix.ch`. | Non |
 
 > `VITE_SITE_URL` vaut `https://rylix.ch` par défaut. **Le remplacer par le domaine réel**
 > avant la mise en production, sinon les balises canonical et le sitemap pointeront vers
 > une URL inexistante.
 
-### Activer le formulaire de contact
+### Le formulaire de contact
 
-1. Créer un formulaire sur [formspree.io](https://formspree.io) et récupérer l'endpoint
-   `https://formspree.io/f/xxxxxxx`
-2. Dans Vercel : *Project Settings → Environment Variables* → `VITE_FORMSPREE_ID` = `xxxxxxx`
-3. Redéployer (les variables `VITE_*` sont lues au build, pas au runtime)
+Le formulaire poste directement en JavaScript vers l'API de
+[Web3Forms](https://web3forms.com) (`https://api.web3forms.com/submit`), qui
+relaie le message par email sans qu'aucun serveur ne soit à maintenir. La clé
+d'accès est publique par conception — elle route l'email et sert de garde-fou
+anti-spam côté Web3Forms, elle n'authentifie pas un compte.
 
-Le formulaire contient un champ piège anti-spam (`_gotcha`) traité côté Formspree.
+Pour changer de compte Web3Forms : récupérer la nouvelle clé sur
+[web3forms.com](https://web3forms.com), puis soit la remplacer directement dans
+`src/lib/content.ts` (`web3formsKey`), soit définir `VITE_WEB3FORMS_KEY` dans
+Vercel — cette dernière prend le dessus sur la valeur en dur.
+
+Le formulaire contient un champ piège anti-spam (`botcheck`) traité côté
+Web3Forms.
 
 ---
 

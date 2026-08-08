@@ -3,40 +3,41 @@ import { Seo } from '@/components/Seo'
 import { PageHeader } from '@/components/PageHeader'
 import { Reveal } from '@/components/PageTransition'
 import { SocialLinks } from '@/components/SocialLinks'
-import { contactEmail, formspreeEndpoint } from '@/lib/content'
+import { contactEmail, site, web3formsKey } from '@/lib/content'
 
 type Status = 'idle' | 'sending' | 'sent' | 'error'
+
+const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit'
 
 export default function Contact() {
   const [status, setStatus] = useState<Status>('idle')
   const [error, setError] = useState('')
 
-  const configured = formspreeEndpoint !== ''
-
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    if (!configured) return
     const form = e.currentTarget
     const data = new FormData(form)
 
     // Champ piège anti-spam : rempli uniquement par les robots.
-    if (data.get('_gotcha')) return
+    if (data.get('botcheck')) return
+
+    data.set('access_key', web3formsKey)
+    data.set('subject', `Nouveau message depuis ${site.name}`)
+    data.set('from_name', site.name)
 
     setStatus('sending')
     setError('')
 
     try {
-      const res = await fetch(formspreeEndpoint, {
+      const res = await fetch(WEB3FORMS_ENDPOINT, {
         method: 'POST',
         body: data,
         headers: { Accept: 'application/json' },
       })
+      const body = (await res.json().catch(() => null)) as { success?: boolean; message?: string } | null
 
-      if (!res.ok) {
-        const body = (await res.json().catch(() => null)) as {
-          errors?: { message: string }[]
-        } | null
-        throw new Error(body?.errors?.[0]?.message ?? "L'envoi a échoué.")
+      if (!res.ok || !body?.success) {
+        throw new Error(body?.message ?? "L'envoi a échoué.")
       }
 
       form.reset()
@@ -70,15 +71,7 @@ export default function Contact() {
                 <label htmlFor="name" className="label">
                   Nom
                 </label>
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  required
-                  autoComplete="name"
-                  disabled={!configured}
-                  className={field}
-                />
+                <input id="name" name="name" type="text" required autoComplete="name" className={field} />
               </div>
 
               <div className="flex flex-col gap-2">
@@ -91,7 +84,6 @@ export default function Contact() {
                   type="email"
                   required
                   autoComplete="email"
-                  disabled={!configured}
                   className={field}
                 />
               </div>
@@ -100,20 +92,13 @@ export default function Contact() {
                 <label htmlFor="message" className="label">
                   Message
                 </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  required
-                  rows={6}
-                  disabled={!configured}
-                  className={`${field} resize-y`}
-                />
+                <textarea id="message" name="message" required rows={6} className={`${field} resize-y`} />
               </div>
 
               {/* Honeypot — masqué visuellement et pour les lecteurs d'écran */}
               <input
-                type="text"
-                name="_gotcha"
+                type="checkbox"
+                name="botcheck"
                 tabIndex={-1}
                 autoComplete="off"
                 aria-hidden="true"
@@ -121,35 +106,18 @@ export default function Contact() {
               />
 
               <div className="flex flex-wrap items-center gap-6">
-                <button
-                  type="submit"
-                  className="btn"
-                  disabled={!configured || status === 'sending'}
-                >
+                <button type="submit" className="btn" disabled={status === 'sending'}>
                   {status === 'sending' ? 'Envoi…' : 'Envoyer'}
                 </button>
 
                 <p aria-live="polite" className="text-sm">
-                  {status === 'sent' && <span className="text-accent">Message envoyé.</span>}
+                  {status === 'sent' && (
+                    <span className="text-accent">Message envoyé. Réponse sous peu.</span>
+                  )}
                   {status === 'error' && <span className="text-pale">{error}</span>}
                 </p>
               </div>
             </form>
-
-            {!configured && (
-              <p className="mt-6 text-sm text-fg-muted/70">
-                Formulaire momentanément indisponible — écrire à{' '}
-                <a href={`mailto:${contactEmail}`} className="link-quiet">
-                  {contactEmail}
-                </a>
-                .
-                {import.meta.env.DEV && (
-                  <span className="mt-2 block text-pale/70">
-                    (dev : définir <code>VITE_FORMSPREE_ID</code> pour l'activer)
-                  </span>
-                )}
-              </p>
-            )}
           </Reveal>
 
           {/* Email + réseaux */}
