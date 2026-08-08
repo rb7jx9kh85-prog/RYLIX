@@ -39,37 +39,61 @@ export const nav: NavItem[] = [
   { label: 'Contact', to: '/contact' },
 ]
 
+export type HeroSubject = {
+  mobile: { x: number; y: number; rx: number; ry: number }
+  desktop: { x: number; y: number; rx: number; ry: number }
+}
+
+export type HeroSlide = {
+  /** Clé dans src/lib/images.generated.ts */
+  imageKey: string
+  alt: string
+  /** Recadrage (object-position) par point de rupture. */
+  objectPosition: { mobile: string; desktop: string }
+  /**
+   * Zone occupée par l'artiste, en % de la boîte affichée — sert à découper
+   * le calque de premier plan qui repasse l'artiste par-dessus le logotype.
+   * Absente : la diapositive n'a pas cet effet (image trop texturée pour un
+   * découpage net, ou sujet déjà partiellement masqué par le décor).
+   */
+  subject?: HeroSubject
+}
+
 /**
- * Cadrage du hero. Les valeurs sont en pourcentage de l'image source et
- * pilotent à la fois le recadrage et la position du logotype : le « X » de
- * RYLIX est aligné sur `subjectX` pour venir se glisser derrière l'artiste.
+ * Hero à deux diapositives, alternées en 3D (rotation + profondeur). La
+ * première porte l'effet signature du site — le « X » de RYLIX qui se glisse
+ * derrière l'artiste — la seconde s'affiche pleine image, sans découpage.
  */
 export const hero = {
-  imageKey: 'image-1',
-  alt: 'RYLIX de profil devant un massif alpin valaisan.',
-  /**
-   * Recadrage (object-position) par point de rupture. Sur grand écran le
-   * cadrage est descendu pour que la tête ET le buste de l'artiste tiennent
-   * dans le format paysage.
-   */
-  objectPosition: { mobile: '50% 30%', desktop: '52% 58%' },
-  /**
-   * Zone occupée par l'artiste dans le hero, en % de la boîte affichée.
-   * `x`/`y` = centre, `rx`/`ry` = rayons. Cette ellipse découpe le calque de
-   * premier plan qui repasse l'artiste par-dessus le logotype.
-   */
-  subject: {
-    mobile: { x: 68, y: 52, rx: 20, ry: 32 },
-    desktop: { x: 66, y: 64, rx: 13, ry: 36 },
-  },
-  /** Douceur du bord de l'ellipse, en % du rayon. Plus haut = occlusion plus diffuse. */
+  slides: [
+    {
+      imageKey: 'image-1',
+      alt: 'RYLIX de profil devant un massif alpin valaisan.',
+      // Sur grand écran le cadrage est descendu pour que la tête ET le buste
+      // de l'artiste tiennent dans le format paysage.
+      objectPosition: { mobile: '50% 30%', desktop: '52% 58%' },
+      // x/y = centre de l'ellipse, rx/ry = rayons, en % de la boîte affichée.
+      subject: {
+        mobile: { x: 68, y: 52, rx: 20, ry: 32 },
+        desktop: { x: 66, y: 64, rx: 13, ry: 36 },
+      },
+    },
+    {
+      imageKey: 'image-4',
+      alt: 'RYLIX assis, aperçu à travers des herbes hautes.',
+      objectPosition: { mobile: '50% 38%', desktop: '50% 44%' },
+    },
+  ] satisfies HeroSlide[],
+  /** Douceur du bord de l'ellipse d'occlusion, en % du rayon. */
   subjectFeather: 38,
   /**
    * Position visée pour le centre du « X », en % de la largeur de la fenêtre.
-   * Placée sur le bord de l'ellipse : seule la fin du mot passe derrière
-   * l'artiste, le reste du logotype reste entièrement lisible.
+   * Calée sur l'ellipse de la première diapositive : seule la fin du mot
+   * passe derrière l'artiste, le reste du logotype reste entièrement lisible.
    */
   markX: { mobile: 48, desktop: 53 },
+  /** Intervalle entre deux diapositives, en ms. */
+  autoplayMs: 7000,
 } as const
 
 export type Platform = { name: string; url: string }
