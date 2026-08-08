@@ -183,6 +183,11 @@ export const gallery: GalleryPhoto[] = [
     span: 'portrait',
   },
   {
+    key: 'image-3',
+    alt: 'RYLIX assis devant un mur de pierres s\u00e8ches, \u00e0 travers les herbes hautes.',
+    span: 'wide',
+  },
+  {
     key: 'image-4',
     alt: 'RYLIX assis, aper\u00e7u \u00e0 travers des herbes hautes.',
     span: 'portrait',
