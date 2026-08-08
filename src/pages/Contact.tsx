@@ -21,9 +21,17 @@ export default function Contact() {
     // Champ piège anti-spam : rempli uniquement par les robots.
     if (data.get('botcheck')) return
 
+    const senderName = String(data.get('name') ?? '').trim()
+
     data.set('access_key', web3formsKey)
-    data.set('subject', `Nouveau message depuis ${site.name}`)
+    // Sujet personnalisé par expéditeur plutôt qu'un intitulé fixe répété à
+    // chaque envoi : les filtres anti-spam apprennent vite à reconnaître (et
+    // à classer) un modèle de message identique envoyé en masse.
+    data.set('subject', senderName ? `${site.name} — message de ${senderName}` : `Nouveau message — ${site.name}`)
     data.set('from_name', site.name)
+    // Explicite en plus du champ "email" auto-détecté par Web3Forms : garantit
+    // qu'une réponse part bien vers le visiteur, pas vers l'expéditeur technique.
+    data.set('replyto', String(data.get('email') ?? ''))
 
     setStatus('sending')
     setError('')
