@@ -44,56 +44,60 @@ export type HeroSubject = {
   desktop: { x: number; y: number; rx: number; ry: number }
 }
 
-export type HeroSlide = {
+export type HeroLayer = {
   /** Clé dans src/lib/images.generated.ts */
   imageKey: string
   alt: string
   /** Recadrage (object-position) par point de rupture. */
   objectPosition: { mobile: string; desktop: string }
-  /**
-   * Zone occupée par l'artiste, en % de la boîte affichée — sert à découper
-   * le calque de premier plan qui repasse l'artiste par-dessus le logotype.
-   * Absente : la diapositive n'a pas cet effet (image trop texturée pour un
-   * découpage net, ou sujet déjà partiellement masqué par le décor).
-   */
-  subject?: HeroSubject
 }
 
 /**
- * Hero à deux diapositives, alternées en 3D (rotation + profondeur). La
- * première porte l'effet signature du site — le « X » de RYLIX qui se glisse
- * derrière l'artiste — la seconde s'affiche pleine image, sans découpage.
+ * Hero à deux images superposées en profondeur, reliées par le scroll plutôt
+ * que par une bascule automatique :
+ *
+ *  - `background` reste en place, avec l'effet signature du site — le « X »
+ *    du logo qui se glisse derrière l'artiste
+ *  - `reveal` monte depuis le bas au fil du scroll et recouvre le fond, comme
+ *    un panneau qui glisse devant la scène — une vraie transition « au geste »
+ *    plutôt qu'un minuteur
  */
 export const hero = {
-  slides: [
-    {
-      imageKey: 'image-1',
-      alt: 'RYLIX de profil devant un massif alpin valaisan.',
-      // Sur grand écran le cadrage est descendu pour que la tête ET le buste
-      // de l'artiste tiennent dans le format paysage.
-      objectPosition: { mobile: '50% 30%', desktop: '52% 58%' },
-      // x/y = centre de l'ellipse, rx/ry = rayons, en % de la boîte affichée.
-      subject: {
-        mobile: { x: 68, y: 52, rx: 20, ry: 32 },
-        desktop: { x: 66, y: 64, rx: 13, ry: 36 },
-      },
-    },
-    {
-      imageKey: 'image-4',
-      alt: 'RYLIX assis, aperçu à travers des herbes hautes.',
-      objectPosition: { mobile: '50% 38%', desktop: '50% 44%' },
-    },
-  ] satisfies HeroSlide[],
+  background: {
+    imageKey: 'image-1',
+    alt: 'RYLIX de profil devant un massif alpin valaisan.',
+    // Sur grand écran le cadrage est descendu pour que la tête ET le buste
+    // de l'artiste tiennent dans le format paysage.
+    objectPosition: { mobile: '50% 30%', desktop: '52% 58%' },
+  } satisfies HeroLayer,
+  /**
+   * Zone occupée par l'artiste dans `background`, en % de la boîte affichée.
+   * x/y = centre de l'ellipse, rx/ry = rayons — découpe le calque qui repasse
+   * l'artiste par-dessus le logotype.
+   */
+  subject: {
+    mobile: { x: 68, y: 52, rx: 20, ry: 32 },
+    desktop: { x: 66, y: 64, rx: 13, ry: 36 },
+  } satisfies HeroSubject,
   /** Douceur du bord de l'ellipse d'occlusion, en % du rayon. */
   subjectFeather: 38,
+  reveal: {
+    imageKey: 'image-4',
+    alt: 'RYLIX assis, aperçu à travers des herbes hautes.',
+    objectPosition: { mobile: '50% 38%', desktop: '50% 44%' },
+  } satisfies HeroLayer,
+  /**
+   * Portion du défilement du hero (0 à 1) sur laquelle `reveal` monte et
+   * recouvre entièrement `background`. Le reste du scroll laisse `reveal`
+   * au repos avant que le hero ne quitte l'écran.
+   */
+  revealEnd: 0.6,
   /**
    * Position visée pour le centre du « X », en % de la largeur de la fenêtre.
-   * Calée sur l'ellipse de la première diapositive : seule la fin du mot
-   * passe derrière l'artiste, le reste du logotype reste entièrement lisible.
+   * Calée sur l'ellipse du sujet : seule la fin du mot passe derrière
+   * l'artiste, le reste du logotype reste entièrement lisible.
    */
   markX: { mobile: 48, desktop: 53 },
-  /** Intervalle entre deux diapositives, en ms. */
-  autoplayMs: 7000,
 } as const
 
 export type Platform = { name: string; url: string }

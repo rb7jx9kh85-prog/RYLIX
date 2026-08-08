@@ -1,88 +1,28 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { AnimatePresence, motion, useScroll, useSpring, useTransform } from 'framer-motion'
+import { motion, useScroll, useSpring, useTransform } from 'framer-motion'
 import { Image } from './Image'
-import { hero, site, type HeroSubject } from '@/lib/content'
+import { hero, site } from '@/lib/content'
 import { DURATION, EASE, transition, usePrefersReducedMotion } from '@/lib/motion'
 import { MD, useMediaQuery } from '@/lib/useMediaQuery'
 
 const veil = 'bg-gradient-to-t from-navy via-navy/45 to-navy/20'
 
-/** Construit le masque radial qui découpe le calque de premier plan sur le sujet. */
-function subjectMask(s: HeroSubject['mobile'], feather: number) {
-  const solid = Math.max(0, 100 - feather)
-  return `radial-gradient(ellipse ${s.rx}% ${s.ry}% at ${s.x}% ${s.y}%, #000 ${solid}%, transparent 100%)`
-}
-
 /**
- * Une diapositive du hero. Superpose, quand la diapositive porte un `subject`,
- * la même photo une seconde fois : découpée à l'ellipse du sujet, elle repasse
- * l'artiste par-dessus le logotype. Voir le composant Hero pour le détail de
- * cette technique.
+ * Hero à deux images, superposées en profondeur et reliées par le scroll :
+ *
+ *   1. `background` — la photo de fond, avec une légère dérive de parallaxe
+ *   2. le logotype RYLIX
+ *   3. `background` une seconde fois, découpée à l'ellipse du sujet : ce
+ *      calque repasse l'artiste par-dessus le logotype (le « X » se glisse
+ *      derrière lui)
+ *   4. `reveal` — une seconde photo, ancrée en bas de l'écran, qui monte et
+ *      recouvre toute la scène au fil du défilement : la transition entre
+ *      les deux images se fait au geste du visiteur, pas sur un minuteur
+ *
+ * Les deux photos dérivent à des vitesses différentes (voir `photoY` et
+ * `revealY`) : c'est cet écart qui donne la sensation de profondeur.
  */
-function Slide({
-  slide,
-  objectPosition,
-  photoY,
-  photoScale,
-  feather,
-}: {
-  slide: (typeof hero.slides)[number]
-  objectPosition: string
-  photoY: import('framer-motion').MotionValue<string>
-  photoScale: import('framer-motion').MotionValue<number>
-  feather: number
-}) {
-  const isDesktop = useMediaQuery(MD)
-  const subject = slide.subject && (isDesktop ? slide.subject.desktop : slide.subject.mobile)
-
-  return (
-    <>
-      <motion.div style={{ y: photoY, scale: photoScale }} className="absolute inset-0">
-        <Image
-          imageKey={slide.imageKey}
-          alt={slide.alt}
-          sizes="100vw"
-          priority
-          className="h-full w-full"
-          objectPosition={objectPosition}
-        />
-      </motion.div>
-      <div aria-hidden className={`absolute inset-0 ${veil}`} />
-
-      {subject && (
-        <motion.div
-          aria-hidden
-          style={{
-            y: photoY,
-            scale: photoScale,
-            maskImage: subjectMask(subject, feather),
-            WebkitMaskImage: subjectMask(subject, feather),
-          }}
-          className="pointer-events-none absolute inset-0"
-        >
-          <Image
-            imageKey={slide.imageKey}
-            alt=""
-            sizes="100vw"
-            priority
-            className="h-full w-full"
-            objectPosition={objectPosition}
-          />
-          <div className={`absolute inset-0 ${veil}`} />
-        </motion.div>
-      )}
-    </>
-  )
-}
-
-/** Rotation 3D + profondeur : la diapositive entrante pivote depuis la tranche, la sortante s'en va de l'autre côté. */
-const flipVariants = {
-  enter: (dir: number) => ({ rotateY: dir * 78, opacity: 0, scale: 1.05 }),
-  center: { rotateY: 0, opacity: 1, scale: 1 },
-  exit: (dir: number) => ({ rotateY: dir * -78, opacity: 0, scale: 0.95 }),
-}
-
 export function Hero() {
   const sectionRef = useRef<HTMLElement>(null)
   const markRef = useRef<HTMLHeadingElement>(null)
@@ -90,155 +30,135 @@ export function Hero() {
 
   const reduce = usePrefersReducedMotion()
   const isDesktop = useMediaQuery(MD)
+  const subject = isDesktop ? hero.subject.desktop : hero.subject.mobile
   const markX = isDesktop ? hero.markX.desktop : hero.markX.mobile
+  const bgPosition = isDesktop ? hero.background.objectPosition.desktop : hero.background.objectPosition.mobile
+  const revealPosition = isDesktop ? hero.reveal.objectPosition.desktop : hero.reveal.objectPosition.mobile
 
-  const [slideIndex, setSlideIndex] = useState(0)
-  const [direction, setDirection] = useState(1)
-  const slide = hero.slides[slideIndex]
-  const objectPosition = isDesktop ? slide.objectPosition.desktop : slide.objectPosition.mobile
-
-  // Alterne automatiquement entre les diapositives — coupé sous
-  // prefers-reduced-motion et pendant que l'onglet est en arrière-plan.
-  useEffect(() => {
-    if (reduce || hero.slides.length < 2) return
-
-    const tick = () => {
-      if (document.hidden) return
-      setSlideIndex((i) => {
-        const next = (i + 1) % hero.slides.length
-        setDirection(next > i || (i === hero.slides.length - 1 && next === 0) ? 1 : -1)
-        return next
-      })
-    }
-
-    const id = window.setInterval(tick, hero.autoplayMs)
-    return () => window.clearInterval(id)
-  }, [reduce])
-
+  // La section fait 220svh : la progression couvre toute cette hauteur, pas
+  // seulement un écran — c'est la réserve de défilement qui permet au
+  // contenu épinglé (ci-dessous) de jouer sa transition sans être poussé
+  // hors champ en même temps.
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ['start start', 'end start'],
+    offset: ['start start', 'end end'],
   })
   const progress = useSpring(scrollYProgress, { stiffness: 110, damping: 30, mass: 0.3 })
 
-  // La photo dérive plus lentement que la page ; le logotype remonte plus vite.
-  // C'est ce différentiel qui fait passer le X derrière l'artiste au scroll.
+  // Le fond dérive lentement ; le logotype remonte plus vite — c'est ce
+  // différentiel qui glisse le X derrière l'artiste dès les premiers pixels
+  // de défilement.
   const photoY = useTransform(progress, [0, 1], reduce ? ['0%', '0%'] : ['0%', '10%'])
   const photoScale = useTransform(progress, [0, 1], reduce ? [1, 1] : [1, 1.05])
   const markY = useTransform(progress, [0, 1], reduce ? [0, 0] : [0, -120])
   const metaOpacity = useTransform(progress, [0, 0.45], [1, 0])
 
+  // Le panneau de révélation monte depuis le bas et recouvre tout à
+  // `revealEnd` : une vitesse nettement différente de celle du fond, pour que
+  // les deux images se déplacent visiblement l'une par rapport à l'autre.
+  const revealStops = [0, hero.revealEnd, 1]
+  const revealY = useTransform(progress, revealStops, reduce ? ['100%', '100%', '100%'] : ['100%', '0%', '0%'])
+  const revealScale = useTransform(progress, revealStops, reduce ? [1, 1, 1] : [1.08, 1, 1])
+  // Fondu sur les 12 premiers % de la hauteur du panneau, pour que son bord
+  // avant se dissolve dans le calque du dessous plutôt que de le trancher.
+  const revealMask = 'linear-gradient(to bottom, transparent 0%, #000 12%)'
+
   const markOffset = useMarkAlignment({ markRef, xRef, targetX: markX })
 
+  const solid = Math.max(0, 100 - hero.subjectFeather)
+  const subjectMask = `radial-gradient(ellipse ${subject.rx}% ${subject.ry}% at ${subject.x}% ${subject.y}%, #000 ${solid}%, transparent 100%)`
+
   return (
-    <section
-      ref={sectionRef}
-      className="grain relative isolate flex min-h-[100svh] flex-col justify-end overflow-hidden"
-    >
-      {/* 1 — diapositives, alternées en 3D */}
-      <div className="absolute inset-0 z-0" style={{ perspective: 1600 }}>
-        <AnimatePresence initial={false} custom={direction}>
-          <motion.div
-            key={slide.imageKey}
-            custom={direction}
-            variants={reduce ? undefined : flipVariants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={transition(1.15)}
-            style={{ transformStyle: 'preserve-3d', backfaceVisibility: 'hidden' }}
-            className="absolute inset-0"
-          >
-            <Slide
-              slide={slide}
-              objectPosition={objectPosition}
-              photoY={photoY}
-              photoScale={photoScale}
-              feather={hero.subjectFeather}
-            />
-          </motion.div>
-        </AnimatePresence>
-      </div>
-
-      {/* 2 — logotype, au-dessus des diapositives */}
-      <div className="container-rylix relative z-[2] pb-16 md:pb-24">
-        <motion.h1
-          ref={markRef}
-          style={{ y: markY, marginLeft: markOffset }}
-          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: reduce ? 0.2 : DURATION.slow, ease: EASE }}
-          className="w-fit font-display text-hero font-extrabold uppercase leading-none text-cream"
-        >
-          RYLI<span ref={xRef}>X</span>
-        </motion.h1>
-      </div>
-
-      {/* Baseline + CTA — toujours au-dessus */}
-      <motion.div
-        style={{ opacity: metaOpacity }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={transition(DURATION.base, 0.45)}
-        className="container-rylix relative z-[4] flex flex-col gap-6 pb-16 md:flex-row
-                   md:items-center md:justify-between md:pb-24"
-      >
-        <p className="label text-cream/80">{site.tagline}</p>
-        <Link to="/musique" className="btn self-start md:self-auto">
-          Écouter
-        </Link>
-      </motion.div>
-
-      {hero.slides.length > 1 && (
-        <SlideDots count={hero.slides.length} active={slideIndex} onSelect={setSlideIndex} setDirection={setDirection} />
-      )}
-
-      <ScrollHint />
-    </section>
-  )
-}
-
-/** Puces de position discrètes — permettent aussi de choisir une diapositive au clic. */
-function SlideDots({
-  count,
-  active,
-  onSelect,
-  setDirection,
-}: {
-  count: number
-  active: number
-  onSelect: (i: number) => void
-  setDirection: (d: number) => void
-}) {
-  return (
-    <div
-      role="group"
-      aria-label="Choisir une image du hero"
-      className="absolute bottom-24 right-6 z-[4] flex gap-2 md:bottom-28 md:right-10"
-    >
-      {Array.from({ length: count }).map((_, i) => (
-        // Le bouton porte la cible tactile complète (min. 44px) ; le repère
-        // visuel reste fin et centré dedans — la zone cliquable ne doit pas
-        // suivre le rendu graphique.
-        <button
-          key={i}
-          type="button"
-          aria-current={i === active}
-          onClick={() => {
-            setDirection(i > active ? 1 : -1)
-            onSelect(i)
-          }}
-          className="group flex h-11 w-11 items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pale"
-        >
-          <span
-            aria-hidden
-            className="block h-1.5 rounded-full bg-cream/40 transition-all duration-500 ease-rylix group-hover:bg-cream/70"
-            style={{ width: i === active ? 22 : 8, opacity: i === active ? 1 : 0.6 }}
+    // Épinglé : le wrapper est plus haut que l'écran (220svh) pour ménager
+    // une vraie zone de défilement pendant laquelle le contenu visuel, lui,
+    // reste fixe (sticky) — sans cette réserve de hauteur, la révélation et
+    // le défilement de la page se superposeraient et brouilleraient l'effet.
+    <section ref={sectionRef} className="relative h-[220svh]">
+      <div className="grain sticky top-0 isolate flex h-[100svh] flex-col justify-end overflow-hidden">
+        {/* 1 — photo de fond */}
+        <motion.div style={{ y: photoY, scale: photoScale }} className="absolute inset-0 z-0">
+          <Image
+            imageKey={hero.background.imageKey}
+            alt={hero.background.alt}
+            sizes="100vw"
+            priority
+            className="h-full w-full"
+            objectPosition={bgPosition}
           />
-          <span className="sr-only">Image {i + 1}</span>
-        </button>
-      ))}
-    </div>
+        </motion.div>
+        <div aria-hidden className={`absolute inset-0 z-[1] ${veil}`} />
+
+        {/* 2 — logotype */}
+        <div className="container-rylix relative z-[2] pb-16 md:pb-24">
+          <motion.h1
+            ref={markRef}
+            style={{ y: markY, marginLeft: markOffset }}
+            initial={reduce ? { opacity: 0 } : { opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: reduce ? 0.2 : DURATION.slow, ease: EASE }}
+            className="w-fit font-display text-hero font-extrabold uppercase leading-none text-cream"
+          >
+            RYLI<span ref={xRef}>X</span>
+          </motion.h1>
+        </div>
+
+        {/* 3 — l'artiste, repassé par-dessus le logotype */}
+        <motion.div
+          aria-hidden
+          style={{ y: photoY, scale: photoScale, maskImage: subjectMask, WebkitMaskImage: subjectMask }}
+          className="pointer-events-none absolute inset-0 z-[3]"
+        >
+          <Image
+            imageKey={hero.background.imageKey}
+            alt=""
+            sizes="100vw"
+            priority
+            className="h-full w-full"
+            objectPosition={bgPosition}
+          />
+          <div className={`absolute inset-0 ${veil}`} />
+        </motion.div>
+
+        {/* 4 — panneau de révélation, monte au scroll */}
+        <motion.div
+          style={{
+            y: revealY,
+            scale: revealScale,
+            // Bord supérieur adouci : sans ce dégradé, la jonction avec le
+            // calque du dessous serait une ligne nette, plutôt qu'un fondu.
+            maskImage: revealMask,
+            WebkitMaskImage: revealMask,
+          }}
+          className="absolute inset-0 z-[4]"
+        >
+          <Image
+            imageKey={hero.reveal.imageKey}
+            alt={hero.reveal.alt}
+            sizes="100vw"
+            className="h-full w-full"
+            objectPosition={revealPosition}
+          />
+          <div aria-hidden className={`absolute inset-0 ${veil}`} />
+        </motion.div>
+
+        {/* Baseline + CTA — toujours au-dessus */}
+        <motion.div
+          style={{ opacity: metaOpacity }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={transition(DURATION.base, 0.45)}
+          className="container-rylix relative z-[5] flex flex-col gap-6 pb-16 md:flex-row
+                     md:items-center md:justify-between md:pb-24"
+        >
+          <p className="label text-cream/80">{site.tagline}</p>
+          <Link to="/musique" className="btn self-start md:self-auto">
+            Écouter
+          </Link>
+        </motion.div>
+
+        <ScrollHint />
+      </div>
+    </section>
   )
 }
 
@@ -306,7 +226,7 @@ function ScrollHint() {
     <motion.div
       aria-hidden
       style={{ opacity }}
-      className="pointer-events-none absolute inset-x-0 bottom-5 z-[4] flex justify-center"
+      className="pointer-events-none absolute inset-x-0 bottom-5 z-[5] flex justify-center"
     >
       <motion.span
         className="block h-8 w-px bg-gradient-to-b from-transparent via-cream/50 to-transparent"
