@@ -77,41 +77,58 @@ export const hero = {
 export type HomeCard = {
   to: string
   label: string
-  /** Une ligne factuelle — ce qu'on trouve derrière l'onglet. */
+  /**
+   * Ce que l'aperçu montre :
+   *  - `mosaic` : les vignettes de la galerie
+   *  - `list`   : les infos clés de l'onglet, en lignes
+   */
+  kind: 'mosaic' | 'list'
+  /** Une ligne factuelle, sous le titre. */
   teaser: string
-  /** Clé d'image du manifeste, ou absente pour une carte purement typographique. */
-  imageKey?: string
-  imageAlt?: string
+  /** Lignes affichées pour `kind: 'list'`. Vide -> le teaser suffit. */
+  lines?: string[]
+  /** Largeur de la carte dans la grille de 6 colonnes (desktop). */
+  span: 2 | 3 | 4
 }
 
 /**
  * Aperçus des onglets, sous la dernière sortie sur l'accueil. Chaque carte
- * mène à la page correspondante. Le teaser des dates est calculé à
- * l'affichage (voir src/pages/Home.tsx) pour rester juste quand la liste
- * évolue.
+ * mène à sa page. Les contenus visuels (musique, galerie) sont resserrés, les
+ * contenus textuels prennent plus de place : les tailles suivent la densité
+ * réelle plutôt qu'une grille uniforme.
+ *
+ * Le contenu des cartes dates et parcours est dérivé des listes réelles à
+ * l'affichage (voir src/pages/Home.tsx), pas recopié ici.
  */
 export const homeCards: HomeCard[] = [
   {
     to: '/galerie',
     label: 'Galerie',
+    kind: 'mosaic',
     teaser: 'Photographies alpines, Valais.',
-    imageKey: 'image-2',
-    imageAlt: 'RYLIX de profil au pied d’une tour médiévale.',
+    span: 2,
   },
   {
     to: '/dates',
     label: 'Dates',
-    teaser: 'Prochaines dates confirmées.',
+    kind: 'list',
+    teaser: 'Prochaines dates.',
+    span: 4,
   },
   {
     to: '/parcours',
     label: 'Parcours',
-    teaser: 'Lieux, événements et marques.',
+    kind: 'list',
+    teaser: 'Lieux, \u00e9v\u00e9nements et marques.',
+    span: 4,
   },
   {
     to: '/contact',
     label: 'Contact',
+    kind: 'list',
     teaser: 'Bookings, collaborations, presse.',
+    lines: ['contact@rylix.ch', 'Instagram \u00b7 TikTok \u00b7 YouTube \u00b7 Spotify'],
+    span: 2,
   },
 ]
 
@@ -200,6 +217,13 @@ export const parcours: ParcoursEntry[] = [
   },
 ]
 
+/** Auteur des photographies du site — crédité sous chaque visuel. */
+export const photographer = {
+  name: 'Noah Gabioud',
+  studio: 'Aloa Photography',
+  url: 'https://www.aloa-photography.ch',
+} as const
+
 export type GalleryPhoto = {
   /** Clé dans src/lib/images.generated.ts */
   key: string
@@ -213,16 +237,19 @@ export type GalleryPhoto = {
  * Les entrées dont l'image n'existe pas encore dans le manifeste sont ignorées
  * à l'affichage : on peut donc déclarer un visuel avant de l'avoir, il
  * apparaîtra dès que le fichier sera déposé et `npm run images` relancé.
+ *
+ * Le `alt` décrit l'image pour l'accessibilité ; la légende visible, elle, est
+ * le crédit photo — voir `photographer`.
  */
 export const gallery: GalleryPhoto[] = [
   {
     key: 'image-1',
-    alt: 'RYLIX de profil devant un massif alpin valaisan, lumière de fin de journée.',
+    alt: 'RYLIX de profil devant un massif alpin valaisan, lumi\u00e8re de fin de journ\u00e9e.',
     span: 'tall',
   },
   {
     key: 'image-2',
-    alt: 'RYLIX de profil au pied d\u2019une tour médiévale, drapeaux suisse et valaisan en haut.',
+    alt: 'RYLIX de profil au pied d\u2019une tour m\u00e9di\u00e9vale, drapeaux suisse et valaisan en haut.',
     span: 'portrait',
   },
   {
@@ -234,11 +261,6 @@ export const gallery: GalleryPhoto[] = [
     key: 'image-4',
     alt: 'RYLIX assis, aper\u00e7u \u00e0 travers des herbes hautes.',
     span: 'portrait',
-  },
-  {
-    key: 'better-days-cover',
-    alt: 'Pochette du single Better Days : silhouette de dos face \u00e0 une vall\u00e9e alpine.',
-    span: 'square',
   },
 ]
 

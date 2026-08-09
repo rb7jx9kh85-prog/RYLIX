@@ -51,7 +51,7 @@ src/pages/             Une page par route
 |---|---|
 | `/` | Accueil — hero (dont présentation), dernière sortie, aperçus des onglets |
 | `/musique` | Better Days : pochette, player Spotify, plateformes |
-| `/galerie` | Grille asymétrique + lightbox |
+| `/galerie` | Photos en grille asymétrique + lightbox, créditées |
 | `/dates` | Dates confirmées, ou état vide |
 | `/parcours` | Lieux, événements et marques |
 | `/contact` | Formulaire Web3Forms, email et réseaux |
@@ -79,10 +79,15 @@ Les dates passées sont masquées automatiquement. Liste vide → la page affich
 
 ### Modifier les aperçus de l'accueil
 
-Les cartes sous la dernière sortie sont dans `homeCards` (`src/lib/content.ts`).
-Une carte avec `imageKey` s'affiche en pleine largeur avec sa photo ; les autres
-sont purement typographiques. Le teaser des dates est recalculé à l'affichage
-d'après la liste réelle.
+Les cartes sous la dernière sortie sont dans `homeCards` (`src/lib/content.ts`),
+rendues par `src/components/HomeCards.tsx`. La bande glisse latéralement au fil
+du scroll vertical, et reste glissable au doigt.
+
+- `kind: 'mosaic'` — affiche les vignettes de la galerie
+- `kind: 'list'` — affiche des lignes d'infos ; celles des dates et du parcours
+  sont dérivées des listes réelles (`linesFor`), pas recopiées
+- `span` (2/3/4) règle la largeur : les cartes visuelles sont resserrées, les
+  cartes de texte plus larges
 
 ### Ajouter une entrée au parcours
 
@@ -120,10 +125,15 @@ pochette dans `assets/photos/`, puis `npm run images`.
 | Fichier source | Emplacement |
 |---|---|
 | `image-1.jpg` | Galerie |
-| `image-2.jpg` | Galerie, et aperçu « Galerie » sur l'accueil |
+| `image-2.jpg` | Galerie |
 | `image-3.jpg` | Hero (cadre 01), et galerie |
 | `image-4.jpg` | Hero (cadre 02), et galerie |
-| `better-days-cover.png` | Pochette : accueil, `/musique`, galerie, image Open Graph |
+| `better-days-cover.png` | Pochette : accueil, `/musique`, image Open Graph |
+
+Les quatre photos sont créditées à leur auteur — voir `photographer` dans
+`src/lib/content.ts` : le crédit s'affiche sous chaque photo de la galerie et
+dans la lightbox. Le `alt` de chaque entrée reste une description de l'image,
+pour les lecteurs d'écran.
 
 Une entrée de galerie dont l'image n'existe pas dans le manifeste n'est pas
 affichée, et la section présentation rend un cadre vide : on peut donc déclarer

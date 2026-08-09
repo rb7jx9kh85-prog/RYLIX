@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { resolveImage } from '@/lib/images'
+import { photographer } from '@/lib/content'
 
 export type LightboxItem = { key: string; alt: string }
 
@@ -133,10 +134,23 @@ export function Lightbox({ items, index, onClose, onNavigate }: Props) {
               alt={item.alt}
               className="photo max-h-[78vh] w-auto object-contain"
             />
-            <figcaption className="text-center text-sm text-fg-muted/70">
-              {item.alt}
+            {/* La légende porte le crédit, pas la description : celle-ci est
+                déjà dans l'attribut alt, à destination des lecteurs d'écran. */}
+            <figcaption className="flex items-center justify-center gap-3 text-center text-sm text-fg-muted/70">
+              <span>
+                Photo —{' '}
+                <a
+                  href={photographer.url}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="link-quiet"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {photographer.name}
+                </a>
+              </span>
               {items.length > 1 && (
-                <span className="ml-3 tabular-nums text-fg-muted/70">
+                <span className="tabular-nums text-fg-muted/60">
                   {(index ?? 0) + 1} / {items.length}
                 </span>
               )}

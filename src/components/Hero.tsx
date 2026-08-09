@@ -1,5 +1,12 @@
 import { useEffect, useRef } from 'react'
-import { motion, useMotionValue, useScroll, useSpring, useTransform } from 'framer-motion'
+import {
+  motion,
+  useMotionValue,
+  useScroll,
+  useSpring,
+  useTransform,
+  type MotionValue,
+} from 'framer-motion'
 import { resolveImage } from '@/lib/images'
 import { hero, presentation, site } from '@/lib/content'
 import { EASE, usePrefersReducedMotion } from '@/lib/motion'
@@ -36,6 +43,7 @@ export function Hero() {
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ['start start', 'end end'],
+    layoutEffect: false,
   })
   const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 32, mass: 0.3 })
 
@@ -63,11 +71,13 @@ export function Hero() {
 
   const wordY = pct(0, -18)
   const wordScale = num(1, 0.88)
-  // Le logotype s'estompe pour passer en fond derrière le cadre qui arrive.
-  const wordOpacity = useTransform(progress, [0.22, 0.5], reduce ? [1, 1] : [1, 0.26])
-  // Le passage du cadre 02 devant le logotype est un saut de z-index — placé
-  // à un moment où le mot est déjà largement estompé, il ne se voit pas.
-  const secondaryZ = useTransform(progress, (v) => (!reduce && v > 0.4 ? 8 : 2))
+  // Le logotype existe en deux exemplaires superposés — l'un au-dessus des
+  // cadres, l'autre dessous — et on fond de l'un vers l'autre. Un simple saut
+  // de z-index ferait disparaître d'un coup les lettres couvertes par le cadre
+  // qui arrive (le I et le X) ; le fondu croisé les fait passer derrière
+  // l'image progressivement, en gardant la même écriture, juste plus discrète.
+  const wordAbove = useTransform(progress, [0.16, 0.52], reduce ? [1, 1] : [1, 0])
+  const wordBelow = useTransform(progress, [0.16, 0.52], reduce ? [0, 0] : [0, 0.32])
 
   const chapterOneOpacity = useTransform(progress, [0.05, 0.3], reduce ? [1, 1] : [1, 0])
   const chapterOneY = pct(0, -12)
@@ -165,9 +175,6 @@ export function Hero() {
                 )}
               </motion.div>
               <span className="pointer-events-none absolute inset-0 bg-gradient-to-b from-navy/5 via-transparent to-navy/30" />
-              <span className="absolute bottom-2.5 right-3 z-[2] font-sans text-[9px] tracking-[0.16em] text-accent">
-                {hero.primary.index}
-              </span>
             </motion.figure>
           </motion.div>
 
@@ -178,9 +185,8 @@ export function Hero() {
               y: secondaryY,
               scale: secondaryScale,
               rotate: secondaryRotate,
-              zIndex: secondaryZ,
             }}
-            className="absolute left-[72vw] top-[32vh] h-[35vh] w-[36vw]
+            className="absolute left-[72vw] top-[32vh] z-[2] h-[35vh] w-[36vw]
                        md:top-[26vh] md:h-[min(50vh,570px)] md:w-[min(21vw,350px)]"
           >
             <motion.figure
@@ -208,40 +214,27 @@ export function Hero() {
                 )}
               </motion.div>
               <span className="pointer-events-none absolute inset-0 bg-gradient-to-b from-navy/5 via-transparent to-navy/30" />
-              <span className="absolute bottom-2.5 right-3 z-[2] font-sans text-[9px] tracking-[0.16em] text-accent">
-                {hero.secondary.index}
-              </span>
             </motion.figure>
           </motion.div>
         </div>
 
-        {/* RYLIX — étalé lettre par lettre, inversé sur les cadres */}
-        <motion.h1
-          style={{ y: wordY, scale: wordScale, opacity: wordOpacity }}
-          className="pointer-events-none absolute inset-x-[3vw] top-[48%] z-[6] flex items-center
-                     justify-between font-display font-extrabold uppercase leading-[0.7]
-                     text-cream mix-blend-difference md:inset-x-[2.2vw] md:top-[47%]"
-          aria-label="RYLIX"
-        >
-          {LETTERS.map((letter, i) => (
-            <span
-              key={`${letter}-${i}`}
-              aria-hidden
-              className="inline-flex overflow-hidden px-[0.02em] py-[0.12em]"
-            >
-              <motion.span
-                initial={reduce ? false : { y: '118%', rotate: 3 }}
-                animate={{ y: '0%', rotate: 0 }}
-                transition={intro(1.05, 0.38 + i * 0.045)}
-                // 17vw : la somme des cinq glyphes Syne 800 (~4.3em au total) tient
-                // alors dans la largeur du conteneur, sans rognage aux bords.
-                className="inline-block text-[17vw] tracking-[-0.045em] md:text-[clamp(7rem,19vw,21rem)] md:tracking-[-0.06em]"
-              >
-                {letter}
-              </motion.span>
-            </span>
-          ))}
-        </motion.h1>
+        {/* RYLIX — deux exemplaires superposés, l'un devant les cadres, l'autre
+            derrière. Le fondu de l'un vers l'autre fait glisser les lettres
+            couvertes par le cadre 02 derrière l'image, sans rupture. */}
+        <Wordmark
+          layer="below"
+          opacity={wordBelow}
+          y={wordY}
+          scale={wordScale}
+          reduce={reduce}
+        />
+        <Wordmark
+          layer="above"
+          opacity={wordAbove}
+          y={wordY}
+          scale={wordScale}
+          reduce={reduce}
+        />
 
         {/* Accroche, haut gauche. Sous mouvement réduit, la présentation est
             empilée juste dessous : la chorégraphie qui la révèle au scroll est
@@ -333,5 +326,61 @@ export function Hero() {
         </motion.div>
       </div>
     </section>
+  )
+}
+
+/**
+ * Le logotype, rendu à un niveau d'empilement donné. Les deux exemplaires
+ * partagent exactement la même géométrie : seuls leur z-index et leur opacité
+ * diffèrent, ce qui rend le fondu de l'un vers l'autre imperceptible en tant
+ * que tel — on ne voit que le mot qui passe derrière l'image.
+ *
+ * Seul l'exemplaire de devant porte le rôle de titre ; celui du fond est
+ * décoratif, pour ne pas annoncer deux fois « RYLIX » aux lecteurs d'écran.
+ */
+function Wordmark({
+  layer,
+  opacity,
+  y,
+  scale,
+  reduce,
+}: {
+  layer: 'above' | 'below'
+  opacity: MotionValue<number>
+  y: MotionValue<string>
+  scale: MotionValue<number>
+  reduce: boolean
+}) {
+  const above = layer === 'above'
+  const Tag = above ? motion.h1 : motion.div
+
+  return (
+    <Tag
+      style={{ y, scale, opacity }}
+      className={`pointer-events-none absolute inset-x-[3vw] top-[48%] flex items-center
+                  justify-between font-display font-extrabold uppercase leading-[0.7]
+                  text-cream mix-blend-difference md:inset-x-[2.2vw] md:top-[47%]
+                  ${above ? 'z-[6]' : 'z-[1]'}`}
+      {...(above ? { 'aria-label': 'RYLIX' } : { 'aria-hidden': true })}
+    >
+      {LETTERS.map((letter, i) => (
+        <span
+          key={`${letter}-${i}`}
+          aria-hidden
+          className="inline-flex overflow-hidden px-[0.02em] py-[0.12em]"
+        >
+          <motion.span
+            initial={reduce ? false : { y: '118%', rotate: 3 }}
+            animate={{ y: '0%', rotate: 0 }}
+            transition={intro(1.05, 0.38 + i * 0.045)}
+            // 17vw : la somme des cinq glyphes Syne 800 (~4.3em au total) tient
+            // alors dans la largeur du conteneur, sans rognage aux bords.
+            className="inline-block text-[17vw] tracking-[-0.045em] md:text-[clamp(7rem,19vw,21rem)] md:tracking-[-0.06em]"
+          >
+            {letter}
+          </motion.span>
+        </span>
+      ))}
+    </Tag>
   )
 }
