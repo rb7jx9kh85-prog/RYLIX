@@ -1,8 +1,7 @@
 import { useEffect, useRef } from 'react'
-import { Link } from 'react-router-dom'
 import { motion, useMotionValue, useScroll, useSpring, useTransform } from 'framer-motion'
 import { resolveImage } from '@/lib/images'
-import { hero, site } from '@/lib/content'
+import { hero, presentation, site } from '@/lib/content'
 import { EASE, usePrefersReducedMotion } from '@/lib/motion'
 
 const LETTERS = 'RYLIX'.split('')
@@ -11,16 +10,19 @@ const LETTERS = 'RYLIX'.split('')
 const intro = (duration: number, delay: number) => ({ duration, delay, ease: EASE })
 
 /**
- * Hero éditorial, épinglé sur 230svh :
+ * Hero éditorial en deux temps, épinglé sur 230svh.
  *
- *  - à l'entrée, deux rideaux papier s'ouvrent verticalement, les cadres se
- *    dévoilent par clip-path et les lettres de RYLIX montent une à une
- *    derrière leur masque
- *  - au défilement (section épinglée), les deux cadres dérivent à des vitesses
- *    et amplitudes différentes, leurs photos glissent en sens inverse à
- *    l'intérieur (double parallaxe), le mot se compresse, et le chapitre
- *    d'ouverture cède la place à l'annonce de la sortie en accent acide
- *  - au pointeur, les cadres réagissent en sens opposés — la scène respire
+ * Temps 1 — à l'entrée : deux rideaux papier s'ouvrent verticalement, les
+ * cadres se dévoilent par clip-path, les lettres de RYLIX montent une à une
+ * derrière leur masque.
+ *
+ * Temps 2 — au défilement : le cadre 01 s'efface et laisse la place au texte
+ * de présentation, qui apparaît dans la même zone ; le cadre 02 grandit,
+ * passe devant le logotype, lequel s'estompe pour se poser en fond.
+ *
+ * En continu : les cadres dérivent à des vitesses différentes, leurs photos
+ * glissent en sens inverse à l'intérieur (double parallaxe), et réagissent au
+ * pointeur en sens opposés.
  *
  * Chaque cadre superpose trois couches de mouvement indépendantes : la dérive
  * de scroll (conteneur externe), l'intro clip-path (figure), la parallaxe
@@ -43,12 +45,16 @@ export function Hero() {
   const num = (from: number, to: number) =>
     useTransform(progress, [0, 1], reduce ? [from, from] : [from, to])
 
-  const primaryX = pct(0, -34)
+  // Cadre 01 — dérive puis s'efface : il laisse la place au texte de
+  // présentation, qui apparaît exactement dans la même zone.
+  const primaryX = pct(0, -30)
   const primaryY = pct(0, -8)
-  const primaryScale = num(1, 0.72)
+  const primaryScale = num(1, 0.78)
   const primaryRotate = num(0, -2.2)
   const primaryImgY = pct(0, 12)
+  const primaryOpacity = useTransform(progress, [0.18, 0.44], reduce ? [1, 1] : [1, 0])
 
+  // Cadre 02 — grandit et vient occuper la scène.
   const secondaryX = pct(0, -47)
   const secondaryY = pct(0, -4)
   const secondaryScale = num(1, 1.5)
@@ -57,15 +63,16 @@ export function Hero() {
 
   const wordY = pct(0, -18)
   const wordScale = num(1, 0.88)
+  // Le logotype s'estompe pour passer en fond derrière le cadre qui arrive.
+  const wordOpacity = useTransform(progress, [0.22, 0.5], reduce ? [1, 1] : [1, 0.26])
+  // Le passage du cadre 02 devant le logotype est un saut de z-index — placé
+  // à un moment où le mot est déjà largement estompé, il ne se voit pas.
+  const secondaryZ = useTransform(progress, (v) => (!reduce && v > 0.4 ? 8 : 2))
 
   const chapterOneOpacity = useTransform(progress, [0.05, 0.3], reduce ? [1, 1] : [1, 0])
   const chapterOneY = pct(0, -12)
-  const chapterTwoOpacity = useTransform(progress, [0.38, 0.62], reduce ? [0, 0] : [0, 1])
-  const chapterTwoY = useTransform(progress, [0.38, 0.62], reduce ? [0, 0] : [28, 0])
-  // Le CTA du second chapitre n'est cliquable que lorsqu'il est visible.
-  const chapterTwoEvents = useTransform(chapterTwoOpacity, (v) =>
-    v > 0.5 ? ('auto' as const) : ('none' as const)
-  )
+  const presentationOpacity = useTransform(progress, [0.34, 0.58], reduce ? [0, 0] : [0, 1])
+  const presentationY = useTransform(progress, [0.34, 0.58], reduce ? [0, 0] : [28, 0])
 
   // --- Parallaxe au pointeur, en sens opposés ---
   const pointerX = useMotionValue(0)
@@ -121,12 +128,19 @@ export function Hero() {
         )}
 
         {/* Cadres photo */}
-        <div className="absolute inset-0 z-[2]" aria-hidden>
+        {/* Cadres : z-index géré cadre par cadre (le 02 passe devant le mot). */}
+        <div className="absolute inset-0" aria-hidden>
           {/* 01 — grand cadre : dérive scroll sur le conteneur, intro sur la
               figure, pointeur à l'intérieur — trois couches indépendantes. */}
           <motion.div
-            style={{ x: primaryX, y: primaryY, scale: primaryScale, rotate: primaryRotate }}
-            className="absolute left-[12vw] top-[18vh] h-[58vh] w-[67vw]
+            style={{
+              x: primaryX,
+              y: primaryY,
+              scale: primaryScale,
+              rotate: primaryRotate,
+              opacity: primaryOpacity,
+            }}
+            className="absolute left-[12vw] top-[18vh] z-[2] h-[58vh] w-[67vw]
                        md:left-[28vw] md:top-[13vh] md:h-[min(74vh,830px)] md:w-[min(38vw,610px)]"
           >
             <motion.figure
@@ -159,7 +173,13 @@ export function Hero() {
 
           {/* 02 — petit cadre incliné */}
           <motion.div
-            style={{ x: secondaryX, y: secondaryY, scale: secondaryScale, rotate: secondaryRotate }}
+            style={{
+              x: secondaryX,
+              y: secondaryY,
+              scale: secondaryScale,
+              rotate: secondaryRotate,
+              zIndex: secondaryZ,
+            }}
             className="absolute left-[72vw] top-[32vh] h-[35vh] w-[36vw]
                        md:top-[26vh] md:h-[min(50vh,570px)] md:w-[min(21vw,350px)]"
           >
@@ -197,7 +217,7 @@ export function Hero() {
 
         {/* RYLIX — étalé lettre par lettre, inversé sur les cadres */}
         <motion.h1
-          style={{ y: wordY, scale: wordScale }}
+          style={{ y: wordY, scale: wordScale, opacity: wordOpacity }}
           className="pointer-events-none absolute inset-x-[3vw] top-[48%] z-[6] flex items-center
                      justify-between font-display font-extrabold uppercase leading-[0.7]
                      text-cream mix-blend-difference md:inset-x-[2.2vw] md:top-[47%]"
@@ -213,7 +233,9 @@ export function Hero() {
                 initial={reduce ? false : { y: '118%', rotate: 3 }}
                 animate={{ y: '0%', rotate: 0 }}
                 transition={intro(1.05, 0.38 + i * 0.045)}
-                className="inline-block text-[24vw] tracking-[-0.06em] md:text-[clamp(7rem,19vw,21rem)]"
+                // 17vw : la somme des cinq glyphes Syne 800 (~4.3em au total) tient
+                // alors dans la largeur du conteneur, sans rognage aux bords.
+                className="inline-block text-[17vw] tracking-[-0.045em] md:text-[clamp(7rem,19vw,21rem)] md:tracking-[-0.06em]"
               >
                 {letter}
               </motion.span>
@@ -221,12 +243,14 @@ export function Hero() {
           ))}
         </motion.h1>
 
-        {/* Accroche, haut gauche */}
+        {/* Accroche, haut gauche. Sous mouvement réduit, la présentation est
+            empilée juste dessous : la chorégraphie qui la révèle au scroll est
+            désactivée, elle doit rester atteignable autrement. */}
         <motion.div
           initial={reduce ? false : { opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={intro(0.8, 0.76)}
-          className="absolute left-[18px] top-[13%] z-10 md:left-[30px] md:top-[24%]"
+          className="absolute left-[18px] right-[18px] top-[13%] z-10 md:left-[30px] md:right-auto md:top-[24%] md:max-w-[46vw]"
         >
           <motion.p
             style={{ opacity: chapterOneOpacity, y: chapterOneY }}
@@ -239,6 +263,15 @@ export function Hero() {
               </span>
             ))}
           </motion.p>
+
+          {reduce && (
+            <div className="mt-8">
+              <p className="label mb-3">{presentation.eyebrow}</p>
+              <p className="m-0 font-display text-[clamp(20px,3vw,32px)] font-bold leading-[1.1] tracking-[-0.03em] text-cream">
+                {presentation.text}
+              </p>
+            </div>
+          )}
         </motion.div>
 
         {/* Chapitre 1 — pastilles factuelles */}
@@ -264,24 +297,20 @@ export function Hero() {
           </motion.div>
         </motion.div>
 
-        {/* Chapitre 2 — l'annonce de la sortie, révélée au scroll */}
-        <motion.div
-          style={{ opacity: chapterTwoOpacity, y: chapterTwoY, pointerEvents: chapterTwoEvents }}
-          className="absolute bottom-[12vh] left-[18px] z-10 max-w-[320px] md:bottom-[11vh] md:left-[30px]"
-        >
-          <p className="m-0 font-display text-[clamp(24px,2.4vw,39px)] font-bold leading-[0.95] tracking-[-0.03em] text-accent">
-            {hero.outro.title}
-          </p>
-          <p className="mb-0 mt-[15px] font-sans text-xs leading-[1.35] text-cream/70">
-            {hero.outro.text}
-          </p>
-          <Link to={hero.outro.to} className="btn-quiet mt-5 text-cream hover:text-accent">
-            {hero.outro.ctaLabel}
-            <svg viewBox="0 0 24 24" aria-hidden fill="none" className="h-3.5 w-3.5 stroke-current">
-              <path d="M7 17L17 7M9 7h8v8" strokeWidth="1.5" />
-            </svg>
-          </Link>
-        </motion.div>
+        {/* Second temps — la présentation, là où était le cadre 01.
+            Sous mouvement réduit elle est déjà rendue avec l'accroche. */}
+        {!reduce && (
+          <motion.div
+            style={{ opacity: presentationOpacity, y: presentationY }}
+            className="pointer-events-none absolute inset-x-[18px] top-[26%] z-[9] max-w-[560px]
+                       md:inset-x-auto md:left-[30px] md:top-[30%] md:max-w-[46vw]"
+          >
+            <p className="label mb-4">{presentation.eyebrow}</p>
+            <p className="m-0 font-display text-[clamp(22px,4.5vw,44px)] font-bold leading-[1.05] tracking-[-0.03em] text-cream">
+              {presentation.text}
+            </p>
+          </motion.div>
+        )}
 
         {/* Bandeau bas : repère / progression / coordonnées */}
         <motion.div

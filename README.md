@@ -49,7 +49,7 @@ src/pages/             Une page par route
 
 | Route | Page |
 |---|---|
-| `/` | Accueil — hero, présentation, teaser dernière sortie |
+| `/` | Accueil — hero (dont présentation), dernière sortie, aperçus des onglets |
 | `/musique` | Better Days : pochette, player Spotify, plateformes |
 | `/galerie` | Grille asymétrique + lightbox |
 | `/dates` | Dates confirmées, ou état vide |
@@ -76,6 +76,13 @@ export const tourDates: TourDate[] = [
 
 Les dates passées sont masquées automatiquement. Liste vide → la page affiche
 « Aucune date confirmée pour le moment. »
+
+### Modifier les aperçus de l'accueil
+
+Les cartes sous la dernière sortie sont dans `homeCards` (`src/lib/content.ts`).
+Une carte avec `imageKey` s'affiche en pleine largeur avec sa photo ; les autres
+sont purement typographiques. Le teaser des dates est recalculé à l'affichage
+d'après la liste réelle.
 
 ### Ajouter une entrée au parcours
 
@@ -112,8 +119,8 @@ pochette dans `assets/photos/`, puis `npm run images`.
 
 | Fichier source | Emplacement |
 |---|---|
-| `image-1.jpg` | Section présentation de l'accueil, et galerie |
-| `image-2.jpg` | Galerie |
+| `image-1.jpg` | Galerie |
+| `image-2.jpg` | Galerie, et aperçu « Galerie » sur l'accueil |
 | `image-3.jpg` | Hero (cadre 01), et galerie |
 | `image-4.jpg` | Hero (cadre 02), et galerie |
 | `better-days-cover.png` | Pochette : accueil, `/musique`, galerie, image Open Graph |
@@ -246,19 +253,28 @@ de valeur d'animation en dur.
 `src/components/Hero.tsx` — section épinglée sur 230svh, entièrement en
 Framer Motion :
 
-- à l'entrée : deux rideaux papier s'ouvrent, les cadres photo se dévoilent
-  par clip-path, les lettres de RYLIX montent une à une derrière leur masque
-- au défilement : les deux cadres dérivent à des vitesses différentes, leurs
-  photos glissent en sens inverse à l'intérieur (double parallaxe), le mot se
-  compresse, et le chapitre d'ouverture cède la place à l'annonce de la sortie
-  en accent acide
-- au pointeur : les cadres réagissent en sens opposés
-- le mot est en `mix-blend-difference` : il s'inverse en passant sur les cadres
-- grain pellicule animé (écrans à pointeur fin uniquement), statique ailleurs
-- scène complète et statique sous `prefers-reduced-motion`
+**Temps 1 — à l'entrée** : deux rideaux papier s'ouvrent, les cadres photo se
+dévoilent par clip-path, les lettres de RYLIX montent une à une derrière leur
+masque.
 
-Le contenu du hero (images des cadres, accroche, pastilles, annonce, 
-coordonnées) est dans `hero` (`src/lib/content.ts`).
+**Temps 2 — au défilement** : le cadre 01 s'efface et laisse la place au texte
+de présentation, qui apparaît dans la même zone ; le cadre 02 grandit et passe
+devant le logotype, lequel s'estompe pour se poser en fond.
+
+En continu : les cadres dérivent à des vitesses différentes, leurs photos
+glissent en sens inverse à l'intérieur (double parallaxe), et réagissent au
+pointeur en sens opposés. Le mot est en `mix-blend-difference` : il s'inverse
+en passant sur les cadres.
+
+- taille du logotype : `17vw` sur mobile (les cinq glyphes Syne 800 tiennent
+  alors dans la largeur, sans rognage), `clamp(7rem,19vw,21rem)` au-delà
+- grain pellicule animé (écrans à pointeur fin uniquement), statique ailleurs
+- sous `prefers-reduced-motion` la scène est statique et **complète** : la
+  présentation, sinon révélée au scroll, est empilée sous l'accroche
+
+Le contenu du hero (images des cadres, accroche, pastilles, coordonnées) est
+dans `hero` (`src/lib/content.ts`) ; le texte de présentation dans
+`presentation`.
 
 ## Performance
 

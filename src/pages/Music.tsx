@@ -1,9 +1,8 @@
 import { Seo } from '@/components/Seo'
 import { Image } from '@/components/Image'
 import { PageHeader } from '@/components/PageHeader'
-import { Reveal, RuleReveal } from '@/components/PageTransition'
-import { artist, release, site } from '@/lib/content'
-import { formatReleaseDate } from '@/lib/format'
+import { Reveal } from '@/components/PageTransition'
+import { release, site } from '@/lib/content'
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -40,22 +39,9 @@ export default function Music() {
             />
           </Reveal>
 
-          <div className="flex flex-col gap-10 md:col-span-6">
-            {/* Métadonnées */}
-            <Reveal>
-              <dl className="grid grid-cols-[auto,1fr] gap-x-8 gap-y-3 text-sm">
-                <dt className="label">Format</dt>
-                <dd className="text-cream">{release.type}</dd>
-                <dt className="label">Sortie</dt>
-                <dd className="text-cream">{formatReleaseDate(release.releasedAt)}</dd>
-                <dt className="label">Artiste</dt>
-                <dd className="text-cream">RYLIX</dd>
-              </dl>
-            </Reveal>
-
+          <div className="flex flex-col gap-10 md:col-span-6 md:justify-center">
             {/* Player Spotify */}
-            <Reveal delay={0.06}>
-              <h2 className="label mb-4">Écouter</h2>
+            <Reveal>
               {/* Fond sombre sous l'iframe : évite un rectangle blanc pendant le
                   chargement ou si l'embed est bloqué par un bloqueur de traceurs. */}
               <div className="overflow-hidden rounded-md bg-navy-alt">
@@ -74,8 +60,8 @@ export default function Music() {
             </Reveal>
 
             {/* Plateformes */}
-            <Reveal delay={0.12}>
-              <h2 className="label mb-2">Plateformes</h2>
+            <Reveal delay={0.08}>
+              <h2 className="label mb-2">Écouter</h2>
               <ul className="flex flex-col">
                 {release.platforms.map((p) => (
                   <li key={p.name} className="border-b border-slate/20 first:border-t">
@@ -83,16 +69,16 @@ export default function Music() {
                       href={p.url}
                       target="_blank"
                       rel="noreferrer noopener"
-                      className="group flex items-center justify-between py-4 transition-colors duration-200 ease-rylix"
+                      className="group flex items-center justify-between py-4"
                     >
-                      <span className="text-cream transition-colors group-hover:text-pale">
+                      <span className="text-cream transition-colors duration-300 ease-rylix group-hover:text-accent">
                         {p.name}
                       </span>
                       <svg
                         viewBox="0 0 24 24"
                         aria-hidden
                         fill="none"
-                        className="h-4 w-4 stroke-slate transition-all duration-300 ease-rylix group-hover:translate-x-1 group-hover:stroke-pale"
+                        className="h-4 w-4 stroke-slate transition-all duration-500 ease-rylix group-hover:translate-x-1 group-hover:stroke-accent"
                       >
                         <path d="M7 17L17 7M9 7h8v8" strokeWidth="1.25" />
                       </svg>
@@ -103,31 +89,6 @@ export default function Music() {
             </Reveal>
           </div>
         </div>
-
-        <Reveal delay={0.16}>
-          <RuleReveal className="my-lg" />
-          <p className="max-w-prose text-fg-muted">
-            Discographie complète et mises à jour sur{' '}
-            <a
-              href={artist.spotifyUrl}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="link-quiet"
-            >
-              Spotify
-            </a>{' '}
-            et sur la{' '}
-            <a
-              href={artist.imusicianUrl}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="link-quiet"
-            >
-              page artiste iMusician
-            </a>
-            .
-          </p>
-        </Reveal>
       </section>
     </>
   )

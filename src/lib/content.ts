@@ -19,15 +19,12 @@ export const site = {
 } as const
 
 /**
- * Section de présentation, juste sous le hero de l'accueil.
- * `imageKey` pointe vers une clé du manifeste généré par `npm run images`.
- * (image-1 ici : les images 3 et 4 sont déjà les deux cadres du hero.)
+ * Présentation de l'artiste — affichée dans le second temps du hero, à la
+ * place du cadre de gauche qui s'efface au scroll.
  */
 export const presentation = {
   eyebrow: 'Présentation',
   text: 'pas de texte pour le moment',
-  imageKey: 'image-1',
-  imageAlt: 'RYLIX de profil devant un massif alpin valaisan.',
 } as const
 
 export type NavItem = { label: string; to: string }
@@ -49,20 +46,21 @@ export type HeroFrame = {
 }
 
 /**
- * Hero éditorial : deux cadres photo flottants, RYLIX géant étalé lettre par
- * lettre en mix-blend-difference, section épinglée au scroll. À l'entrée,
- * deux rideaux papier s'ouvrent ; au défilement, les cadres dérivent, le mot
- * se compresse, et le chapitre d'ouverture cède la place à l'annonce de la
- * sortie en accent acide.
+ * Hero éditorial en deux temps, sur une section épinglée.
+ *
+ *  1. les deux cadres photo se dévoilent, RYLIX est étalé au premier plan
+ *  2. au scroll, le cadre de gauche s'efface et laisse la place au texte de
+ *     présentation ; le cadre de droite grandit et passe devant le logotype,
+ *     qui s'estompe en fond
  */
 export const hero = {
-  /** Grand cadre, centre-gauche. */
+  /** Grand cadre, centre-gauche — s'efface au profit de la présentation. */
   primary: {
     imageKey: 'image-3',
     alt: 'RYLIX assis devant un mur de pierres sèches, à travers les herbes hautes.',
     index: '01',
   } satisfies HeroFrame,
-  /** Petit cadre, droite, légèrement incliné. */
+  /** Petit cadre, droite — grandit et passe au premier plan. */
   secondary: {
     imageKey: 'image-4',
     alt: 'RYLIX assis, aperçu à travers des herbes hautes.',
@@ -70,18 +68,52 @@ export const hero = {
   } satisfies HeroFrame,
   /** Accroche en haut à gauche, une ligne par entrée. */
   intro: ['Paysages alpins,', 'production électronique.'],
-  /** Pastilles factuelles du premier chapitre. */
+  /** Pastilles factuelles du premier temps. */
   chips: ['Producteur', 'Valais', 'Suisse'],
-  /** Second chapitre, révélé au scroll — l'annonce de la sortie. */
-  outro: {
-    title: 'Better Days',
-    text: 'Premier single — disponible sur toutes les plateformes.',
-    ctaLabel: 'Écouter',
-    to: '/musique',
-  },
   /** Coordonnées du Valais (Sion), affichées dans le bandeau bas. */
   coordinates: '46.2331° N / 7.3606° E',
 } as const
+
+export type HomeCard = {
+  to: string
+  label: string
+  /** Une ligne factuelle — ce qu'on trouve derrière l'onglet. */
+  teaser: string
+  /** Clé d'image du manifeste, ou absente pour une carte purement typographique. */
+  imageKey?: string
+  imageAlt?: string
+}
+
+/**
+ * Aperçus des onglets, sous la dernière sortie sur l'accueil. Chaque carte
+ * mène à la page correspondante. Le teaser des dates est calculé à
+ * l'affichage (voir src/pages/Home.tsx) pour rester juste quand la liste
+ * évolue.
+ */
+export const homeCards: HomeCard[] = [
+  {
+    to: '/galerie',
+    label: 'Galerie',
+    teaser: 'Photographies alpines, Valais.',
+    imageKey: 'image-2',
+    imageAlt: 'RYLIX de profil au pied d’une tour médiévale.',
+  },
+  {
+    to: '/dates',
+    label: 'Dates',
+    teaser: 'Prochaines dates confirmées.',
+  },
+  {
+    to: '/parcours',
+    label: 'Parcours',
+    teaser: 'Lieux, événements et marques.',
+  },
+  {
+    to: '/contact',
+    label: 'Contact',
+    teaser: 'Bookings, collaborations, presse.',
+  },
+]
 
 export type Platform = { name: string; url: string }
 
