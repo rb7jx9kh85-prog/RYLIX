@@ -49,7 +49,7 @@ src/pages/             Une page par route
 
 | Route | Page |
 |---|---|
-| `/` | Accueil — hero (dont présentation), dernière sortie, aperçus des onglets |
+| `/` | Accueil — hero (dont présentation), puis les cinq entrées du site sur une ligne |
 | `/musique` | Better Days : pochette, player Spotify, plateformes |
 | `/galerie` | Photos en grille asymétrique + lightbox, créditées |
 | `/dates` | Dates confirmées, ou état vide |
@@ -79,15 +79,20 @@ Les dates passées sont masquées automatiquement. Liste vide → la page affich
 
 ### Modifier les aperçus de l'accueil
 
-Les cartes sous la dernière sortie sont dans `homeCards` (`src/lib/content.ts`),
-rendues par `src/components/HomeCards.tsx`. La bande glisse latéralement au fil
+Les cinq entrées de l'accueil — sortie, galerie, dates, parcours, contact —
+sont sur une seule ligne, définie par `homeCards` (`src/lib/content.ts`) et
+rendue par `src/components/HomeCards.tsx`. La bande glisse latéralement au fil
 du scroll vertical, et reste glissable au doigt.
 
-- `kind: 'mosaic'` — affiche les vignettes de la galerie
-- `kind: 'list'` — affiche des lignes d'infos ; celles des dates et du parcours
-  sont dérivées des listes réelles (`linesFor`), pas recopiées
+- `kind: 'cover'` — la pochette de la dernière sortie
+- `kind: 'mosaic'` — les vignettes de la galerie
+- `kind: 'list'` — des lignes d'infos ; celles des dates et du parcours sont
+  dérivées des listes réelles (`linesFor`), pas recopiées
 - `span` (2/3/4) règle la largeur : les cartes visuelles sont resserrées, les
   cartes de texte plus larges
+
+Toutes les cartes ont le titre en tête : dans une bande qu'on parcourt
+latéralement, les intitulés doivent se lire sur une seule ligne de regard.
 
 ### Ajouter une entrée au parcours
 

@@ -79,28 +79,36 @@ export type HomeCard = {
   label: string
   /**
    * Ce que l'aperçu montre :
+   *  - `cover`  : la pochette de la dernière sortie
    *  - `mosaic` : les vignettes de la galerie
    *  - `list`   : les infos clés de l'onglet, en lignes
    */
-  kind: 'mosaic' | 'list'
+  kind: 'cover' | 'mosaic' | 'list'
   /** Une ligne factuelle, sous le titre. */
   teaser: string
   /** Lignes affichées pour `kind: 'list'`. Vide -> le teaser suffit. */
   lines?: string[]
-  /** Largeur de la carte dans la grille de 6 colonnes (desktop). */
+  /** Largeur relative de la carte sur grand écran. */
   span: 2 | 3 | 4
 }
 
 /**
- * Aperçus des onglets, sous la dernière sortie sur l'accueil. Chaque carte
- * mène à sa page. Les contenus visuels (musique, galerie) sont resserrés, les
- * contenus textuels prennent plus de place : les tailles suivent la densité
- * réelle plutôt qu'une grille uniforme.
+ * Les cinq entrées du site, sur une seule ligne : la sortie ouvre, les onglets
+ * suivent. Les cartes visuelles (sortie, galerie) sont resserrées, les cartes
+ * de texte plus larges — les tailles suivent la densité réelle du contenu
+ * plutôt qu'une grille uniforme.
  *
  * Le contenu des cartes dates et parcours est dérivé des listes réelles à
- * l'affichage (voir src/pages/Home.tsx), pas recopié ici.
+ * l'affichage (voir src/components/HomeCards.tsx), pas recopié ici.
  */
 export const homeCards: HomeCard[] = [
+  {
+    to: '/musique',
+    label: 'Musique',
+    kind: 'cover',
+    teaser: 'Better Days \u2014 premier single.',
+    span: 3,
+  },
   {
     to: '/galerie',
     label: 'Galerie',
