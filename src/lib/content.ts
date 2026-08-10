@@ -190,17 +190,6 @@ export type TourDate = {
   ticketUrl?: string
 }
 
-/**
- * Dates confirmées uniquement. Liste vide -> la page /dates affiche son état vide.
- */
-export const tourDates: TourDate[] = [
-  {
-    date: '2026-08-29',
-    city: 'Finhaut',
-    venue: 'Tournoi populaire du FC Finhaut',
-  },
-]
-
 export type ParcoursEntry = {
   /** Lieu, événement ou marque. */
   title: string
@@ -212,18 +201,6 @@ export type ParcoursEntry = {
   period?: string
   url?: string
 }
-
-/**
- * Lieux et événements où RYLIX s'est produit. Liste vide -> état vide sobre.
- */
-export const parcours: ParcoursEntry[] = [
-  {
-    title: "Ima'Gin Suisse",
-    role: 'Événements pour la marque',
-    location: 'Les Voëttes, Valais',
-    url: 'https://ima-gin.swiss/',
-  },
-]
 
 /** Auteur des photographies du site — crédité sous chaque visuel. */
 export const photographer = {
@@ -242,35 +219,17 @@ export type GalleryPhoto = {
 }
 
 /**
- * Les entrées dont l'image n'existe pas encore dans le manifeste sont ignorées
- * à l'affichage : on peut donc déclarer un visuel avant de l'avoir, il
- * apparaîtra dès que le fichier sera déposé et `npm run images` relancé.
+ * Dates, parcours et galerie sont gérés depuis l'admin RYLIX
+ * (https://rylix-admin.vercel.app, Firebase Firestore) et récupérés au moment
+ * du build par scripts/fetch-firestore-content.mjs — voir
+ * src/lib/content.generated.ts (généré, ne pas éditer).
  *
- * Le `alt` décrit l'image pour l'accessibilité ; la légende visible, elle, est
- * le crédit photo — voir `photographer`.
+ * Les entrées de galerie dont l'image n'existe pas encore dans le manifeste
+ * sont ignorées à l'affichage : on peut donc déclarer un visuel dans l'admin
+ * avant de l'avoir traité par le pipeline d'images, il apparaîtra dès que le
+ * fichier sera déposé dans assets/photos/ et `npm run images` relancé.
  */
-export const gallery: GalleryPhoto[] = [
-  {
-    key: 'image-1',
-    alt: 'RYLIX de profil devant un massif alpin valaisan, lumi\u00e8re de fin de journ\u00e9e.',
-    span: 'tall',
-  },
-  {
-    key: 'image-2',
-    alt: 'RYLIX de profil au pied d\u2019une tour m\u00e9di\u00e9vale, drapeaux suisse et valaisan en haut.',
-    span: 'portrait',
-  },
-  {
-    key: 'image-3',
-    alt: 'RYLIX assis devant un mur de pierres s\u00e8ches, \u00e0 travers les herbes hautes.',
-    span: 'wide',
-  },
-  {
-    key: 'image-4',
-    alt: 'RYLIX assis, aper\u00e7u \u00e0 travers des herbes hautes.',
-    span: 'portrait',
-  },
-]
+export { tourDates, parcours, gallery } from './content.generated'
 
 /**
  * Clé d'accès Web3Forms — publique par conception (comme un identifiant de
