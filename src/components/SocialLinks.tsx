@@ -32,7 +32,8 @@ export function SocialLinks({ variant = 'inline', className = '' }: Props) {
               <svg
                 viewBox="0 0 24 24"
                 aria-hidden
-                className="h-5 w-5 shrink-0 fill-slate transition-colors duration-200 group-hover:fill-pale"
+                className="h-5 w-5 shrink-0 fill-slate transition-all duration-300 ease-rylix
+                           group-hover:fill-pale group-hover:scale-110"
               >
                 <path d={paths[s.name]} />
               </svg>
@@ -55,7 +56,7 @@ export function SocialLinks({ variant = 'inline', className = '' }: Props) {
             href={s.url}
             target="_blank"
             rel="noreferrer noopener"
-            className="block transition-colors duration-200 ease-rylix"
+            className="block transition-transform duration-300 ease-rylix hover:-translate-y-0.5 hover:scale-110"
           >
             <span className="sr-only">
               {s.name} — {s.handle}

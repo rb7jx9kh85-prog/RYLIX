@@ -114,8 +114,11 @@ export function SplitText({
           <span
             key={`${word}-${i}`}
             // overflow-hidden découpe le mot pendant sa montée ; le padding
-            // évite de rogner les jambages et les accents.
-            className="inline-block overflow-hidden pb-[0.12em] align-bottom"
+            // évite de rogner les jambages et les accents. max-w-full permet
+            // à overflow-wrap:break-word (porté par le titre) de vraiment
+            // contraindre un mot isolé trop large pour son conteneur — un
+            // inline-block sans plafond de largeur ignore la coupure.
+            className="inline-block max-w-full overflow-hidden pb-[0.12em] align-bottom"
           >
             <motion.span variants={wordVariants} className="inline-block">
               {word}

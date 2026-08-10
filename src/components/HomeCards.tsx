@@ -1,10 +1,20 @@
-import { useRef } from 'react'
+import { useRef, type PointerEvent, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { motion, useScroll, useSpring, useTransform } from 'framer-motion'
+import {
+  motion,
+  useMotionTemplate,
+  useMotionValue,
+  useScroll,
+  useSpring,
+  useTransform,
+} from 'framer-motion'
 import { gallery, homeCards, parcours, release, tourDates, type HomeCard } from '@/lib/content'
 import { formatShortDate, getYear, isUpcoming } from '@/lib/format'
 import { resolveImage } from '@/lib/images'
 import { usePrefersReducedMotion } from '@/lib/motion'
+import { useMediaQuery } from '@/lib/useMediaQuery'
+
+const MotionLink = motion(Link)
 
 /** Largeur de chaque carte, en colonnes d'une grille de 6. */
 const spanClass: Record<HomeCard['span'], string> = {
@@ -37,11 +47,7 @@ export function HomeCards() {
   // l'écran (elle entre vers 0.15, sort vers 0.85) : étalée sur 0→1, elle se
   // terminerait alors que la section a déjà quitté le champ, et la dernière
   // carte ne serait jamais vue en entier.
-  const x = useTransform(
-    progress,
-    [0.15, 0.85],
-    reduce ? ['0%', '0%'] : ['0%', '-19%']
-  )
+  const x = useTransform(progress, [0.15, 0.85], reduce ? ['0%', '0%'] : ['0%', '-19%'])
 
   return (
     <div ref={trackRef} className="overflow-hidden">
@@ -73,23 +79,72 @@ export function HomeCards() {
           )
 
           return (
-            <Link
-              key={card.to}
-              to={card.to}
-              className={`group flex h-[min(44vh,330px)] shrink-0 snap-start flex-col
-                          overflow-hidden rounded-sm border border-slate/25
-                          transition-colors duration-500 ease-rylix hover:border-accent/60
-                          ${spanClass[card.span]}`}
-            >
+            <TiltCard key={card.to} card={card}>
               {/* Même ordre pour toutes les cartes : les titres se lisent sur
                   une seule ligne de regard quand on parcourt la bande. */}
               {header}
               <CardBody card={card} />
-            </Link>
+            </TiltCard>
           )
         })}
       </motion.div>
     </div>
+  )
+}
+
+/**
+ * Carte basculée en 3D vers le pointeur — perspective CSS, pas de WebGL.
+ * Un reflet suit le pointeur en fondu, comme une surface légèrement laquée.
+ * Desktop à pointeur fin uniquement ; repos net au départ du pointeur.
+ */
+function TiltCard({ card, children }: { card: HomeCard; children: ReactNode }) {
+  const canTilt = useMediaQuery('(hover: hover) and (pointer: fine)')
+  const reduce = usePrefersReducedMotion()
+  const active = canTilt && !reduce
+
+  const ref = useRef<HTMLAnchorElement>(null)
+  const px = useMotionValue(0.5)
+  const py = useMotionValue(0.5)
+  const springPX = useSpring(px, { stiffness: 220, damping: 22, mass: 0.4 })
+  const springPY = useSpring(py, { stiffness: 220, damping: 22, mass: 0.4 })
+  const rotateX = useTransform(springPY, [0, 1], [6, -6])
+  const rotateY = useTransform(springPX, [0, 1], [-7, 7])
+  const glare = useMotionTemplate`radial-gradient(circle at ${useTransform(springPX, (v) => `${v * 100}%`)} ${useTransform(springPY, (v) => `${v * 100}%`)}, rgba(242,240,232,0.14), transparent 55%)`
+
+  const onMove = (e: PointerEvent<HTMLAnchorElement>) => {
+    if (!active || !ref.current) return
+    const rect = ref.current.getBoundingClientRect()
+    px.set((e.clientX - rect.left) / rect.width)
+    py.set((e.clientY - rect.top) / rect.height)
+  }
+  const onLeave = () => {
+    px.set(0.5)
+    py.set(0.5)
+  }
+
+  return (
+    <MotionLink
+      ref={ref}
+      to={card.to}
+      onPointerMove={onMove}
+      onPointerLeave={onLeave}
+      data-cursor-label={card.kind === 'cover' || card.kind === 'mosaic' ? 'Voir' : undefined}
+      style={active ? { rotateX, rotateY, transformPerspective: 1000 } : undefined}
+      className={`group relative flex h-[min(44vh,330px)] shrink-0 snap-start flex-col
+                  overflow-hidden rounded-sm border border-slate/25
+                  transition-colors duration-500 ease-rylix hover:border-accent/60
+                  ${spanClass[card.span]}`}
+    >
+      {children}
+      {active && (
+        <motion.span
+          aria-hidden
+          style={{ background: glare }}
+          className="pointer-events-none absolute inset-0 opacity-0 mix-blend-overlay
+                     transition-opacity duration-300 ease-rylix group-hover:opacity-100"
+        />
+      )}
+    </MotionLink>
   )
 }
 

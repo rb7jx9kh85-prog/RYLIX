@@ -74,7 +74,7 @@ export function Image({
         alt={alt}
         loading={priority ? 'eager' : 'lazy'}
         decoding={priority ? 'sync' : 'async'}
-        {...(priority ? { fetchPriority: 'high' as const } : {})}
+        {...(priority ? { fetchpriority: 'high' } : {})}
         onLoad={() => setLoaded(true)}
         style={{ objectPosition }}
         className={`photo transition-opacity duration-700 ease-rylix ${
