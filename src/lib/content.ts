@@ -27,6 +27,47 @@ export const presentation = {
   text: 'pas de texte pour le moment',
 } as const
 
+/** Section tourne-disque — juste sous le hero, avant le bandeau défilant. */
+export const turntableSection = {
+  eyebrow: 'Écouter',
+  hint: 'Lecture directe, via Spotify.',
+} as const
+
+/**
+ * Bandeau défilant sous le hero — texte d'ambiance, pas d'information
+ * nouvelle. Répété en boucle par le composant Marquee.
+ */
+export const marquee = [
+  'Musique électronique',
+  'Née dans les Alpes',
+  'Valais — Suisse',
+  'Production originale',
+] as const
+
+/**
+ * Statement éditorial — grande typographie cinétique entre les cartes
+ * d'accueil et la section son. Texte d'exemple : à remplacer par la vraie
+ * voix de l'artiste, pas une information factuelle vérifiable.
+ */
+export const manifesto = {
+  eyebrow: 'Manifeste',
+  title: ['Une musique', 'née en', 'altitude.'],
+  body: "Chaque morceau part d'un lieu réel avant de devenir un rythme : un sommet, un silence, une lumière de fin de journée. RYLIX cherche l'endroit où l'électronique retrouve le paysage — et n'en garde que l'essentiel.",
+} as const
+
+/** Section son / studio — accompagne la scène 3D. */
+export const sound = {
+  eyebrow: 'Le son',
+  title: ['Chaud.', 'Minéral.', 'Brut.'],
+  body: 'Textures analogiques, basses profondes, silences travaillés comme des pleins. Une identité sonore pensée pour l’écoute autant que pour la scène.',
+} as const
+
+/** Clôture graphique, juste avant le footer. */
+export const finalCta = {
+  title: ['Écouter.', 'Regarder.', 'Suivre.'],
+  body: 'Better Days est disponible partout. La suite se prépare en Valais.',
+} as const
+
 export type NavItem = { label: string; to: string }
 
 export const nav: NavItem[] = [
@@ -237,7 +278,8 @@ export { tourDates, parcours, gallery } from './content.generated'
  * filtrage anti-spam côté Web3Forms, pas à authentifier un compte.
  * Surchargeable par VITE_WEB3FORMS_KEY si la clé change.
  */
-export const web3formsKey = import.meta.env.VITE_WEB3FORMS_KEY || '835ba476-97db-4c8c-bf81-72b4421ec4f8'
+export const web3formsKey =
+  import.meta.env.VITE_WEB3FORMS_KEY || '835ba476-97db-4c8c-bf81-72b4421ec4f8'
 
 /** Adresse professionnelle. Surchargeable par VITE_CONTACT_EMAIL. */
 export const contactEmail = import.meta.env.VITE_CONTACT_EMAIL || 'contact@rylix.ch'
