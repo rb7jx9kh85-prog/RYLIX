@@ -4,6 +4,7 @@ import { HomeCards } from '@/components/HomeCards'
 import { TurntableSection } from '@/components/TurntableSection'
 import { Manifesto } from '@/components/Manifesto'
 import { VinylSection } from '@/components/VinylSection'
+import { FestivalSection } from '@/components/FestivalSection'
 import { FinalCta } from '@/components/FinalCta'
 import { AmbientLayer } from '@/components/AmbientLayer'
 import { Reveal, RuleReveal } from '@/components/PageTransition'
@@ -53,6 +54,7 @@ export default function Home() {
 
       <Manifesto />
       <VinylSection />
+      <FestivalSection />
       <FinalCta />
     </>
   )

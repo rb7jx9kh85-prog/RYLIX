@@ -258,6 +258,20 @@ export const photographer = {
   url: 'https://www.aloa-photography.ch',
 } as const
 
+/** Collaboration avec le festival ima-gin — set RYLIX sur place. */
+export const festival = {
+  eyebrow: 'Collaboration',
+  name: 'ima-gin',
+  title: 'Festival ima-gin',
+  body: 'RYLIX aux platines pour ima-gin, gin alpin — Valais.',
+  url: 'https://ima-gin.swiss',
+  photos: [
+    { key: 'imagin-roll-up', alt: 'Banderole ima-gin, gin alpin, en terrasse dans les Alpes' },
+    { key: 'imagin-ballon', alt: 'Ballon ima-gin flottant devant les Alpes valaisannes' },
+    { key: 'imagin-dj-set', alt: 'RYLIX aux platines lors d’un événement ima-gin' },
+  ],
+} as const
+
 export type GalleryPhoto = {
   /** Clé dans src/lib/images.generated.ts */
   key: string

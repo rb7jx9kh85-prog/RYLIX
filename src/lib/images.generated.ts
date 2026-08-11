@@ -17,6 +17,13 @@ export const images = {
     height: 3000,
     placeholder: 'data:image/webp;base64,UklGRkgAAABXRUJQVlA4IDwAAADQAQCdASoQABAAA8BmJbACdAEOouzP4AD+5yFSp0lqd5jGttvjq5GELZsTtSgRbn9mkOeMlvrlOE5oAAA=',
   },
+  'chalet-miroir-argentine': {
+    src: '/images/chalet-miroir-argentine-1920.webp',
+    srcSet: '/images/chalet-miroir-argentine-480.webp 480w, /images/chalet-miroir-argentine-768.webp 768w, /images/chalet-miroir-argentine-1200.webp 1200w, /images/chalet-miroir-argentine-1920.webp 1920w',
+    width: 5120,
+    height: 3840,
+    placeholder: 'data:image/webp;base64,UklGRkQAAABXRUJQVlA4IDgAAAAwAgCdASoQAAwAA8BmJZgCdGuAAocYuh4RAADxmOWN7NJFnmj0lNvjMdDP9xpZeDDATU2iaVUAAA==',
+  },
   'image-1': {
     src: '/images/image-1-1920.webp',
     srcSet: '/images/image-1-480.webp 480w, /images/image-1-768.webp 768w, /images/image-1-1200.webp 1200w, /images/image-1-1920.webp 1920w',
@@ -44,6 +51,48 @@ export const images = {
     width: 2624,
     height: 3936,
     placeholder: 'data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAAAQBACdASoQABgAPwlur0+rpiQiMAgBcCEJZQAAXK+3ix80aNPz7fbOAAD+7EAfOJRuqF6KrPfKKVPTO2qLIhIYAAA=',
+  },
+  'imagin-ballon': {
+    src: '/images/imagin-ballon-1920.webp',
+    srcSet: '/images/imagin-ballon-480.webp 480w, /images/imagin-ballon-768.webp 768w, /images/imagin-ballon-1200.webp 1200w, /images/imagin-ballon-1920.webp 1920w',
+    width: 5082,
+    height: 3217,
+    placeholder: 'data:image/webp;base64,UklGRkIAAABXRUJQVlA4IDYAAACwAQCdASoQAAoAA8BmJQBOgCEjjegAAP7WGSQwWZ9ilw/MUn2w+9d2adDBwmCWK1joyCAAAAA=',
+  },
+  'imagin-dj-set': {
+    src: '/images/imagin-dj-set-1920.webp',
+    srcSet: '/images/imagin-dj-set-480.webp 480w, /images/imagin-dj-set-768.webp 768w, /images/imagin-dj-set-1200.webp 1200w, /images/imagin-dj-set-1920.webp 1920w',
+    width: 3840,
+    height: 5120,
+    placeholder: 'data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAADQAwCdASoQABUAPwlur0+rpiQiMAgBcCEJaQAANQjqLLUKk97rvAAA/iSjIVI8/YKv6lPtaLnZOI4m53pFuZekQg0rzGDRTmhKc2afDN9nvrZA4AAAAA==',
+  },
+  'imagin-roll-up': {
+    src: '/images/imagin-roll-up-1920.webp',
+    srcSet: '/images/imagin-roll-up-480.webp 480w, /images/imagin-roll-up-768.webp 768w, /images/imagin-roll-up-1200.webp 1200w, /images/imagin-roll-up-1920.webp 1920w',
+    width: 3024,
+    height: 4032,
+    placeholder: 'data:image/webp;base64,UklGRmAAAABXRUJQVlA4IFQAAABwAwCdASoQABUAPwlurk+rpiQiMAgBcCEJYwCw7BWgShLHNcAA/qM0ClnZ/HO3gXKoT4s43DEbElWMOf7yX3pC++4ySlF/bcNJ+SruXrHmksrmAAA=',
+  },
+  'lune-vallee': {
+    src: '/images/lune-vallee-1920.webp',
+    srcSet: '/images/lune-vallee-480.webp 480w, /images/lune-vallee-768.webp 768w, /images/lune-vallee-1200.webp 1200w, /images/lune-vallee-1920.webp 1920w',
+    width: 4032,
+    height: 3024,
+    placeholder: 'data:image/webp;base64,UklGRj4AAABXRUJQVlA4IDIAAADQAQCdASoQAAwAA8BmJYgCdACyZV3l4AD+wCQvaOzfuaVcSpx/f3rt8Cgy8m9644AAAA==',
+  },
+  'rylix-console-dj': {
+    src: '/images/rylix-console-dj-1920.webp',
+    srcSet: '/images/rylix-console-dj-480.webp 480w, /images/rylix-console-dj-768.webp 768w, /images/rylix-console-dj-1200.webp 1200w, /images/rylix-console-dj-1920.webp 1920w',
+    width: 3024,
+    height: 4032,
+    placeholder: 'data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAAAwBACdASoQABUAPwlyr0+rpyQiMAgBcCEJbACdMoACrojJ9OxPd8VEQ6AA8COBG2woqah3YY+jTJUcrM5Szf4/LlxIDBAB8EdcWzRQZzksTp51QTdn6VvoYOYrozplKJuBugSAAAA=',
+  },
+  'rylix-set-terrasse': {
+    src: '/images/rylix-set-terrasse-1920.webp',
+    srcSet: '/images/rylix-set-terrasse-480.webp 480w, /images/rylix-set-terrasse-768.webp 768w, /images/rylix-set-terrasse-1200.webp 1200w, /images/rylix-set-terrasse-1920.webp 1920w',
+    width: 3840,
+    height: 5120,
+    placeholder: 'data:image/webp;base64,UklGRl4AAABXRUJQVlA4IFIAAACQAwCdASoQABUAPwlwsFArpiSisAgBcCEJQBOgArLgFkrqUxnAAPhS0+gmyWDw+1f+gVYZoHCo94ssousAIqq1XZ5tow299KAFN+xjGxmzQAAA',
   },
 } satisfies Record<string, GeneratedImage>
 
