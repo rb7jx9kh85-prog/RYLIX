@@ -27,22 +27,18 @@ export const presentation = {
   text: 'pas de texte pour le moment',
 } as const
 
-/** Section tourne-disque — juste sous le hero, avant le bandeau défilant. */
+/** Section tourne-disque — juste sous le hero. */
 export const turntableSection = {
   eyebrow: 'Écouter',
   hint: 'Lecture directe, via Spotify.',
 } as const
 
-/**
- * Bandeau défilant sous le hero — texte d'ambiance, pas d'information
- * nouvelle. Répété en boucle par le composant Marquee.
- */
-export const marquee = [
-  'Musique électronique',
-  'Née dans les Alpes',
-  'Valais — Suisse',
-  'Production originale',
-] as const
+/** Texte d'intro simple, juste après la pochette sur la page Musique. */
+export const discover = {
+  eyebrow: 'Découvrir',
+  title: 'Découvrez Better Days',
+  body: 'Le premier single de RYLIX, à écouter et à partager.',
+} as const
 
 /**
  * Statement éditorial — grande typographie cinétique entre les cartes
@@ -200,12 +196,24 @@ export const release = {
     },
     { name: 'Deezer', url: 'https://www.deezer.com/track/4150859232' },
     { name: 'YouTube', url: 'https://www.youtube.com/@RYLIXStudio' },
+    { name: 'SoundCloud', url: 'https://soundcloud.com/rylix-s' },
   ] satisfies Platform[],
 } as const
 
 export const artist = {
   spotifyUrl: 'https://open.spotify.com/artist/7J5z5bTji0fyEE3X0xhI3k',
   imusicianUrl: 'https://music.imusician.pro/artist/rylix',
+} as const
+
+/**
+ * Titres SoundCloud — productions non postées sur les autres plateformes.
+ * Aperçu joué directement via le lecteur embarqué officiel SoundCloud.
+ */
+export const soundcloud = {
+  eyebrow: 'SoundCloud',
+  title: 'Découvrez des titres sur SoundCloud',
+  body: 'Productions non postées sur les autres plateformes.',
+  profileUrl: 'https://soundcloud.com/rylix-s',
 } as const
 
 export type SocialName = 'Instagram' | 'TikTok' | 'YouTube' | 'Spotify'

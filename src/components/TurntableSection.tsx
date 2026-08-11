@@ -1,16 +1,8 @@
-import { useEffect, useMemo, useRef, useState, type PointerEvent } from 'react'
-import {
-  motion,
-  useAnimationFrame,
-  useMotionValue,
-  useSpring,
-  useTransform,
-  type Variants,
-} from 'framer-motion'
+import { useEffect, useRef, useState } from 'react'
+import { motion, useAnimationFrame, useMotionValue, useSpring, type Variants } from 'framer-motion'
 import { release, turntableSection } from '@/lib/content'
 import { resolveImage } from '@/lib/images'
 import { EASE, usePrefersReducedMotion } from '@/lib/motion'
-import { useMediaQuery } from '@/lib/useMediaQuery'
 
 type PlaybackStatus = 'idle' | 'loading' | 'ready' | 'playing' | 'paused'
 
@@ -78,9 +70,7 @@ const partVariants: Variants = {
  */
 export function TurntableSection() {
   const reduce = usePrefersReducedMotion()
-  const canTilt = useMediaQuery('(hover: hover) and (pointer: fine)')
   const sectionRef = useRef<HTMLDivElement>(null)
-  const panelRef = useRef<HTMLDivElement>(null)
   const mountRef = useRef<HTMLDivElement>(null)
   const controllerRef = useRef<SpotifyController | null>(null)
   const [status, setStatus] = useState<PlaybackStatus>('idle')
@@ -135,27 +125,6 @@ export function TurntableSection() {
     controllerRef.current?.togglePlay()
   }
 
-  // Bascule 3D du panneau entier vers le pointeur — même technique que les
-  // cartes de la section Explorer, pour une identité d'interaction commune.
-  const tiltActive = canTilt && !reduce
-  const px = useMotionValue(0.5)
-  const py = useMotionValue(0.5)
-  const springPX = useSpring(px, { stiffness: 200, damping: 24, mass: 0.5 })
-  const springPY = useSpring(py, { stiffness: 200, damping: 24, mass: 0.5 })
-  const panelRotateX = useTransform(springPY, [0, 1], [4, -4])
-  const panelRotateY = useTransform(springPX, [0, 1], [-5, 5])
-
-  const onPanelMove = (e: PointerEvent<HTMLDivElement>) => {
-    if (!tiltActive || !panelRef.current) return
-    const rect = panelRef.current.getBoundingClientRect()
-    px.set((e.clientX - rect.left) / rect.width)
-    py.set((e.clientY - rect.top) / rect.height)
-  }
-  const onPanelLeave = () => {
-    px.set(0.5)
-    py.set(0.5)
-  }
-
   return (
     <section ref={sectionRef} className="py-lg md:py-xl" aria-labelledby="ecouter">
       <div className="container-rylix">
@@ -199,14 +168,6 @@ export function TurntableSection() {
             className="md:col-span-7"
           >
             <motion.div
-              ref={panelRef}
-              onPointerMove={onPanelMove}
-              onPointerLeave={onPanelLeave}
-              style={
-                tiltActive
-                  ? { rotateX: panelRotateX, rotateY: panelRotateY, transformPerspective: 1200 }
-                  : undefined
-              }
               className="relative mx-auto flex max-w-md flex-col items-center gap-8 overflow-hidden
                          rounded-md border border-slate/25 bg-gradient-to-b from-navy-alt/90 to-navy
                          p-8 shadow-[0_40px_90px_-24px_rgba(0,0,0,0.65)] md:p-12"
@@ -326,18 +287,6 @@ function Deck({
 
   return (
     <div className="relative aspect-square w-full max-w-[280px]">
-      {/* Halo — s'intensifie en lecture */}
-      <div
-        aria-hidden
-        className={`absolute inset-[-16%] rounded-full blur-2xl transition-opacity duration-700 ease-rylix ${
-          playing ? 'opacity-70' : 'opacity-0'
-        }`}
-        style={{ background: 'radial-gradient(circle, rgba(217,255,67,0.4), transparent 70%)' }}
-      />
-
-      {/* Poussière ambiante */}
-      {!reduce && <DustMotes />}
-
       {/* Platine */}
       <div
         className="absolute inset-0 rounded-full border border-slate/25"
@@ -393,35 +342,6 @@ function Deck({
           Connexion…
         </span>
       )}
-    </div>
-  )
-}
-
-/** Grains de poussière qui dérivent lentement autour de la platine. */
-function DustMotes() {
-  const dots = useMemo(
-    () =>
-      Array.from({ length: 7 }, (_, i) => ({
-        left: 6 + Math.random() * 88,
-        top: 6 + Math.random() * 88,
-        size: 2 + Math.random() * 2.4,
-        duration: 6 + Math.random() * 6,
-        delay: (i / 7) * 3,
-      })),
-    []
-  )
-
-  return (
-    <div aria-hidden className="pointer-events-none absolute inset-[-10%] overflow-hidden">
-      {dots.map((d, i) => (
-        <motion.span
-          key={i}
-          className="absolute rounded-full bg-cream/50"
-          style={{ left: `${d.left}%`, top: `${d.top}%`, width: d.size, height: d.size }}
-          animate={{ y: [0, -16, 0], opacity: [0.12, 0.5, 0.12] }}
-          transition={{ duration: d.duration, delay: d.delay, repeat: Infinity, ease: 'easeInOut' }}
-        />
-      ))}
     </div>
   )
 }
