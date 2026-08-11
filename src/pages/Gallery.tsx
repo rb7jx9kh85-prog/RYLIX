@@ -4,8 +4,9 @@ import { Image } from '@/components/Image'
 import { PageHeader } from '@/components/PageHeader'
 import { Parallax, Reveal } from '@/components/PageTransition'
 import { Lightbox, type LightboxItem } from '@/components/Lightbox'
-import { gallery, photographer } from '@/lib/content'
+import { photographer, type GalleryPhoto } from '@/lib/content'
 import { hasImage } from '@/lib/images'
+import { useFirestoreCollection } from '@/lib/useFirestoreCollection'
 
 /** Grille asymétrique : chaque photo occupe une empreinte différente. */
 const spanClass: Record<string, string> = {
@@ -17,6 +18,7 @@ const spanClass: Record<string, string> = {
 
 export default function Gallery() {
   const [index, setIndex] = useState<number | null>(null)
+  const { items: gallery } = useFirestoreCollection<GalleryPhoto>('galerie', 'createdAt', 'desc')
 
   // On n'affiche que les visuels réellement disponibles : une entrée peut être
   // déclarée dans le contenu avant que la photo ne soit fournie.
