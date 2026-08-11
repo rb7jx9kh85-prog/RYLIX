@@ -8,10 +8,18 @@ import {
   useSpring,
   useTransform,
 } from 'framer-motion'
-import { gallery, homeCards, parcours, release, tourDates, type HomeCard } from '@/lib/content'
+import {
+  homeCards,
+  release,
+  type GalleryPhoto,
+  type HomeCard,
+  type ParcoursEntry,
+  type TourDate,
+} from '@/lib/content'
 import { formatShortDate, getYear, isUpcoming } from '@/lib/format'
 import { resolveImage } from '@/lib/images'
 import { usePrefersReducedMotion } from '@/lib/motion'
+import { useFirestoreCollection } from '@/lib/useFirestoreCollection'
 import { useMediaQuery } from '@/lib/useMediaQuery'
 
 const MotionLink = motion(Link)
@@ -34,6 +42,13 @@ const spanClass: Record<HomeCard['span'], string> = {
 export function HomeCards() {
   const reduce = usePrefersReducedMotion()
   const trackRef = useRef<HTMLDivElement>(null)
+  const { items: tourDates } = useFirestoreCollection<TourDate>('dates', 'date', 'asc')
+  const { items: parcours } = useFirestoreCollection<ParcoursEntry>(
+    'parcours',
+    'createdAt',
+    'desc',
+  )
+  const { items: gallery } = useFirestoreCollection<GalleryPhoto>('galerie', 'createdAt', 'desc')
 
   const { scrollYProgress } = useScroll({
     target: trackRef,
@@ -83,7 +98,7 @@ export function HomeCards() {
               {/* Même ordre pour toutes les cartes : les titres se lisent sur
                   une seule ligne de regard quand on parcourt la bande. */}
               {header}
-              <CardBody card={card} />
+              <CardBody card={card} gallery={gallery} tourDates={tourDates} parcours={parcours} />
             </TiltCard>
           )
         })}
@@ -149,7 +164,17 @@ function TiltCard({ card, children }: { card: HomeCard; children: ReactNode }) {
 }
 
 /** Contenu propre à chaque type de carte. */
-function CardBody({ card }: { card: HomeCard }) {
+function CardBody({
+  card,
+  gallery,
+  tourDates,
+  parcours,
+}: {
+  card: HomeCard
+  gallery: GalleryPhoto[]
+  tourDates: TourDate[]
+  parcours: ParcoursEntry[]
+}) {
   if (card.kind === 'cover') {
     const cover = resolveImage(release.coverKey)
     if (!cover) return null
@@ -193,7 +218,7 @@ function CardBody({ card }: { card: HomeCard }) {
     )
   }
 
-  const lines = card.lines ?? linesFor(card.to)
+  const lines = card.lines ?? linesFor(card.to, tourDates, parcours)
   if (lines.length === 0) return null
 
   return (
@@ -211,7 +236,7 @@ function CardBody({ card }: { card: HomeCard }) {
 }
 
 /** Infos clés reprises des listes réelles, pour ne pas les recopier. */
-function linesFor(to: string): string[] {
+function linesFor(to: string, tourDates: TourDate[], parcours: ParcoursEntry[]): string[] {
   if (to === '/dates') {
     const upcoming = tourDates
       .filter((d) => isUpcoming(d.date))

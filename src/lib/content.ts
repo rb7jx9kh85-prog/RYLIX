@@ -261,16 +261,15 @@ export type GalleryPhoto = {
 
 /**
  * Dates, parcours et galerie sont gérés depuis l'admin RYLIX
- * (https://rylix-admin.vercel.app, Firebase Firestore) et récupérés au moment
- * du build par scripts/fetch-firestore-content.mjs — voir
- * src/lib/content.generated.ts (généré, ne pas éditer).
+ * (https://rylix-admin.vercel.app, Firebase Firestore) et lus en direct
+ * depuis Firestore via le SDK Firebase — voir src/lib/useFirestoreCollection.ts.
+ * Le site reflète l'admin sans nouveau build.
  *
  * Les entrées de galerie dont l'image n'existe pas encore dans le manifeste
  * sont ignorées à l'affichage : on peut donc déclarer un visuel dans l'admin
  * avant de l'avoir traité par le pipeline d'images, il apparaîtra dès que le
  * fichier sera déposé dans assets/photos/ et `npm run images` relancé.
  */
-export { tourDates, parcours, gallery } from './content.generated'
 
 /**
  * Clé d'accès Web3Forms — publique par conception (comme un identifiant de

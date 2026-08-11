@@ -1,10 +1,13 @@
 import { Seo } from '@/components/Seo'
 import { PageHeader } from '@/components/PageHeader'
 import { Reveal, RuleReveal } from '@/components/PageTransition'
-import { site, tourDates } from '@/lib/content'
+import { site, type TourDate } from '@/lib/content'
 import { formatShortDate, getYear, isUpcoming } from '@/lib/format'
+import { useFirestoreCollection } from '@/lib/useFirestoreCollection'
 
 export default function Dates() {
+  const { items: tourDates } = useFirestoreCollection<TourDate>('dates', 'date', 'asc')
+
   const upcoming = tourDates
     .filter((d) => isUpcoming(d.date))
     .sort((a, b) => a.date.localeCompare(b.date))
