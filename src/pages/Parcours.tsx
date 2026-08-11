@@ -1,9 +1,16 @@
 import { Seo } from '@/components/Seo'
 import { PageHeader } from '@/components/PageHeader'
 import { Reveal, RuleReveal } from '@/components/PageTransition'
-import { parcours, site } from '@/lib/content'
+import { site, type ParcoursEntry } from '@/lib/content'
+import { useFirestoreCollection } from '@/lib/useFirestoreCollection'
 
 export default function Parcours() {
+  const { items: parcours } = useFirestoreCollection<ParcoursEntry>(
+    'parcours',
+    'createdAt',
+    'desc',
+  )
+
   const jsonLd =
     parcours.length > 0
       ? {
