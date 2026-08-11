@@ -9,6 +9,7 @@ import {
   useTransform,
 } from 'framer-motion'
 import {
+  gallery,
   homeCards,
   release,
   type GalleryPhoto,
@@ -48,7 +49,6 @@ export function HomeCards() {
     'createdAt',
     'desc',
   )
-  const { items: gallery } = useFirestoreCollection<GalleryPhoto>('galerie', 'createdAt', 'desc')
 
   const { scrollYProgress } = useScroll({
     target: trackRef,

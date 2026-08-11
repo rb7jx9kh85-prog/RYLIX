@@ -260,15 +260,43 @@ export type GalleryPhoto = {
 }
 
 /**
- * Dates, parcours et galerie sont gérés depuis l'admin RYLIX
+ * Galerie codée en dur (pas de SDK Firebase ici, volontairement) : contrairement
+ * à dates/parcours, elle ne se gère pas depuis l'admin. Les entrées dont
+ * l'image n'existe pas encore dans le manifeste sont ignorées à l'affichage —
+ * on peut donc déclarer un visuel avant de l'avoir, il apparaîtra dès que le
+ * fichier sera déposé dans assets/photos/ et `npm run images` relancé.
+ *
+ * Le `alt` décrit l'image pour l'accessibilité ; la légende visible, elle, est
+ * le crédit photo — voir `photographer`.
+ */
+export const gallery: GalleryPhoto[] = [
+  {
+    key: 'image-1',
+    alt: 'RYLIX de profil devant un massif alpin valaisan, lumière de fin de journée.',
+    span: 'tall',
+  },
+  {
+    key: 'image-2',
+    alt: 'RYLIX de profil au pied d’une tour médiévale, drapeaux suisse et valaisan en haut.',
+    span: 'portrait',
+  },
+  {
+    key: 'image-3',
+    alt: 'RYLIX assis devant un mur de pierres sèches, à travers les herbes hautes.',
+    span: 'wide',
+  },
+  {
+    key: 'image-4',
+    alt: 'RYLIX assis, aperçu à travers des herbes hautes.',
+    span: 'portrait',
+  },
+]
+
+/**
+ * Dates et parcours sont gérés depuis l'admin RYLIX
  * (https://rylix-admin.vercel.app, Firebase Firestore) et lus en direct
  * depuis Firestore via le SDK Firebase — voir src/lib/useFirestoreCollection.ts.
  * Le site reflète l'admin sans nouveau build.
- *
- * Les entrées de galerie dont l'image n'existe pas encore dans le manifeste
- * sont ignorées à l'affichage : on peut donc déclarer un visuel dans l'admin
- * avant de l'avoir traité par le pipeline d'images, il apparaîtra dès que le
- * fichier sera déposé dans assets/photos/ et `npm run images` relancé.
  */
 
 /**
