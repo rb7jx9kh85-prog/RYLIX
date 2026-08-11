@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useScroll, useSpring, useTransform } from 'framer-motion'
 import {
+  gallery,
   homeCards,
   release,
   type GalleryPhoto,
@@ -38,7 +39,6 @@ export function HomeCards() {
     'createdAt',
     'desc',
   )
-  const { items: gallery } = useFirestoreCollection<GalleryPhoto>('galerie', 'createdAt', 'desc')
 
   const { scrollYProgress } = useScroll({
     target: trackRef,
@@ -139,9 +139,11 @@ function CardBody({
   if (card.kind === 'mosaic') {
     // Vignettes rendues en <img> nu : à cette taille le placeholder progressif
     // du composant Image n'apporte rien et coûte un rendu de plus par image.
+    // Grille 2x2 fixe : seules les 4 premières photos de la galerie tiennent.
     const photos = gallery
       .map((p) => ({ ...p, image: resolveImage(p.key) }))
       .filter((p) => p.image !== null)
+      .slice(0, 4)
 
     return (
       <div className="grid min-h-0 flex-1 grid-cols-2 grid-rows-2 gap-px border-t border-slate/20 bg-slate/20">

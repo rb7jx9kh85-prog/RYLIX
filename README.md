@@ -133,12 +133,18 @@ pochette dans `assets/photos/`, puis `npm run images`.
 | `image-2.jpg` | Galerie |
 | `image-3.jpg` | Hero (cadre 01), et galerie |
 | `image-4.jpg` | Hero (cadre 02), et galerie |
+| `imagin-chalet.jpg`, `imagin-affiche.jpg`, `imagin-ballon.jpg`, `imagin-crepuscule.jpg`, `rylix-dj-1.jpg`, `rylix-dj-2.jpg`, `rylix-dj-exterieur.jpg` | Galerie — événement Ima'Gin Suisse |
 | `better-days-cover.png` | Pochette : accueil, `/musique`, image Open Graph |
 
-Les quatre photos sont créditées à leur auteur — voir `photographer` dans
+Toutes les photos sont créditées à leur auteur — voir `photographer` dans
 `src/lib/content.ts` : le crédit s'affiche sous chaque photo de la galerie et
 dans la lightbox. Le `alt` de chaque entrée reste une description de l'image,
 pour les lecteurs d'écran.
+
+La galerie est déclarée dans `gallery` (`src/lib/content.ts`), pas administrée
+en direct : contrairement aux dates et au parcours (Firestore, admin RYLIX),
+ce sont des fichiers commités dans le dépôt — la page `/galerie` et
+l'aperçu mosaïque de l'accueil n'ont donc aucune dépendance au SDK Firebase.
 
 Une entrée de galerie dont l'image n'existe pas dans le manifeste n'est pas
 affichée, et la section présentation rend un cadre vide : on peut donc déclarer

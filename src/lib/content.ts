@@ -266,16 +266,76 @@ export type GalleryPhoto = {
 }
 
 /**
- * Dates, parcours et galerie sont gérés depuis l'admin RYLIX
- * (https://rylix-admin.vercel.app, Firebase Firestore) et lus en direct
- * depuis Firestore via le SDK Firebase — voir src/lib/useFirestoreCollection.ts.
- * Le site reflète l'admin sans nouveau build.
+ * Dates et parcours restent gérés depuis l'admin RYLIX
+ * (https://rylix-admin.vercel.app, Firebase Firestore) et lus en direct via
+ * le SDK Firebase — voir src/lib/useFirestoreCollection.ts.
  *
- * Les entrées de galerie dont l'image n'existe pas encore dans le manifeste
- * sont ignorées à l'affichage : on peut donc déclarer un visuel dans l'admin
- * avant de l'avoir traité par le pipeline d'images, il apparaîtra dès que le
- * fichier sera déposé dans assets/photos/ et `npm run images` relancé.
+ * La galerie, elle, est déclarée ici : ce sont des fichiers commités dans le
+ * dépôt (assets/photos/), pas un contenu administrable en direct — pas de
+ * dépendance Firebase pour l'afficher.
+ *
+ * Une entrée dont l'image n'existe pas encore dans le manifeste est ignorée
+ * à l'affichage : la déclarer ici avant d'avoir déposé le fichier ne casse
+ * rien, elle apparaît dès que la photo est ajoutée dans assets/photos/ et
+ * `npm run images` relancé.
  */
+export const gallery: GalleryPhoto[] = [
+  {
+    key: 'image-1',
+    alt: 'RYLIX de profil devant un massif alpin valaisan, lumière de fin de journée.',
+    span: 'tall',
+  },
+  {
+    key: 'image-2',
+    alt: 'RYLIX de profil au pied d’une tour médiévale, drapeaux suisse et valaisan en haut.',
+    span: 'portrait',
+  },
+  {
+    key: 'image-3',
+    alt: 'RYLIX assis devant un mur de pierres sèches, à travers les herbes hautes.',
+    span: 'wide',
+  },
+  {
+    key: 'image-4',
+    alt: 'RYLIX assis, aperçu à travers des herbes hautes.',
+    span: 'portrait',
+  },
+  {
+    key: 'rylix-dj-exterieur',
+    alt: 'RYLIX aux platines en extérieur, terrasse du Miroir de l’Argentine, Valais.',
+    span: 'portrait',
+  },
+  {
+    key: 'imagin-chalet',
+    alt: 'Chalet Miroir de l’Argentine et massif alpin, lors d’un événement Ima’Gin en Valais.',
+    span: 'wide',
+  },
+  {
+    key: 'rylix-dj-1',
+    alt: 'RYLIX aux platines, casque audio, contrôleur DJ Pioneer.',
+    span: 'tall',
+  },
+  {
+    key: 'imagin-affiche',
+    alt: 'Affiche Ima’Gin Suisse, gin alpin, devant les montagnes valaisannes.',
+    span: 'square',
+  },
+  {
+    key: 'rylix-dj-2',
+    alt: 'RYLIX aux platines, casquette Ima’Gin, contrôleur DJ Hercules, noir et blanc.',
+    span: 'portrait',
+  },
+  {
+    key: 'imagin-ballon',
+    alt: 'Ballon publicitaire Ima’Gin au-dessus des chalets, Valais.',
+    span: 'wide',
+  },
+  {
+    key: 'imagin-crepuscule',
+    alt: 'Ciel crépusculaire au-dessus des sapins et de la lune, Valais.',
+    span: 'square',
+  },
+]
 
 /**
  * Clé d'accès Web3Forms — publique par conception (comme un identifiant de
