@@ -161,7 +161,10 @@ export function Hero() {
               transition={intro(1.7, 0.18)}
               className="m-0 h-full w-full overflow-hidden bg-navy-alt shadow-[0_36px_90px_rgba(0,0,0,0.38)]"
             >
-              <motion.div style={{ x: primaryPointerX, y: primaryPointerY }} className="h-full w-full">
+              <motion.div
+                style={{ x: primaryPointerX, y: primaryPointerY }}
+                className="h-full w-full"
+              >
                 {primary && (
                   <motion.img
                     src={primary.src}
@@ -170,7 +173,7 @@ export function Hero() {
                     width={primary.width}
                     height={primary.height}
                     alt=""
-                    fetchPriority="high"
+                    {...{ fetchpriority: 'high' }}
                     style={{ y: primaryImgY, objectPosition: 'center 48%' }}
                     className="photo h-[115%] w-full object-cover"
                   />
@@ -209,7 +212,7 @@ export function Hero() {
                     width={secondary.width}
                     height={secondary.height}
                     alt=""
-                    fetchPriority="high"
+                    {...{ fetchpriority: 'high' }}
                     style={{ y: secondaryImgY, objectPosition: 'center 46%' }}
                     className="photo h-[115%] w-full object-cover"
                   />
@@ -223,20 +226,8 @@ export function Hero() {
         {/* RYLIX — deux exemplaires superposés, l'un devant les cadres, l'autre
             derrière. Le fondu de l'un vers l'autre fait glisser les lettres
             couvertes par le cadre 02 derrière l'image, sans rupture. */}
-        <Wordmark
-          layer="below"
-          opacity={wordBelow}
-          y={wordY}
-          scale={wordScale}
-          reduce={reduce}
-        />
-        <Wordmark
-          layer="above"
-          opacity={wordAbove}
-          y={wordY}
-          scale={wordScale}
-          reduce={reduce}
-        />
+        <Wordmark layer="below" opacity={wordBelow} y={wordY} scale={wordScale} reduce={reduce} />
+        <Wordmark layer="above" opacity={wordAbove} y={wordY} scale={wordScale} reduce={reduce} />
 
         {/* Accroche, haut gauche. Sous mouvement réduit, la présentation est
             empilée juste dessous : la chorégraphie qui la révèle au scroll est

@@ -62,6 +62,7 @@ export default function Gallery() {
                   <button
                     type="button"
                     onClick={() => setIndex(i)}
+                    data-cursor-label="Voir"
                     className="group block min-h-0 flex-1 overflow-hidden rounded-sm"
                   >
                     <span className="sr-only">Agrandir : {photo.alt}</span>

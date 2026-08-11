@@ -27,6 +27,47 @@ export const presentation = {
   text: 'pas de texte pour le moment',
 } as const
 
+/** Section tourne-disque — juste sous le hero, avant le bandeau défilant. */
+export const turntableSection = {
+  eyebrow: 'Écouter',
+  hint: 'Lecture directe, via Spotify.',
+} as const
+
+/**
+ * Bandeau défilant sous le hero — texte d'ambiance, pas d'information
+ * nouvelle. Répété en boucle par le composant Marquee.
+ */
+export const marquee = [
+  'Musique électronique',
+  'Née dans les Alpes',
+  'Valais — Suisse',
+  'Production originale',
+] as const
+
+/**
+ * Statement éditorial — grande typographie cinétique entre les cartes
+ * d'accueil et la section son. Texte d'exemple : à remplacer par la vraie
+ * voix de l'artiste, pas une information factuelle vérifiable.
+ */
+export const manifesto = {
+  eyebrow: 'Manifeste',
+  title: ['Une musique', 'née en', 'altitude.'],
+  body: "Chaque morceau part d'un lieu réel avant de devenir un rythme : un sommet, un silence, une lumière de fin de journée. RYLIX cherche l'endroit où l'électronique retrouve le paysage — et n'en garde que l'essentiel.",
+} as const
+
+/** Section son / studio — accompagne la scène 3D. */
+export const sound = {
+  eyebrow: 'Le son',
+  title: ['Chaud.', 'Minéral.', 'Brut.'],
+  body: 'Textures analogiques, basses profondes, silences travaillés comme des pleins. Une identité sonore pensée pour l’écoute autant que pour la scène.',
+} as const
+
+/** Clôture graphique, juste avant le footer. */
+export const finalCta = {
+  title: ['Écouter.', 'Regarder.', 'Suivre.'],
+  body: 'Better Days est disponible partout. La suite se prépare en Valais.',
+} as const
+
 export type NavItem = { label: string; to: string }
 
 export const nav: NavItem[] = [
@@ -190,17 +231,6 @@ export type TourDate = {
   ticketUrl?: string
 }
 
-/**
- * Dates confirmées uniquement. Liste vide -> la page /dates affiche son état vide.
- */
-export const tourDates: TourDate[] = [
-  {
-    date: '2026-08-29',
-    city: 'Finhaut',
-    venue: 'Tournoi populaire du FC Finhaut',
-  },
-]
-
 export type ParcoursEntry = {
   /** Lieu, événement ou marque. */
   title: string
@@ -212,18 +242,6 @@ export type ParcoursEntry = {
   period?: string
   url?: string
 }
-
-/**
- * Lieux et événements où RYLIX s'est produit. Liste vide -> état vide sobre.
- */
-export const parcours: ParcoursEntry[] = [
-  {
-    title: "Ima'Gin Suisse",
-    role: 'Événements pour la marque',
-    location: 'Les Voëttes, Valais',
-    url: 'https://ima-gin.swiss/',
-  },
-]
 
 /** Auteur des photographies du site — crédité sous chaque visuel. */
 export const photographer = {
@@ -242,35 +260,17 @@ export type GalleryPhoto = {
 }
 
 /**
- * Les entrées dont l'image n'existe pas encore dans le manifeste sont ignorées
- * à l'affichage : on peut donc déclarer un visuel avant de l'avoir, il
- * apparaîtra dès que le fichier sera déposé et `npm run images` relancé.
+ * Dates, parcours et galerie sont gérés depuis l'admin RYLIX
+ * (https://rylix-admin.vercel.app, Firebase Firestore) et récupérés au moment
+ * du build par scripts/fetch-firestore-content.mjs — voir
+ * src/lib/content.generated.ts (généré, ne pas éditer).
  *
- * Le `alt` décrit l'image pour l'accessibilité ; la légende visible, elle, est
- * le crédit photo — voir `photographer`.
+ * Les entrées de galerie dont l'image n'existe pas encore dans le manifeste
+ * sont ignorées à l'affichage : on peut donc déclarer un visuel dans l'admin
+ * avant de l'avoir traité par le pipeline d'images, il apparaîtra dès que le
+ * fichier sera déposé dans assets/photos/ et `npm run images` relancé.
  */
-export const gallery: GalleryPhoto[] = [
-  {
-    key: 'image-1',
-    alt: 'RYLIX de profil devant un massif alpin valaisan, lumi\u00e8re de fin de journ\u00e9e.',
-    span: 'tall',
-  },
-  {
-    key: 'image-2',
-    alt: 'RYLIX de profil au pied d\u2019une tour m\u00e9di\u00e9vale, drapeaux suisse et valaisan en haut.',
-    span: 'portrait',
-  },
-  {
-    key: 'image-3',
-    alt: 'RYLIX assis devant un mur de pierres s\u00e8ches, \u00e0 travers les herbes hautes.',
-    span: 'wide',
-  },
-  {
-    key: 'image-4',
-    alt: 'RYLIX assis, aper\u00e7u \u00e0 travers des herbes hautes.',
-    span: 'portrait',
-  },
-]
+export { tourDates, parcours, gallery } from './content.generated'
 
 /**
  * Clé d'accès Web3Forms — publique par conception (comme un identifiant de
@@ -278,7 +278,8 @@ export const gallery: GalleryPhoto[] = [
  * filtrage anti-spam côté Web3Forms, pas à authentifier un compte.
  * Surchargeable par VITE_WEB3FORMS_KEY si la clé change.
  */
-export const web3formsKey = import.meta.env.VITE_WEB3FORMS_KEY || '835ba476-97db-4c8c-bf81-72b4421ec4f8'
+export const web3formsKey =
+  import.meta.env.VITE_WEB3FORMS_KEY || '835ba476-97db-4c8c-bf81-72b4421ec4f8'
 
 /** Adresse professionnelle. Surchargeable par VITE_CONTACT_EMAIL. */
 export const contactEmail = import.meta.env.VITE_CONTACT_EMAIL || 'contact@rylix.ch'
