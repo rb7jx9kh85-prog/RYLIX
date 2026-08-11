@@ -1,13 +1,6 @@
 import { useRef, type PointerEvent, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import {
-  motion,
-  useMotionTemplate,
-  useMotionValue,
-  useScroll,
-  useSpring,
-  useTransform,
-} from 'framer-motion'
+import { motion, useMotionValue, useScroll, useSpring, useTransform } from 'framer-motion'
 import {
   gallery,
   homeCards,
@@ -109,7 +102,6 @@ export function HomeCards() {
 
 /**
  * Carte basculée en 3D vers le pointeur — perspective CSS, pas de WebGL.
- * Un reflet suit le pointeur en fondu, comme une surface légèrement laquée.
  * Desktop à pointeur fin uniquement ; repos net au départ du pointeur.
  */
 function TiltCard({ card, children }: { card: HomeCard; children: ReactNode }) {
@@ -124,7 +116,6 @@ function TiltCard({ card, children }: { card: HomeCard; children: ReactNode }) {
   const springPY = useSpring(py, { stiffness: 220, damping: 22, mass: 0.4 })
   const rotateX = useTransform(springPY, [0, 1], [6, -6])
   const rotateY = useTransform(springPX, [0, 1], [-7, 7])
-  const glare = useMotionTemplate`radial-gradient(circle at ${useTransform(springPX, (v) => `${v * 100}%`)} ${useTransform(springPY, (v) => `${v * 100}%`)}, rgba(242,240,232,0.14), transparent 55%)`
 
   const onMove = (e: PointerEvent<HTMLAnchorElement>) => {
     if (!active || !ref.current) return
@@ -151,14 +142,6 @@ function TiltCard({ card, children }: { card: HomeCard; children: ReactNode }) {
                   ${spanClass[card.span]}`}
     >
       {children}
-      {active && (
-        <motion.span
-          aria-hidden
-          style={{ background: glare }}
-          className="pointer-events-none absolute inset-0 opacity-0 mix-blend-overlay
-                     transition-opacity duration-300 ease-rylix group-hover:opacity-100"
-        />
-      )}
     </MotionLink>
   )
 }

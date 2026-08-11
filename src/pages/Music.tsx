@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { Seo } from '@/components/Seo'
 import { Image } from '@/components/Image'
 import { PageHeader } from '@/components/PageHeader'
-import { Marquee } from '@/components/Marquee'
 import { AmbientLayer } from '@/components/AmbientLayer'
 import { VinylSection } from '@/components/VinylSection'
 import { SocialLinks } from '@/components/SocialLinks'
@@ -159,8 +158,6 @@ export default function Music() {
           </div>
         </div>
       </section>
-
-      <Marquee />
 
       <VinylSection />
 

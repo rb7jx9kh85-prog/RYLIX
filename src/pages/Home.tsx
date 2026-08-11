@@ -2,7 +2,6 @@ import { Seo } from '@/components/Seo'
 import { Hero } from '@/components/Hero'
 import { HomeCards } from '@/components/HomeCards'
 import { TurntableSection } from '@/components/TurntableSection'
-import { Marquee } from '@/components/Marquee'
 import { Manifesto } from '@/components/Manifesto'
 import { VinylSection } from '@/components/VinylSection'
 import { FinalCta } from '@/components/FinalCta'
@@ -29,8 +28,6 @@ export default function Home() {
       <Hero />
 
       <TurntableSection />
-
-      <Marquee />
 
       {/* Les cinq entrées du site, sur une seule ligne qui glisse au scroll.
           Un champ de particules 3D dérive derrière, visible dans les
