@@ -215,7 +215,6 @@ export function TurntableSection() {
                     type="button"
                     onClick={handleToggle}
                     disabled={status === 'idle' || status === 'loading'}
-                    data-cursor-label={playing ? 'Pause' : 'Écouter'}
                     aria-label={
                       playing ? `Mettre en pause ${release.title}` : `Lire ${release.title}`
                     }
@@ -306,21 +305,6 @@ function Deck({
           </div>
           <span className="absolute left-1/2 top-1/2 h-[5%] w-[5%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-navy" />
         </motion.div>
-
-        {/* Reflet — tourne en continu, indépendant de la lecture : le vinyle
-            n'est jamais tout à fait immobile visuellement. */}
-        {!reduce && (
-          <motion.div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 rounded-full"
-            style={{
-              background:
-                'conic-gradient(from 0deg, transparent 0deg, rgba(242,240,232,0.16) 16deg, transparent 38deg, transparent 360deg)',
-            }}
-            animate={{ rotate: 360 }}
-            transition={{ repeat: Infinity, duration: 11, ease: 'linear' }}
-          />
-        )}
       </div>
 
       {/* Bras de lecture */}

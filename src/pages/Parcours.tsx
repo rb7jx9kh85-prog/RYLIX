@@ -34,9 +34,7 @@ export default function Parcours() {
         jsonLd={jsonLd}
       />
 
-      <PageHeader eyebrow="Parcours" title="Lieux et événements">
-        <p>Là où RYLIX s'est produit.</p>
-      </PageHeader>
+      <PageHeader eyebrow="Parcours" title="Lieux et événements" />
 
       <section className="container-rylix pb-lg md:pb-xl">
         {parcours.length === 0 ? (

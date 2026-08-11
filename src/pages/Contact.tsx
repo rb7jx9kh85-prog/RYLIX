@@ -63,11 +63,11 @@ export default function Contact() {
     <>
       <Seo
         title="Contact"
-        description="Contacter RYLIX — bookings, collaborations, presse. Instagram, TikTok, YouTube, Spotify."
+        description="Contacter RYLIX — bookings, collaborations. Instagram, TikTok, YouTube, Spotify."
       />
 
       <PageHeader eyebrow="Contact" title="Écrire">
-        <p>Bookings, collaborations, presse.</p>
+        <p>Bookings, collaborations.</p>
       </PageHeader>
 
       <section className="container-rylix pb-lg md:pb-xl">

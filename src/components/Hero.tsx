@@ -254,7 +254,7 @@ export function Hero() {
             <div className="mt-8">
               <p className="label mb-3">{presentation.eyebrow}</p>
               <p className="m-0 font-display text-[clamp(20px,3vw,32px)] font-bold leading-[1.1] tracking-[-0.03em] text-cream">
-                {presentation.text}
+                {presentation.lead}
               </p>
             </div>
           )}
@@ -270,7 +270,7 @@ export function Hero() {
           >
             <p className="label mb-4">{presentation.eyebrow}</p>
             <p className="m-0 font-display text-[clamp(22px,4.5vw,44px)] font-bold leading-[1.05] tracking-[-0.03em] text-cream">
-              {presentation.text}
+              {presentation.lead}
             </p>
           </motion.div>
         )}

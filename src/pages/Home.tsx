@@ -2,7 +2,7 @@ import { Seo } from '@/components/Seo'
 import { Hero } from '@/components/Hero'
 import { HomeCards } from '@/components/HomeCards'
 import { TurntableSection } from '@/components/TurntableSection'
-import { Manifesto } from '@/components/Manifesto'
+import { Presentation } from '@/components/Presentation'
 import { VinylSection } from '@/components/VinylSection'
 import { FinalCta } from '@/components/FinalCta'
 import { AmbientLayer } from '@/components/AmbientLayer'
@@ -51,7 +51,7 @@ export default function Home() {
         </div>
       </section>
 
-      <Manifesto />
+      <Presentation />
       <VinylSection />
       <FinalCta />
     </>

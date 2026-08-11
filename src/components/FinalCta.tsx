@@ -34,7 +34,6 @@ export function FinalCta() {
               href={release.spotifyUrl}
               target="_blank"
               rel="noreferrer noopener"
-              data-cursor-label="Écouter"
               className="btn mt-6"
             >
               Écouter maintenant

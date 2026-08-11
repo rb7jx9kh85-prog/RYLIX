@@ -55,15 +55,17 @@ export default function Music() {
               <Reveal>
                 <p className="label mb-4">{discover.eyebrow}</p>
               </Reveal>
+              {/* Taille calée sur la largeur réelle de la colonne (6/12) :
+                  « Découvrez » est un mot long et insécable, et SplitText le
+                  rogne au lieu de le laisser déborder s'il ne tient pas. */}
               <SplitText
                 as="h1"
                 text={discover.title}
                 delay={0.06}
-                className="text-balance font-display text-h1 font-extrabold uppercase"
+                className="text-balance break-words font-display
+                           text-[clamp(1.5rem,3.4vw,2.5rem)] font-extrabold uppercase
+                           leading-[1.05] tracking-[-0.02em]"
               />
-              <Reveal delay={0.18}>
-                <p className="mt-6 max-w-prose text-fg-muted">{discover.body}</p>
-              </Reveal>
             </div>
 
             <div className="md:col-span-6">
@@ -78,7 +80,6 @@ export default function Music() {
                         href={p.url}
                         target="_blank"
                         rel="noreferrer noopener"
-                        data-cursor-label="Écouter"
                         className="group relative flex items-center justify-between overflow-hidden py-4"
                       >
                         <span

@@ -19,12 +19,24 @@ export const site = {
 } as const
 
 /**
- * Présentation de l'artiste — affichée dans le second temps du hero, à la
- * place du cadre de gauche qui s'efface au scroll.
+ * Présentation de l'artiste — reprise dans le second temps du hero (première
+ * ligne seulement, à la place du cadre qui s'efface) et en entier dans la
+ * section Présentation de l'accueil.
+ *
+ * Le texte est découpé en paragraphes plutôt qu'en un bloc unique : c'est ce
+ * qui le rend lisible aussi bien sur mobile que sur grand écran.
  */
 export const presentation = {
   eyebrow: 'Présentation',
-  text: 'pas de texte pour le moment',
+  /** Titre de la section Présentation, sur l'accueil. */
+  title: 'DJ producteur suisse',
+  /** Accroche courte — celle qui apparaît dans le second temps du hero. */
+  lead: 'Guitariste, DJ, producteur.',
+  paragraphs: [
+    "Guitariste, DJ, producteur, je suis passionné de musique depuis mon enfance, que ce soit en écoutant ou en jouant — ça m'a toujours fait vibrer.",
+    "Mais après plusieurs heures d'écoute et de jeu, j'ai eu l'envie de faire mes propres compositions, de créer quelque chose venant de moi. De vouloir faire vibrer les gens à leur tour, et de donner vie à ces compositions venues d'une chambre d'ado qui expérimente, perfectionne et doute.",
+    "Ma toute première sortie, « Better Days », est pour moi un moyen de me lancer, de sortir de ce manque de confiance et de cette peur de me montrer et de présenter mon art — sans me soucier de faire des erreurs, mais en les acceptant et en apprenant davantage.",
+  ],
 } as const
 
 /** Section tourne-disque — juste sous le hero. */
@@ -37,18 +49,6 @@ export const turntableSection = {
 export const discover = {
   eyebrow: 'Découvrir',
   title: 'Découvrez Better Days',
-  body: 'Le premier single de RYLIX, à écouter et à partager.',
-} as const
-
-/**
- * Statement éditorial — grande typographie cinétique entre les cartes
- * d'accueil et la section son. Texte d'exemple : à remplacer par la vraie
- * voix de l'artiste, pas une information factuelle vérifiable.
- */
-export const manifesto = {
-  eyebrow: 'Manifeste',
-  title: ['Une musique', 'née en', 'altitude.'],
-  body: "Chaque morceau part d'un lieu réel avant de devenir un rythme : un sommet, un silence, une lumière de fin de journée. RYLIX cherche l'endroit où l'électronique retrouve le paysage — et n'en garde que l'essentiel.",
 } as const
 
 /** Section son / studio — accompagne la scène 3D. */
@@ -106,7 +106,7 @@ export const hero = {
   /** Accroche en haut à gauche, une ligne par entrée. */
   intro: ['DJ producteur suisse'],
   /** Coordonnées du Valais (Sion), affichées dans le bandeau bas. */
-  coordinates: '46.2331° N / 7.3606° E',
+  coordinates: '46°06′00″ N / 7°04′22″ E',
 } as const
 
 export type HomeCard = {
@@ -169,7 +169,7 @@ export const homeCards: HomeCard[] = [
     to: '/contact',
     label: 'Contact',
     kind: 'list',
-    teaser: 'Bookings, collaborations, presse.',
+    teaser: 'Bookings, collaborations.',
     lines: ['contact@rylix.ch', 'Instagram \u00b7 TikTok \u00b7 YouTube \u00b7 Spotify'],
     span: 2,
   },

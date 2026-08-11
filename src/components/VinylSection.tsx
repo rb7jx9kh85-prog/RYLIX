@@ -1,43 +1,13 @@
-import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { Reveal, SplitText } from './PageTransition'
 import { sound } from '@/lib/content'
-import { usePrefersReducedMotion } from '@/lib/motion'
-
-// Chunk séparé : three.js + react-three-fiber ne pèsent que si cette section
-// est réellement atteinte, et jamais sous mouvement réduit.
-const VinylScene = lazy(() => import('./VinylScene'))
 
 /**
- * Section son / studio — la scène 3D (vinyle, sillons, poussière en
- * suspension) partage l'écran avec le statement éditorial. Le canvas n'est
- * monté qu'une fois la section réellement visible, jamais avant : pas de
- * coût WebGL payé pour une section qu'on ne voit peut-être jamais.
+ * Section son / studio — le disque accompagne le statement éditorial.
  *
- * Sous prefers-reduced-motion, un disque statique dessiné en CSS prend le
- * relais — même identité visuelle, aucune animation, aucun WebGL.
+ * Le disque est dessiné à plat en CSS : pas de rendu 3D, pas de reflets, pas
+ * de WebGL. Une seule image du disque, identique partout et à tout moment.
  */
 export function VinylSection() {
-  const reduce = usePrefersReducedMotion()
-  const ref = useRef<HTMLDivElement>(null)
-  const [inView, setInView] = useState(false)
-
-  useEffect(() => {
-    if (reduce || inView) return
-    const el = ref.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setInView(true)
-          observer.disconnect()
-        }
-      },
-      { rootMargin: '15% 0px' }
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [reduce, inView])
-
   return (
     <section className="py-lg md:py-xl" aria-labelledby="le-son">
       <div className="container-rylix grid items-center gap-12 md:grid-cols-12 md:gap-12">
@@ -69,26 +39,17 @@ export function VinylSection() {
         </div>
 
         <div
-          ref={ref}
           aria-hidden
           className="relative aspect-square w-full overflow-hidden rounded-sm border border-slate/20 bg-navy-alt/40 md:col-span-5"
         >
-          {reduce ? (
-            <StaticDisc />
-          ) : (
-            inView && (
-              <Suspense fallback={<StaticDisc />}>
-                <VinylScene />
-              </Suspense>
-            )
-          )}
+          <StaticDisc />
         </div>
       </div>
     </section>
   )
 }
 
-/** Repli statique — même silhouette, zéro animation, zéro WebGL. */
+/** Disque à plat — sillons en dégradé répété, étiquette, trou central. */
 function StaticDisc() {
   return (
     <div className="flex h-full w-full items-center justify-center">
