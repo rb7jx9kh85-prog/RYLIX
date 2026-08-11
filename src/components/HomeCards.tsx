@@ -1,4 +1,4 @@
-import { useRef, type PointerEvent, type ReactNode } from 'react'
+import { useRef, type PointerEvent, type ReactNode, type RefObject } from 'react'
 import { Link } from 'react-router-dom'
 import {
   motion,
@@ -31,23 +31,25 @@ const spanClass: Record<HomeCard['span'], string> = {
  * La bande reste aussi glissable au doigt / au trackpad — sur mobile c'est le
  * geste attendu, et ça évite de dépendre uniquement du scroll détourné.
  */
-export function HomeCards() {
+export function HomeCards({ pinnedRef }: { pinnedRef?: RefObject<HTMLElement> }) {
   const reduce = usePrefersReducedMotion()
   const trackRef = useRef<HTMLDivElement>(null)
 
+  // Quand la bande est épinglée par la page (pinnedRef), la progression
+  // couvre toute la durée de l'épinglage : la bande doit avoir fini de
+  // défiler avant que la section ne rende la main au scroll normal. Sans
+  // pin (fallback), on retombe sur l'ancienne mesure : la portion du scroll
+  // où la bande est réellement à l'écran.
   const { scrollYProgress } = useScroll({
-    target: trackRef,
-    offset: ['start end', 'end start'],
+    target: pinnedRef ?? trackRef,
+    offset: pinnedRef ? ['start start', 'end end'] : ['start end', 'end start'],
     // Mesure hors layout effect : évite de forcer un reflow synchrone à chaque
     // montage/scroll, coûteux sur mobile.
     layoutEffect: false,
   })
   const progress = useSpring(scrollYProgress, { stiffness: 90, damping: 28, mass: 0.35 })
-  // La course est calée sur la portion du scroll où la bande est réellement à
-  // l'écran (elle entre vers 0.15, sort vers 0.85) : étalée sur 0→1, elle se
-  // terminerait alors que la section a déjà quitté le champ, et la dernière
-  // carte ne serait jamais vue en entier.
-  const x = useTransform(progress, [0.15, 0.85], reduce ? ['0%', '0%'] : ['0%', '-19%'])
+  const range: [number, number] = pinnedRef ? [0.06, 0.94] : [0.15, 0.85]
+  const x = useTransform(progress, range, reduce ? ['0%', '0%'] : ['0%', '-19%'])
 
   return (
     <div ref={trackRef} className="overflow-hidden">
