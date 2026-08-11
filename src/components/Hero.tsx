@@ -260,29 +260,6 @@ export function Hero() {
           )}
         </motion.div>
 
-        {/* Chapitre 1 — pastilles factuelles */}
-        <motion.div
-          initial={reduce ? false : { opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={intro(0.8, 0.83)}
-          className="absolute bottom-[12vh] left-[18px] z-10 md:bottom-[11vh] md:left-[30px]"
-        >
-          <motion.div
-            style={{ opacity: chapterOneOpacity, y: chapterOneY }}
-            className="flex gap-1.5 md:gap-2"
-          >
-            {hero.chips.map((chip) => (
-              <span
-                key={chip}
-                className="rounded-full border border-cream/45 px-2.5 py-1.5 font-sans text-[8px]
-                           uppercase tracking-[0.08em] text-cream md:text-[10px]"
-              >
-                {chip}
-              </span>
-            ))}
-          </motion.div>
-        </motion.div>
-
         {/* Second temps — la présentation, là où était le cadre 01.
             Sous mouvement réduit elle est déjà rendue avec l'accroche. */}
         {!reduce && (

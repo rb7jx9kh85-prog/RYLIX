@@ -108,9 +108,7 @@ export const hero = {
     index: '02',
   } satisfies HeroFrame,
   /** Accroche en haut à gauche, une ligne par entrée. */
-  intro: ['Paysages alpins,', 'production électronique.'],
-  /** Pastilles factuelles du premier temps. */
-  chips: ['Producteur', 'Valais', 'Suisse'],
+  intro: ['DJ producteur suisse'],
   /** Coordonnées du Valais (Sion), affichées dans le bandeau bas. */
   coordinates: '46.2331° N / 7.3606° E',
 } as const
