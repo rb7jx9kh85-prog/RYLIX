@@ -1,6 +1,6 @@
-import { useRef } from 'react'
+import { useEffect, useRef, useState, type RefObject } from 'react'
 import { Link } from 'react-router-dom'
-import { motion, useScroll, useSpring, useTransform } from 'framer-motion'
+import { useMotionValueEvent, useScroll, useSpring, useTransform } from 'framer-motion'
 import {
   gallery,
   homeCards,
@@ -14,6 +14,28 @@ import { formatShortDate, getYear, isUpcoming } from '@/lib/format'
 import { resolveImage } from '@/lib/images'
 import { usePrefersReducedMotion } from '@/lib/motion'
 import { useFirestoreCollection } from '@/lib/useFirestoreCollection'
+
+/**
+ * Largeur qui dépasse de la bande — la course exacte à parcourir pour que la
+ * dernière carte arrive au bord droit. Re-mesurée au redimensionnement et
+ * quand le contenu change (les cartes dates/parcours arrivent après coup).
+ */
+function useTrackOverflow(ref: RefObject<HTMLElement>): number {
+  const [overflow, setOverflow] = useState(0)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const measure = () => setOverflow(Math.max(0, el.scrollWidth - el.clientWidth))
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(el)
+    for (const child of Array.from(el.children)) observer.observe(child)
+    return () => observer.disconnect()
+  }, [ref])
+
+  return overflow
+}
 
 /** Largeur de chaque carte, en colonnes d'une grille de 6. */
 const spanClass: Record<HomeCard['span'], string> = {
@@ -30,9 +52,11 @@ const spanClass: Record<HomeCard['span'], string> = {
  * La bande reste aussi glissable au doigt / au trackpad — sur mobile c'est le
  * geste attendu, et ça évite de dépendre uniquement du scroll détourné.
  */
-export function HomeCards() {
+export function HomeCards({ pinnedRef }: { pinnedRef?: RefObject<HTMLElement> }) {
   const reduce = usePrefersReducedMotion()
   const trackRef = useRef<HTMLDivElement>(null)
+  const bandRef = useRef<HTMLDivElement>(null)
+  const overflow = useTrackOverflow(bandRef)
   const { items: tourDates } = useFirestoreCollection<TourDate>('dates', 'date', 'asc')
   const { items: parcours } = useFirestoreCollection<ParcoursEntry>(
     'parcours',
@@ -40,24 +64,40 @@ export function HomeCards() {
     'desc',
   )
 
+  // Section épinglée (pinnedRef) : la progression court sur toute la durée de
+  // l'épinglage, et la bande a fini de défiler avant que la page ne reparte
+  // vers le bas. Sans pin, on retombe sur la mesure d'origine — la portion du
+  // scroll pendant laquelle la bande est réellement à l'écran.
   const { scrollYProgress } = useScroll({
-    target: trackRef,
-    offset: ['start end', 'end start'],
+    target: pinnedRef ?? trackRef,
+    offset: pinnedRef ? ['start start', 'end end'] : ['start end', 'end start'],
     // Mesure hors layout effect : évite de forcer un reflow synchrone à chaque
     // montage/scroll, coûteux sur mobile.
     layoutEffect: false,
   })
   const progress = useSpring(scrollYProgress, { stiffness: 90, damping: 28, mass: 0.35 })
-  // La course est calée sur la portion du scroll où la bande est réellement à
-  // l'écran (elle entre vers 0.15, sort vers 0.85) : étalée sur 0→1, elle se
-  // terminerait alors que la section a déjà quitté le champ, et la dernière
-  // carte ne serait jamais vue en entier.
-  const x = useTransform(progress, [0.15, 0.85], reduce ? ['0%', '0%'] : ['0%', '-19%'])
+  // La course est la largeur réellement en trop, mesurée, pas un pourcentage
+  // choisi à la main : c'est la seule façon que la dernière carte arrive pile
+  // au bord quelle que soit la largeur d'écran — un pourcentage calé sur le
+  // bureau laisse la moitié de la bande dehors sur mobile. Elle se termine à
+  // 0.9 : le dixième restant sert de palier avant que la section ne se
+  // désépingle et ne rende la main au scroll vertical.
+  const range: [number, number] = pinnedRef ? [0.05, 0.9] : [0.15, 0.85]
+  const offset = useTransform(progress, range, [0, overflow], { clamp: true })
+
+  // On pilote le scroll natif de la bande, pas une translation : la bande
+  // porte overflow-x, donc la translater déplacerait aussi sa fenêtre de
+  // découpe — les cartes disparaîtraient par la droite au lieu de défiler.
+  useMotionValueEvent(offset, 'change', (v) => {
+    if (reduce) return
+    const el = bandRef.current
+    if (el) el.scrollLeft = v
+  })
 
   return (
     <div ref={trackRef} className="overflow-hidden">
-      <motion.div
-        style={{ x }}
+      <div
+        ref={bandRef}
         // snap + scroll natif : le glissement manuel reste possible et net.
         className="flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-2
                    [scrollbar-width:none] md:gap-6 md:px-10 [&::-webkit-scrollbar]:hidden"
@@ -101,7 +141,7 @@ export function HomeCards() {
             </Link>
           )
         })}
-      </motion.div>
+      </div>
     </div>
   )
 }

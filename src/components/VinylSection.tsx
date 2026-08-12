@@ -12,8 +12,7 @@ export function VinylSection() {
     <section className="py-lg md:py-xl" aria-labelledby="le-son">
       <div className="container-rylix grid items-center gap-12 md:grid-cols-12 md:gap-12">
         <div className="md:col-span-7">
-          <div className="mb-6 flex items-center gap-4">
-            <span className="font-sans text-sm text-accent">03</span>
+          <div className="mb-6">
             <Reveal>
               <p id="le-son" className="label">
                 {sound.eyebrow}

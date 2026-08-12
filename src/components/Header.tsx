@@ -73,7 +73,9 @@ export function Header() {
             <ul className="flex items-center gap-7 lg:gap-9">
               {nav.map((item) => (
                 <li key={item.to}>
-                  <NavLink to={item.to} className="group relative block py-1">
+                  {/* `end` sur l'accueil : sans lui, "/" étant préfixe de
+                      toutes les routes, l'onglet resterait actif partout. */}
+                  <NavLink to={item.to} end={item.to === '/'} className="group relative block py-1">
                     {({ isActive }) => (
                       <>
                         <span
@@ -163,6 +165,7 @@ export function Header() {
                       <NavLink
                         ref={i === 0 ? firstLinkRef : undefined}
                         to={item.to}
+                        end={item.to === '/'}
                         className={({ isActive }) =>
                           `group flex items-baseline gap-3 py-4 font-display text-[clamp(1.85rem,8.3vw,2.85rem)]
                          font-extrabold uppercase leading-[0.95] tracking-[-0.03em] ${

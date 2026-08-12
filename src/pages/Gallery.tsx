@@ -4,7 +4,7 @@ import { Image } from '@/components/Image'
 import { PageHeader } from '@/components/PageHeader'
 import { Parallax, Reveal } from '@/components/PageTransition'
 import { Lightbox, type LightboxItem } from '@/components/Lightbox'
-import { gallery, photographer } from '@/lib/content'
+import { creditFor, gallery, photographer } from '@/lib/content'
 import { hasImage } from '@/lib/images'
 
 /** Grille asymétrique : chaque photo occupe une empreinte différente. */
@@ -21,7 +21,16 @@ export default function Gallery() {
   // On n'affiche que les visuels réellement disponibles : une entrée peut être
   // déclarée dans le contenu avant que la photo ne soit fournie.
   const photos = gallery.filter((p) => hasImage(p.key))
-  const items: LightboxItem[] = photos.map((p) => ({ key: p.key, alt: p.alt }))
+  const items: LightboxItem[] = photos.map((p) => ({
+    key: p.key,
+    alt: p.alt,
+    credit: creditFor(p.credit),
+  }))
+
+  // Les auteurs autres que celui par défaut, cités une fois dans l'en-tête.
+  const otherCredits = [
+    ...new Set(photos.filter((p) => p.credit).map((p) => creditFor(p.credit).name)),
+  ]
 
   return (
     <>
@@ -41,7 +50,8 @@ export default function Gallery() {
           >
             {photographer.name}
           </a>
-          , {photographer.studio}.
+          , {photographer.studio}
+          {otherCredits.length > 0 && <> et {otherCredits.join(', ')}</>}.
         </p>
       </PageHeader>
 
@@ -73,9 +83,10 @@ export default function Gallery() {
                       imgClassName="h-full w-full object-cover transition-transform duration-[1200ms] ease-rylix group-hover:scale-[1.04]"
                     />
                   </button>
-                  {/* Crédit sous chaque photo, comme une légende d'édition. */}
+                  {/* Crédit sous chaque photo, comme une légende d'édition —
+                      l'auteur varie d'une série à l'autre. */}
                   <p className="mt-3 shrink-0 font-sans text-[10px] uppercase tracking-[0.12em] text-fg-muted/70">
-                    Photo — {photographer.name}
+                    Photo — {creditFor(photo.credit).name}
                   </p>
                 </Reveal>
               </Parallax>

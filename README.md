@@ -136,7 +136,10 @@ pochette dans `assets/photos/`, puis `npm run images`.
 | `imagin-chalet.jpg`, `imagin-affiche.jpg`, `imagin-ballon.jpg`, `imagin-crepuscule.jpg`, `rylix-dj-1.jpg`, `rylix-dj-2.jpg`, `rylix-dj-exterieur.jpg` | Galerie — événement Ima'Gin Suisse |
 | `better-days-cover.png` | Pochette : accueil, `/musique`, image Open Graph |
 
-Toutes les photos sont créditées à leur auteur — voir `photographer` dans
+Toutes les photos sont créditées à leur auteur. L'auteur par défaut est
+`photographer` ; une entrée de galerie porte `credit: '<clé>'` (voir
+`photographers`) quand la photo est de quelqu'un d'autre — c'est le cas de la
+série Ima'Gin, d'Anne Sophie Fioretto. Voir `photographer` dans
 `src/lib/content.ts` : le crédit s'affiche sous chaque photo de la galerie et
 dans la lightbox. Le `alt` de chaque entrée reste une description de l'image,
 pour les lecteurs d'écran.

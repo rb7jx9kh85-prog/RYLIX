@@ -251,27 +251,38 @@ export function Hero() {
           </motion.p>
 
           {reduce && (
-            <div className="mt-8">
+            <div className="mt-8 max-w-prose">
               <p className="label mb-3">{presentation.eyebrow}</p>
-              <p className="m-0 font-display text-[clamp(20px,3vw,32px)] font-bold leading-[1.1] tracking-[-0.03em] text-cream">
-                {presentation.lead}
-              </p>
+              {presentation.paragraphs.map((paragraph, i) => (
+                <p key={i} className="mt-3 text-sm leading-relaxed text-cream/90 first:mt-0">
+                  {paragraph}
+                </p>
+              ))}
             </div>
           )}
         </motion.div>
 
         {/* Second temps — la présentation, là où était le cadre 01.
-            Sous mouvement réduit elle est déjà rendue avec l'accroche. */}
+            Sous mouvement réduit elle est déjà rendue avec l'accroche.
+
+            Texte courant et non plus display : trois paragraphes à la taille
+            d'un titre ne tiendraient pas dans la fenêtre épinglée. */}
         {!reduce && (
           <motion.div
             style={{ opacity: presentationOpacity, y: presentationY }}
-            className="pointer-events-none absolute inset-x-[18px] top-[26%] z-[9] max-w-[560px]
-                       md:inset-x-auto md:left-[30px] md:top-[30%] md:max-w-[46vw]"
+            className="pointer-events-none absolute inset-x-[18px] top-[20%] z-[9] max-w-[560px]
+                       md:inset-x-auto md:left-[30px] md:top-[24%] md:max-w-[42vw]"
           >
             <p className="label mb-4">{presentation.eyebrow}</p>
-            <p className="m-0 font-display text-[clamp(22px,4.5vw,44px)] font-bold leading-[1.05] tracking-[-0.03em] text-cream">
-              {presentation.lead}
-            </p>
+            {presentation.paragraphs.map((paragraph, i) => (
+              <p
+                key={i}
+                className="mt-3 text-[13px] leading-relaxed text-cream/90 first:mt-0
+                           md:mt-4 md:text-[clamp(13px,1.05vw,16px)]"
+              >
+                {paragraph}
+              </p>
+            ))}
           </motion.div>
         )}
 

@@ -30,12 +30,10 @@ export const presentation = {
   eyebrow: 'Présentation',
   /** Titre de la section Présentation, sur l'accueil. */
   title: 'DJ producteur suisse',
-  /** Accroche courte — celle qui apparaît dans le second temps du hero. */
-  lead: 'Guitariste, DJ, producteur.',
   paragraphs: [
     "Guitariste, DJ, producteur, je suis passionné de musique depuis mon enfance, que ce soit en écoutant ou en jouant — ça m'a toujours fait vibrer.",
     "Mais après plusieurs heures d'écoute et de jeu, j'ai eu l'envie de faire mes propres compositions, de créer quelque chose venant de moi. De vouloir faire vibrer les gens à leur tour, et de donner vie à ces compositions venues d'une chambre d'ado qui expérimente, perfectionne et doute.",
-    "Ma toute première sortie, « Better Days », est pour moi un moyen de me lancer, de sortir de ce manque de confiance et de cette peur de me montrer et de présenter mon art — sans me soucier de faire des erreurs, mais en les acceptant et en apprenant davantage.",
+    "Ma toute première sortie, « Better Days », est pour moi un moyen de me lancer, de sortir de ce manque de confiance et de cette peur de me montrer et de présenter mon travail.",
   ],
 } as const
 
@@ -51,6 +49,15 @@ export const discover = {
   title: 'Découvrez Better Days',
 } as const
 
+/**
+ * Origine du nom d'artiste — petite note citée en bas de la section Explorer.
+ * Texte de l'artiste, à la première personne.
+ */
+export const artistName = {
+  eyebrow: 'Le nom',
+  quote: '',
+} as const
+
 /** Section son / studio — accompagne la scène 3D. */
 export const sound = {
   eyebrow: 'Le son',
@@ -58,15 +65,22 @@ export const sound = {
   body: 'Textures analogiques, basses profondes, silences travaillés comme des pleins. Une identité sonore pensée pour l’écoute autant que pour la scène.',
 } as const
 
-/** Clôture graphique, juste avant le footer. */
-export const finalCta = {
-  title: ['Écouter.', 'Regarder.', 'Suivre.'],
-  body: 'Better Days est disponible partout. La suite se prépare en Valais.',
-} as const
+/**
+ * Clôture graphique, juste avant le footer.
+ *
+ * Chaque mot est lui-même le lien : le verbe annonce ce qu'on trouve au bout,
+ * plutôt qu'un paragraphe qui l'explique puis une rangée d'icônes séparée.
+ */
+export const finalCta = [
+  { word: 'Écouter', platform: 'Spotify', url: 'https://open.spotify.com/artist/7J5z5bTji0fyEE3X0xhI3k' },
+  { word: 'Regarder', platform: 'YouTube', url: 'https://www.youtube.com/@RYLIXStudio' },
+  { word: 'Suivre', platform: 'Instagram', url: 'https://www.instagram.com/rylix_music' },
+] as const
 
 export type NavItem = { label: string; to: string }
 
 export const nav: NavItem[] = [
+  { label: 'Accueil', to: '/' },
   { label: 'Musique', to: '/musique' },
   { label: 'Galerie', to: '/galerie' },
   { label: 'Dates', to: '/dates' },
@@ -249,12 +263,31 @@ export type ParcoursEntry = {
   url?: string
 }
 
-/** Auteur des photographies du site — crédité sous chaque visuel. */
+/**
+ * Auteur par défaut des photographies du site — crédité sous chaque visuel
+ * qui ne déclare pas son propre `credit`.
+ */
 export const photographer = {
   name: 'Noah Gabioud',
   studio: 'Aloa Photography',
   url: 'https://www.aloa-photography.ch',
 } as const
+
+/**
+ * Autres photographes. Une entrée de galerie porte `credit: '<clé>'` pour
+ * être créditée à quelqu'un d'autre que `photographer`.
+ */
+export const photographers = {
+  'anne-sophie-fioretto': { name: 'Anne Sophie Fioretto' },
+} as const
+
+export type PhotographerKey = keyof typeof photographers
+
+/** Crédit affiché pour une photo — auteur par défaut si rien n'est déclaré. */
+export function creditFor(credit?: PhotographerKey): { name: string; url?: string } {
+  if (credit && credit in photographers) return photographers[credit]
+  return { name: photographer.name, url: photographer.url }
+}
 
 export type GalleryPhoto = {
   /** Clé dans src/lib/images.generated.ts */
@@ -263,6 +296,8 @@ export type GalleryPhoto = {
   alt: string
   /** Empreinte dans la grille asymétrique. */
   span: 'tall' | 'portrait' | 'square' | 'wide'
+  /** Auteur, si ce n'est pas celui par défaut (voir `photographers`). */
+  credit?: PhotographerKey
 }
 
 /**
@@ -304,36 +339,43 @@ export const gallery: GalleryPhoto[] = [
     key: 'rylix-dj-exterieur',
     alt: 'RYLIX aux platines en extérieur, terrasse du Miroir de l’Argentine, Valais.',
     span: 'portrait',
+    credit: 'anne-sophie-fioretto',
   },
   {
     key: 'imagin-chalet',
     alt: 'Chalet Miroir de l’Argentine et massif alpin, lors d’un événement Ima’Gin en Valais.',
     span: 'wide',
+    credit: 'anne-sophie-fioretto',
   },
   {
     key: 'rylix-dj-1',
     alt: 'RYLIX aux platines, casque audio, contrôleur DJ Pioneer.',
     span: 'tall',
+    credit: 'anne-sophie-fioretto',
   },
   {
     key: 'imagin-affiche',
     alt: 'Affiche Ima’Gin Suisse, gin alpin, devant les montagnes valaisannes.',
     span: 'square',
+    credit: 'anne-sophie-fioretto',
   },
   {
     key: 'rylix-dj-2',
     alt: 'RYLIX aux platines, casquette Ima’Gin, contrôleur DJ Hercules, noir et blanc.',
     span: 'portrait',
+    credit: 'anne-sophie-fioretto',
   },
   {
     key: 'imagin-ballon',
     alt: 'Ballon publicitaire Ima’Gin au-dessus des chalets, Valais.',
     span: 'wide',
+    credit: 'anne-sophie-fioretto',
   },
   {
     key: 'imagin-crepuscule',
     alt: 'Ciel crépusculaire au-dessus des sapins et de la lune, Valais.',
     span: 'square',
+    credit: 'anne-sophie-fioretto',
   },
 ]
 
