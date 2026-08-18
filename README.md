@@ -1,6 +1,6 @@
 # RYLIX — site officiel
 
-Site artiste de RYLIX, producteur suisse (Valais). Site statique multipage, sans backend.
+Site artiste de RYLIX, DJ et producteur suisse (Valais). Site statique multipage, sans backend.
 
 - **Stack** : Vite + React 18 + TypeScript, React Router v6, Tailwind CSS, Framer Motion, Lenis
 - **Hébergement** : Vercel (statique, `dist/`)
@@ -50,7 +50,7 @@ src/pages/             Une page par route
 | Route | Page |
 |---|---|
 | `/` | Accueil — hero (dont présentation), puis les cinq entrées du site sur une ligne |
-| `/musique` | Better Days : pochette, player Spotify, plateformes |
+| `/musique` | Better Days : pochette et lecture Spotify, aperçu SoundCloud |
 | `/galerie` | Photos en grille asymétrique + lightbox, créditées |
 | `/dates` | Dates confirmées, ou état vide |
 | `/parcours` | Lieux, événements et marques |
@@ -150,8 +150,7 @@ ce sont des fichiers commités dans le dépôt — la page `/galerie` et
 l'aperçu mosaïque de l'accueil n'ont donc aucune dépendance au SDK Firebase.
 
 Une entrée de galerie dont l'image n'existe pas dans le manifeste n'est pas
-affichée, et la section présentation rend un cadre vide : on peut donc déclarer
-un visuel avant de l'avoir, il apparaîtra dès que le fichier sera déposé et
+affichée : on peut donc déclarer un visuel avant de l'avoir, il apparaîtra dès que le fichier sera déposé et
 `npm run images` relancé.
 
 ---

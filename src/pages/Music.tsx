@@ -1,12 +1,7 @@
-import { useState } from 'react'
 import { Seo } from '@/components/Seo'
-import { Image } from '@/components/Image'
 import { TurntableSection } from '@/components/TurntableSection'
-import { AmbientLayer } from '@/components/AmbientLayer'
-import { VinylSection } from '@/components/VinylSection'
-import { SocialLinks } from '@/components/SocialLinks'
-import { Reveal, RuleReveal, SplitText } from '@/components/PageTransition'
-import { discover, release, site, soundcloud } from '@/lib/content'
+import { Reveal, RuleReveal } from '@/components/PageTransition'
+import { release, site, soundcloud } from '@/lib/content'
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -30,97 +25,13 @@ export default function Music() {
         jsonLd={jsonLd}
       />
 
-      {/* 1. Pochette */}
-      <section className="pb-lg pt-32 md:pb-xl md:pt-40">
-        <div className="container-rylix">
-          <Reveal>
-            <Image
-              imageKey={release.coverKey}
-              alt={`Pochette du single ${release.title} de RYLIX`}
-              sizes="(max-width: 768px) 92vw, 640px"
-              className="photo mx-auto aspect-square w-full max-w-xl rounded-sm border border-slate/20"
-              priority
-            />
-          </Reveal>
-        </div>
-      </section>
+      {/* Écouter — la pochette et la lecture Spotify dans un seul bloc. */}
+      <div className="pt-24 md:pt-28">
+        <TurntableSection />
+      </div>
 
-      {/* 2. Découvrez Better Days — texte simple + liens plateformes */}
-      <section className="relative overflow-hidden pb-lg md:pb-xl">
-        <AmbientLayer className="pointer-events-none absolute inset-0 z-0 opacity-50" />
-
-        <div className="container-rylix relative z-10">
-          <div className="grid gap-10 md:grid-cols-12 md:gap-12">
-            <div className="md:col-span-6">
-              <Reveal>
-                <p className="label mb-4">{discover.eyebrow}</p>
-              </Reveal>
-              {/* Taille calée sur la largeur réelle de la colonne (6/12) :
-                  « Découvrez » est un mot long et insécable, et SplitText le
-                  rogne au lieu de le laisser déborder s'il ne tient pas. */}
-              <SplitText
-                as="h1"
-                text={discover.title}
-                delay={0.06}
-                className="text-balance break-words font-display
-                           text-[clamp(1.5rem,3.4vw,2.5rem)] font-extrabold uppercase
-                           leading-[1.05] tracking-[-0.02em]"
-              />
-            </div>
-
-            <div className="md:col-span-6">
-              <Reveal delay={0.1}>
-                <h2 className="label mb-2">Sur toutes les plateformes</h2>
-              </Reveal>
-              <ul className="flex flex-col">
-                {release.platforms.map((p, i) => (
-                  <Reveal key={p.name} delay={0.14 + i * 0.05}>
-                    <li className="border-b border-slate/20 first:border-t">
-                      <a
-                        href={p.url}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                        className="group relative flex items-center justify-between overflow-hidden py-4"
-                      >
-                        <span
-                          aria-hidden
-                          className="absolute inset-y-0 left-0 w-0 bg-accent/5 transition-[width]
-                                     duration-500 ease-rylix group-hover:w-full"
-                        />
-                        <span className="relative flex items-center gap-3">
-                          <span
-                            aria-hidden
-                            className="h-1.5 w-1.5 shrink-0 rounded-full bg-slate/40 transition-colors
-                                       duration-300 ease-rylix group-hover:bg-accent"
-                          />
-                          <span className="text-cream transition-colors duration-300 ease-rylix group-hover:text-accent">
-                            {p.name}
-                          </span>
-                        </span>
-                        <svg
-                          viewBox="0 0 24 24"
-                          aria-hidden
-                          fill="none"
-                          className="relative h-4 w-4 stroke-slate transition-all duration-500 ease-rylix
-                                     group-hover:translate-x-1 group-hover:stroke-accent"
-                        >
-                          <path d="M7 17L17 7M9 7h8v8" strokeWidth="1.25" />
-                        </svg>
-                      </a>
-                    </li>
-                  </Reveal>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. Tourne-disque simplifié — production Spotify */}
-      <TurntableSection />
-
-      {/* 4 & 5. SoundCloud — titres non postés ailleurs + aperçu */}
-      <section className="py-lg md:py-xl" aria-labelledby="soundcloud">
+      {/* SoundCloud — titres non postés ailleurs */}
+      <section className="pb-lg md:pb-xl" aria-labelledby="soundcloud">
         <div className="container-rylix">
           <RuleReveal className="mb-lg" />
           <Reveal>
@@ -151,77 +62,6 @@ export default function Music() {
           </Reveal>
         </div>
       </section>
-
-      <VinylSection />
-
-      <section className="py-lg md:py-xl" aria-labelledby="partager">
-        <div className="container-rylix">
-          <RuleReveal className="mb-lg" />
-          <div className="grid gap-12 md:grid-cols-12 md:gap-12">
-            <Reveal className="md:col-span-5">
-              <p id="partager" className="label mb-2">
-                Partager
-              </p>
-              <p className="max-w-prose text-fg-muted">
-                {release.title} se découvre aussi de bouche à oreille — le lien en un geste.
-              </p>
-            </Reveal>
-
-            <Reveal delay={0.06} className="min-w-0 md:col-span-7">
-              <ShareLink />
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      <section className="pb-lg md:pb-xl" aria-labelledby="suivre">
-        <div className="container-rylix">
-          <RuleReveal className="mb-lg" />
-          <div className="grid gap-12 md:grid-cols-12 md:gap-12">
-            <Reveal className="md:col-span-5">
-              <p id="suivre" className="label mb-2">
-                Suivre
-              </p>
-              <p className="max-w-prose text-fg-muted">
-                Les prochaines sorties et dates se suivent d’abord ici.
-              </p>
-            </Reveal>
-
-            <Reveal delay={0.06} className="md:col-span-7">
-              <SocialLinks variant="list" />
-            </Reveal>
-          </div>
-        </div>
-      </section>
     </>
-  )
-}
-
-/** Copie le lien du morceau — partage natif sur mobile si disponible. */
-function ShareLink() {
-  const [copied, setCopied] = useState(false)
-  const url = release.spotifyUrl
-
-  const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: release.title, url })
-        return
-      } catch {
-        // Partage annulé ou indisponible : on retombe sur la copie.
-      }
-    }
-    await navigator.clipboard.writeText(url)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
-
-  return (
-    <div className="flex items-center gap-4 border-y border-slate/20 py-4">
-      <code className="min-w-0 flex-1 truncate font-sans text-sm text-fg-muted">{url}</code>
-      <button type="button" onClick={handleShare} className="btn shrink-0">
-        {copied ? 'Copié' : 'Partager'}
-      </button>
-    </div>
   )
 }

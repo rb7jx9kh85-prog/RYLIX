@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, useAnimationFrame, useMotionValue, useSpring, type Variants } from 'framer-motion'
+import { motion, type Variants } from 'framer-motion'
 import { release, turntableSection } from '@/lib/content'
 import { resolveImage } from '@/lib/images'
 import { EASE, usePrefersReducedMotion } from '@/lib/motion'
@@ -251,7 +251,10 @@ export function TurntableSection() {
   )
 }
 
-/** Platine + bras — CSS/SVG et quelques motion values, aucune dépendance supplémentaire. */
+/**
+ * La pochette de Better Days, carrée — plus de plateau ni de bras de lecture.
+ * Elle respire légèrement en lecture, ce qui suffit à signaler que ça tourne.
+ */
 function Deck({
   cover,
   playing,
@@ -263,65 +266,30 @@ function Deck({
   loading: boolean
   reduce: boolean
 }) {
-  // Rotation continue du plateau : la vitesse s'accélère puis décélère vers sa
-  // cible au lieu de basculer net — démarrage moteur, ralenti par inertie.
-  const rotation = useMotionValue(0)
-  const speedRef = useRef(0)
-  useAnimationFrame((_t, delta) => {
-    if (reduce) return
-    const dt = Math.min(delta, 48) / 1000
-    const target = playing ? 168 : 0
-    const smoothing = playing ? 2.8 : 0.85
-    speedRef.current += (target - speedRef.current) * Math.min(1, smoothing * dt)
-    rotation.set(rotation.get() + speedRef.current * dt)
-  })
-
-  // Bras : ressort peu amorti -> léger rebond mécanique à l'arrivée, comme un
-  // vrai bras qui se pose plutôt qu'un simple basculement.
-  const armTarget = useMotionValue(-16)
-  const armRotate = useSpring(armTarget, { stiffness: 85, damping: 8.5, mass: 1.3 })
-  useEffect(() => {
-    armTarget.set(playing ? 20 : -16)
-  }, [playing, armTarget])
-
   return (
     <div className="relative aspect-square w-full max-w-[280px]">
-      {/* Platine */}
-      <div
-        className="absolute inset-0 rounded-full border border-slate/25"
-        style={{
-          background:
-            'repeating-radial-gradient(circle, rgba(200,203,188,0.1) 0px, rgba(200,203,188,0.1) 1px, transparent 1px, transparent 6px), #1a1c17',
-        }}
-      >
-        <motion.div style={{ rotate: reduce ? 0 : rotation }} className="h-full w-full">
-          {/* Étiquette — vraie pochette du single */}
-          <div className="absolute left-1/2 top-1/2 h-[38%] w-[38%] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full border border-navy shadow-[0_0_0_1px_rgba(0,0,0,0.4)]">
-            {cover ? (
-              <img src={cover} alt="" className="photo h-full w-full object-cover" />
-            ) : (
-              <div className="h-full w-full bg-accent" />
-            )}
-          </div>
-          <span className="absolute left-1/2 top-1/2 h-[5%] w-[5%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-navy" />
-        </motion.div>
-      </div>
-
-      {/* Bras de lecture */}
       <motion.div
-        aria-hidden
-        className="absolute -right-2 -top-2 h-[46%] w-[46%] origin-top-right"
-        style={{ rotate: reduce ? (playing ? 20 : -16) : armRotate }}
+        animate={reduce ? undefined : { scale: playing ? 1.02 : 1 }}
+        transition={{ duration: 0.9, ease: EASE }}
+        className="h-full w-full overflow-hidden rounded-sm border border-slate/25 bg-navy-alt"
       >
-        <div className="absolute right-[18%] top-[10%] h-[78%] w-[3px] rounded-full bg-pale/70" />
-        <span className="absolute right-[9%] top-[82%] block h-3 w-5 -translate-x-1/2 rotate-[28deg] rounded-[2px] bg-pale/80" />
-        <span className="absolute right-[10%] top-[6%] block h-3 w-3 -translate-x-1/2 rounded-full border border-pale/70" />
+        {cover ? (
+          <img
+            src={cover}
+            alt=""
+            className="photo h-full w-full object-cover"
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          <div className="h-full w-full bg-navy-alt" />
+        )}
       </motion.div>
 
       {loading && (
         <span
           aria-hidden
-          className="absolute inset-0 flex items-center justify-center font-sans text-[10px] uppercase tracking-[0.14em] text-fg-muted/50"
+          className="absolute inset-0 flex items-center justify-center bg-navy/50 font-sans text-[10px] uppercase tracking-[0.14em] text-fg-muted/70"
         >
           Connexion…
         </span>

@@ -3,9 +3,7 @@ import { Seo } from '@/components/Seo'
 import { Hero } from '@/components/Hero'
 import { HomeCards } from '@/components/HomeCards'
 import { TurntableSection } from '@/components/TurntableSection'
-import { Presentation } from '@/components/Presentation'
 import { NameNote } from '@/components/NameNote'
-import { VinylSection } from '@/components/VinylSection'
 import { FinalCta } from '@/components/FinalCta'
 import { AmbientLayer } from '@/components/AmbientLayer'
 import { Reveal, RuleReveal } from '@/components/PageTransition'
@@ -61,8 +59,6 @@ export default function Home() {
         </div>
       </section>
 
-      <Presentation />
-      <VinylSection />
       <FinalCta />
     </>
   )

@@ -10,12 +10,15 @@ export const site = {
   url: (import.meta.env.VITE_SITE_URL ?? 'https://rylix.ch').replace(/\/$/, ''),
   locale: 'fr_CH',
   lang: 'fr',
-  /** Affichée sur le site (hero, footer). */
-  tagline: 'Producteur suisse — Valais',
+  /**
+   * Affichée sur le site (hero, footer) — la même formule partout, pour qu'on
+   * retienne le métier plutôt que la géographie.
+   */
+  tagline: 'DJ et producteur',
   /** Suffixe du <title> de l'accueil — sans tiret pour éviter un double séparateur. */
-  titleSuffix: 'Producteur suisse, Valais',
+  titleSuffix: 'DJ et producteur, Valais',
   description:
-    'RYLIX est un producteur suisse originaire du Valais. Better Days, son premier single, est disponible.',
+    'RYLIX est un DJ et producteur suisse originaire du Valais. Better Days, son premier single, est disponible.',
 } as const
 
 /**
@@ -32,8 +35,7 @@ export const presentation = {
   title: 'DJ producteur suisse',
   paragraphs: [
     "Guitariste, DJ, producteur, je suis passionné de musique depuis mon enfance, que ce soit en écoutant ou en jouant — ça m'a toujours fait vibrer.",
-    "Mais après plusieurs heures d'écoute et de jeu, j'ai eu l'envie de faire mes propres compositions, de créer quelque chose venant de moi. De vouloir faire vibrer les gens à leur tour, et de donner vie à ces compositions venues d'une chambre d'ado qui expérimente, perfectionne et doute.",
-    "Ma toute première sortie, « Better Days », est pour moi un moyen de me lancer, de sortir de ce manque de confiance et de cette peur de me montrer et de présenter mon travail.",
+    "Mais j'ai assez vite eu l'envie de faire mes propres compositions, de créer quelque chose venant de moi. De vouloir faire vibrer les gens à leur tour.",
   ],
 } as const
 
@@ -43,12 +45,6 @@ export const turntableSection = {
   hint: 'Lecture directe, via Spotify.',
 } as const
 
-/** Texte d'intro simple, juste après la pochette sur la page Musique. */
-export const discover = {
-  eyebrow: 'Découvrir',
-  title: 'Découvrez Better Days',
-} as const
-
 /**
  * Origine du nom d'artiste — petite note citée en bas de la section Explorer.
  * Texte de l'artiste, à la première personne.
@@ -56,13 +52,6 @@ export const discover = {
 export const artistName = {
   eyebrow: 'Le nom',
   quote: '',
-} as const
-
-/** Section son / studio — accompagne la scène 3D. */
-export const sound = {
-  eyebrow: 'Le son',
-  title: ['Chaud.', 'Minéral.', 'Brut.'],
-  body: 'Textures analogiques, basses profondes, silences travaillés comme des pleins. Une identité sonore pensée pour l’écoute autant que pour la scène.',
 } as const
 
 /**
@@ -118,7 +107,7 @@ export const hero = {
     index: '02',
   } satisfies HeroFrame,
   /** Accroche en haut à gauche, une ligne par entrée. */
-  intro: ['DJ producteur suisse'],
+  intro: ['DJ et producteur'],
   /** Coordonnées du Valais (Sion), affichées dans le bandeau bas. */
   coordinates: '46°06′00″ N / 7°04′22″ E',
 } as const

@@ -98,9 +98,12 @@ export function HomeCards({ pinnedRef }: { pinnedRef?: RefObject<HTMLElement> })
     <div ref={trackRef} className="overflow-hidden">
       <div
         ref={bandRef}
-        // snap + scroll natif : le glissement manuel reste possible et net.
-        className="flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-2
-                   [scrollbar-width:none] md:gap-6 md:px-10 [&::-webkit-scrollbar]:hidden"
+        // Scroll natif, sans snap : l'accrochage obligatoire ramenait la bande
+        // sur la carte la plus proche après chaque écriture de scrollLeft, ce
+        // qui hachait le défilement au lieu de le laisser glisser. Le
+        // glissement au doigt reste possible, simplement plus libre.
+        className="flex gap-4 overflow-x-auto px-6 pb-2 [scrollbar-width:none]
+                   md:gap-6 md:px-10 [&::-webkit-scrollbar]:hidden"
       >
         {homeCards.map((card) => {
           const header = (
@@ -129,7 +132,7 @@ export function HomeCards({ pinnedRef }: { pinnedRef?: RefObject<HTMLElement> })
             <Link
               key={card.to}
               to={card.to}
-              className={`group relative flex h-[min(44vh,330px)] shrink-0 snap-start flex-col
+              className={`group relative flex h-[min(44vh,330px)] shrink-0 flex-col
                           overflow-hidden rounded-sm border border-slate/25
                           transition-colors duration-500 ease-rylix hover:border-accent/60
                           ${spanClass[card.span]}`}

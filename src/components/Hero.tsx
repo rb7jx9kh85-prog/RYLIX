@@ -13,6 +13,16 @@ import { EASE, usePrefersReducedMotion } from '@/lib/motion'
 
 const LETTERS = 'RYLIX'.split('')
 
+/**
+ * Écriture de la présentation, calquée sur le logotype : capitales, graisse
+ * display, et mix-blend-difference pour que le texte s'inverse en passant sur
+ * les cadres photo au lieu de se poser dessus.
+ */
+const PRESENTATION_TEXT =
+  'm-0 font-display font-extrabold uppercase leading-[1.12] tracking-[-0.015em] ' +
+  'text-cream mix-blend-difference text-[clamp(14px,3.4vw,19px)] ' +
+  'md:text-[clamp(15px,1.55vw,26px)]'
+
 /** Courbe d'intro commune — sortie franche, sans rebond. */
 const intro = (duration: number, delay: number) => ({ duration, delay, ease: EASE })
 
@@ -254,7 +264,7 @@ export function Hero() {
             <div className="mt-8 max-w-prose">
               <p className="label mb-3">{presentation.eyebrow}</p>
               {presentation.paragraphs.map((paragraph, i) => (
-                <p key={i} className="mt-3 text-sm leading-relaxed text-cream/90 first:mt-0">
+                <p key={i} className={`${PRESENTATION_TEXT} mt-4 first:mt-0`}>
                   {paragraph}
                 </p>
               ))}
@@ -265,21 +275,18 @@ export function Hero() {
         {/* Second temps — la présentation, là où était le cadre 01.
             Sous mouvement réduit elle est déjà rendue avec l'accroche.
 
-            Texte courant et non plus display : trois paragraphes à la taille
-            d'un titre ne tiendraient pas dans la fenêtre épinglée. */}
+            Même écriture que le logotype : capitales, graisse display,
+            mix-blend-difference — le texte s'inverse en passant sur les
+            cadres, exactement comme RYLIX au premier temps. */}
         {!reduce && (
           <motion.div
             style={{ opacity: presentationOpacity, y: presentationY }}
-            className="pointer-events-none absolute inset-x-[18px] top-[20%] z-[9] max-w-[560px]
-                       md:inset-x-auto md:left-[30px] md:top-[24%] md:max-w-[42vw]"
+            className="pointer-events-none absolute inset-x-[18px] top-[17%] z-[9] max-w-[600px]
+                       md:inset-x-auto md:left-[30px] md:top-[20%] md:max-w-[52vw]"
           >
             <p className="label mb-4">{presentation.eyebrow}</p>
             {presentation.paragraphs.map((paragraph, i) => (
-              <p
-                key={i}
-                className="mt-3 text-[13px] leading-relaxed text-cream/90 first:mt-0
-                           md:mt-4 md:text-[clamp(13px,1.05vw,16px)]"
-              >
+              <p key={i} className={`${PRESENTATION_TEXT} mt-4 first:mt-0 md:mt-5`}>
                 {paragraph}
               </p>
             ))}
