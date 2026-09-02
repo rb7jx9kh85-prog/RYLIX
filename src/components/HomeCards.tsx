@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState, type RefObject } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useMotionValueEvent, useScroll, useSpring, useTransform } from 'framer-motion'
+import { motion } from 'framer-motion'
 import {
   gallery,
   homeCards,
@@ -12,30 +12,8 @@ import {
 } from '@/lib/content'
 import { formatShortDate, getYear, isUpcoming } from '@/lib/format'
 import { resolveImage } from '@/lib/images'
-import { usePrefersReducedMotion } from '@/lib/motion'
+import { EASE, usePrefersReducedMotion } from '@/lib/motion'
 import { useFirestoreCollection } from '@/lib/useFirestoreCollection'
-
-/**
- * Largeur qui dépasse de la bande — la course exacte à parcourir pour que la
- * dernière carte arrive au bord droit. Re-mesurée au redimensionnement et
- * quand le contenu change (les cartes dates/parcours arrivent après coup).
- */
-function useTrackOverflow(ref: RefObject<HTMLElement>): number {
-  const [overflow, setOverflow] = useState(0)
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const measure = () => setOverflow(Math.max(0, el.scrollWidth - el.clientWidth))
-    measure()
-    const observer = new ResizeObserver(measure)
-    observer.observe(el)
-    for (const child of Array.from(el.children)) observer.observe(child)
-    return () => observer.disconnect()
-  }, [ref])
-
-  return overflow
-}
 
 /** Largeur de chaque carte, en colonnes d'une grille de 6. */
 const spanClass: Record<HomeCard['span'], string> = {
@@ -45,18 +23,16 @@ const spanClass: Record<HomeCard['span'], string> = {
 }
 
 /**
- * Aperçus des onglets. La bande défile latéralement au fil du scroll vertical :
- * on descend normalement dans la page, mais les cartes, elles, traversent
- * l'écran de la droite vers la gauche.
- *
- * La bande reste aussi glissable au doigt / au trackpad — sur mobile c'est le
- * geste attendu, et ça évite de dépendre uniquement du scroll détourné.
+ * Aperçus des onglets, en bande horizontale. Elle ne réagit qu'au geste
+ * explicite de l'utilisateur — glisser au doigt/trackpad, ou les flèches sur
+ * grand écran — jamais au simple scroll vertical de la page : c'est lui qui
+ * a le dernier mot, la bande ne le détourne jamais.
  */
-export function HomeCards({ pinnedRef }: { pinnedRef?: RefObject<HTMLElement> }) {
+export function HomeCards() {
   const reduce = usePrefersReducedMotion()
-  const trackRef = useRef<HTMLDivElement>(null)
   const bandRef = useRef<HTMLDivElement>(null)
-  const overflow = useTrackOverflow(bandRef)
+  const [canScrollLeft, setCanScrollLeft] = useState(false)
+  const [canScrollRight, setCanScrollRight] = useState(false)
   const { items: tourDates } = useFirestoreCollection<TourDate>('dates', 'date', 'asc')
   const { items: parcours } = useFirestoreCollection<ParcoursEntry>(
     'parcours',
@@ -64,48 +40,44 @@ export function HomeCards({ pinnedRef }: { pinnedRef?: RefObject<HTMLElement> })
     'desc',
   )
 
-  // Section épinglée (pinnedRef) : la progression court sur toute la durée de
-  // l'épinglage, et la bande a fini de défiler avant que la page ne reparte
-  // vers le bas. Sans pin, on retombe sur la mesure d'origine — la portion du
-  // scroll pendant laquelle la bande est réellement à l'écran.
-  const { scrollYProgress } = useScroll({
-    target: pinnedRef ?? trackRef,
-    offset: pinnedRef ? ['start start', 'end end'] : ['start end', 'end start'],
-    // Mesure hors layout effect : évite de forcer un reflow synchrone à chaque
-    // montage/scroll, coûteux sur mobile.
-    layoutEffect: false,
-  })
-  const progress = useSpring(scrollYProgress, { stiffness: 90, damping: 28, mass: 0.35 })
-  // La course est la largeur réellement en trop, mesurée, pas un pourcentage
-  // choisi à la main : c'est la seule façon que la dernière carte arrive pile
-  // au bord quelle que soit la largeur d'écran — un pourcentage calé sur le
-  // bureau laisse la moitié de la bande dehors sur mobile. Elle se termine à
-  // 0.9 : le dixième restant sert de palier avant que la section ne se
-  // désépingle et ne rende la main au scroll vertical.
-  const range: [number, number] = pinnedRef ? [0.05, 0.9] : [0.15, 0.85]
-  const offset = useTransform(progress, range, [0, overflow], { clamp: true })
-
-  // On pilote le scroll natif de la bande, pas une translation : la bande
-  // porte overflow-x, donc la translater déplacerait aussi sa fenêtre de
-  // découpe — les cartes disparaîtraient par la droite au lieu de défiler.
-  useMotionValueEvent(offset, 'change', (v) => {
-    if (reduce) return
+  useEffect(() => {
     const el = bandRef.current
-    if (el) el.scrollLeft = v
-  })
+    if (!el) return
+    const update = () => {
+      setCanScrollLeft(el.scrollLeft > 4)
+      setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4)
+    }
+    update()
+    el.addEventListener('scroll', update, { passive: true })
+    const observer = new ResizeObserver(update)
+    observer.observe(el)
+    return () => {
+      el.removeEventListener('scroll', update)
+      observer.disconnect()
+    }
+  }, [])
+
+  const scrollByCard = (direction: 1 | -1) => {
+    const el = bandRef.current
+    if (!el) return
+    const amount = Math.min(el.clientWidth * 0.8, 480) * direction
+    el.scrollBy({ left: amount, behavior: reduce ? 'auto' : 'smooth' })
+  }
 
   return (
-    <div ref={trackRef} className="overflow-hidden">
+    <div className="relative">
       <div
         ref={bandRef}
-        // Scroll natif, sans snap : l'accrochage obligatoire ramenait la bande
-        // sur la carte la plus proche après chaque écriture de scrollLeft, ce
-        // qui hachait le défilement au lieu de le laisser glisser. Le
-        // glissement au doigt reste possible, simplement plus libre.
-        className="flex gap-4 overflow-x-auto px-6 pb-2 [scrollbar-width:none]
-                   md:gap-6 md:px-10 [&::-webkit-scrollbar]:hidden"
+        className="flex snap-x snap-proximity gap-4 overflow-x-auto scroll-smooth px-6 pb-2
+                   [scrollbar-width:none] md:gap-6 md:px-10 [&::-webkit-scrollbar]:hidden"
+        style={{
+          maskImage:
+            'linear-gradient(to right, transparent, black 24px, black calc(100% - 24px), transparent)',
+          WebkitMaskImage:
+            'linear-gradient(to right, transparent, black 24px, black calc(100% - 24px), transparent)',
+        }}
       >
-        {homeCards.map((card) => {
+        {homeCards.map((card, i) => {
           const header = (
             <div className="flex items-end justify-between gap-4 p-5 md:p-6">
               <div>
@@ -126,24 +98,61 @@ export function HomeCards({ pinnedRef }: { pinnedRef?: RefObject<HTMLElement> })
             </div>
           )
 
-          // Carte plate : pas de bascule 3D, pas de reflet au pointeur —
-          // seules la bordure et la couleur du titre répondent au survol.
           return (
-            <Link
+            <motion.div
               key={card.to}
-              to={card.to}
-              className={`group relative flex h-[min(44vh,330px)] shrink-0 flex-col
-                          overflow-hidden rounded-sm border border-slate/25
-                          transition-colors duration-500 ease-rylix hover:border-accent/60
-                          ${spanClass[card.span]}`}
+              initial={reduce ? undefined : { opacity: 0, y: 18 }}
+              whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-10% 0px' }}
+              transition={{ duration: 0.6, delay: i * 0.05, ease: EASE }}
+              className={`shrink-0 snap-start ${spanClass[card.span]}`}
             >
-              {/* Même ordre pour toutes les cartes : les titres se lisent sur
-                  une seule ligne de regard quand on parcourt la bande. */}
-              {header}
-              <CardBody card={card} gallery={gallery} tourDates={tourDates} parcours={parcours} />
-            </Link>
+              <Link
+                to={card.to}
+                className="group relative flex h-[min(44vh,330px)] w-full flex-col
+                           overflow-hidden rounded-sm border border-slate/25
+                           transition-colors duration-500 ease-rylix hover:border-accent/60"
+              >
+                {header}
+                <CardBody card={card} gallery={gallery} tourDates={tourDates} parcours={parcours} />
+              </Link>
+            </motion.div>
           )
         })}
+      </div>
+
+      {/* Flèches — visibles uniquement quand il reste effectivement de la
+          bande à découvrir dans cette direction, et seulement sur pointeur
+          fin : sur tactile, le glissement suffit. */}
+      <div className="pointer-events-none absolute inset-y-0 left-0 right-0 hidden items-center justify-between px-1 md:flex">
+        <button
+          type="button"
+          onClick={() => scrollByCard(-1)}
+          aria-label="Cartes précédentes"
+          disabled={!canScrollLeft}
+          className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full
+                     border border-slate/30 bg-navy/80 text-cream backdrop-blur transition-all
+                     duration-300 ease-rylix hover:border-accent/60 hover:text-accent
+                     disabled:pointer-events-none disabled:opacity-0"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden className="h-4 w-4 stroke-current" fill="none">
+            <path d="M15 4l-8 8 8 8" strokeWidth="1.25" />
+          </svg>
+        </button>
+        <button
+          type="button"
+          onClick={() => scrollByCard(1)}
+          aria-label="Cartes suivantes"
+          disabled={!canScrollRight}
+          className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full
+                     border border-slate/30 bg-navy/80 text-cream backdrop-blur transition-all
+                     duration-300 ease-rylix hover:border-accent/60 hover:text-accent
+                     disabled:pointer-events-none disabled:opacity-0"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden className="h-4 w-4 stroke-current" fill="none">
+            <path d="M9 4l8 8-8 8" strokeWidth="1.25" />
+          </svg>
+        </button>
       </div>
     </div>
   )
