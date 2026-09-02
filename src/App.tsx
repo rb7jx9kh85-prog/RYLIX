@@ -5,6 +5,7 @@ import Home from '@/pages/Home'
 
 // L'accueil est dans le bundle initial ; les autres pages sont chargées à la demande.
 const Music = lazy(() => import('@/pages/Music'))
+const Studio = lazy(() => import('@/pages/Studio'))
 const Gallery = lazy(() => import('@/pages/Gallery'))
 const Dates = lazy(() => import('@/pages/Dates'))
 const Parcours = lazy(() => import('@/pages/Parcours'))
@@ -22,6 +23,7 @@ export default function App() {
       <Route element={<Layout />}>
         <Route index element={<Home />} />
         <Route path="musique" element={deferred(<Music />)} />
+        <Route path="studio" element={deferred(<Studio />)} />
         <Route path="galerie" element={deferred(<Gallery />)} />
         <Route path="dates" element={deferred(<Dates />)} />
         <Route path="parcours" element={deferred(<Parcours />)} />

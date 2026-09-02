@@ -71,6 +71,7 @@ export type NavItem = { label: string; to: string }
 export const nav: NavItem[] = [
   { label: 'Accueil', to: '/' },
   { label: 'Musique', to: '/musique' },
+  { label: 'Studio', to: '/studio' },
   { label: 'Galerie', to: '/galerie' },
   { label: 'Dates', to: '/dates' },
   { label: 'Parcours', to: '/parcours' },
@@ -148,6 +149,14 @@ export const homeCards: HomeCard[] = [
     span: 3,
   },
   {
+    to: '/studio',
+    label: 'Studio',
+    kind: 'list',
+    teaser: 'Coulisses et productions SoundCloud.',
+    lines: ['Photos du studio \u2014 \u00e0 venir.', '\u00c9coute directe via SoundCloud.'],
+    span: 3,
+  },
+  {
     to: '/galerie',
     label: 'Galerie',
     kind: 'mosaic',
@@ -215,6 +224,13 @@ export const soundcloud = {
   title: 'Découvrez des titres sur SoundCloud',
   body: 'Productions non postées sur les autres plateformes.',
   profileUrl: 'https://soundcloud.com/rylix-s',
+} as const
+
+/** En-tête de l'onglet Studio — coulisses en photos et productions SoundCloud. */
+export const studio = {
+  eyebrow: 'Studio',
+  title: 'Dans le studio',
+  intro: 'Coulisses et sessions studio en images — les photos arrivent bientôt.',
 } as const
 
 export type SocialName = 'Instagram' | 'TikTok' | 'YouTube' | 'Spotify'
@@ -367,6 +383,14 @@ export const gallery: GalleryPhoto[] = [
     credit: 'anne-sophie-fioretto',
   },
 ]
+
+/**
+ * Photos de l'onglet Studio — coulisses et sessions, dans le même esprit que
+ * `gallery` ci-dessus (mêmes clés d'image, même règle : une entrée sans
+ * fichier correspondant est ignorée à l'affichage plutôt que de casser le
+ * build). Vide pour l'instant : les photos suivront.
+ */
+export const studioPhotos: GalleryPhoto[] = []
 
 /**
  * Clé d'accès Web3Forms — publique par conception (comme un identifiant de
