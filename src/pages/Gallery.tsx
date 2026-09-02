@@ -116,9 +116,13 @@ export default function Gallery() {
                         className="h-full w-full object-cover"
                       />
                     </div>
-                    <p className="mt-3 shrink-0 font-sans text-[10px] uppercase tracking-[0.12em] text-fg-muted/70">
-                      Vidéo — {creditFor(video.credit).name}
-                    </p>
+                    {/* Pas de crédit par défaut ici : contrairement aux photos,
+                        l'auteur d'une vidéo n'est pas présumé. */}
+                    {video.credit && (
+                      <p className="mt-3 shrink-0 font-sans text-[10px] uppercase tracking-[0.12em] text-fg-muted/70">
+                        Vidéo — {creditFor(video.credit).name}
+                      </p>
+                    )}
                   </Reveal>
                 </Parallax>
               )
