@@ -384,6 +384,26 @@ export const gallery: GalleryPhoto[] = [
   },
 ]
 
+export type GalleryVideo = {
+  /** Chemin statique dans public/videos/ — fichier commité tel quel, pas de pipeline de traitement. */
+  src: string
+  /** Image affichée avant que la vidéo ne démarre. Chemin statique dans public/, optionnel. */
+  poster?: string
+  /** Texte alternatif factuel — accessibilité, pas de storytelling. */
+  alt: string
+  /** Empreinte dans la grille asymétrique — mêmes valeurs que `GalleryPhoto`. */
+  span: 'tall' | 'portrait' | 'square' | 'wide'
+  /** Auteur, si ce n'est pas celui par défaut (voir `photographers`). */
+  credit?: PhotographerKey
+}
+
+/**
+ * Vidéos de la Galerie — lues automatiquement (muettes, en boucle) dans la
+ * même grille que les photos. Déposer le fichier dans public/videos/ puis
+ * ajouter une entrée ici ; contrairement aux photos, aucun script à relancer.
+ */
+export const galleryVideos: GalleryVideo[] = []
+
 /**
  * Photos de l'onglet Studio — coulisses et sessions, dans le même esprit que
  * `gallery` ci-dessus (mêmes clés d'image, même règle : une entrée sans
