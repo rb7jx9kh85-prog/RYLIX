@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { contactEmail, hero, nav, site } from '@/lib/content'
+import { contactEmail, cookiePolicyUrl, hero, nav, site } from '@/lib/content'
 import { SocialLinks } from './SocialLinks'
 
 export function Footer() {
@@ -45,6 +45,14 @@ export function Footer() {
             className="link-quiet text-sm text-fg-muted/70"
           >
             Paramètres de confidentialité
+          </a>
+          <a
+            href={cookiePolicyUrl}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="link-quiet text-sm text-fg-muted/70"
+          >
+            Politique de cookies
           </a>
         </div>
         <p className="font-sans text-[9px] uppercase tracking-[0.1em] text-fg-muted/60">

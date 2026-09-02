@@ -379,3 +379,6 @@ export const web3formsKey =
 
 /** Adresse professionnelle. Surchargeable par VITE_CONTACT_EMAIL. */
 export const contactEmail = import.meta.env.VITE_CONTACT_EMAIL || 'contact@rylix.ch'
+
+/** Politique de cookies, générée et hébergée par Biskoui. */
+export const cookiePolicyUrl = 'https://policies.biskoui.ch/986029'
