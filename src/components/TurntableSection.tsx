@@ -1,53 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
 import { motion, type Variants } from 'framer-motion'
 import { release, turntableSection } from '@/lib/content'
 import { resolveImage } from '@/lib/images'
-import { EASE, usePrefersReducedMotion } from '@/lib/motion'
-
-type PlaybackStatus = 'idle' | 'loading' | 'ready' | 'playing' | 'paused'
-
-type SpotifyController = {
-  play: () => void
-  pause: () => void
-  togglePlay: () => void
-  addListener: (
-    event: 'playback_update' | 'ready',
-    callback: (e: { data: { isPaused: boolean } }) => void
-  ) => void
-}
-
-type SpotifyIframeApi = {
-  createController: (
-    element: HTMLElement,
-    options: { uri: string; width?: string | number; height?: string | number },
-    callback: (controller: SpotifyController) => void
-  ) => void
-}
-
-declare global {
-  interface Window {
-    onSpotifyIframeApiReady?: (api: SpotifyIframeApi) => void
-  }
-}
-
-const IFRAME_API_SRC = 'https://open.spotify.com/embed/iframe-api/v1'
-
-/** Le script officiel Spotify n'est chargé qu'une fois, quel que soit le nombre de montages. */
-let iframeApiPromise: Promise<SpotifyIframeApi> | null = null
-function loadSpotifyIframeApi(): Promise<SpotifyIframeApi> {
-  if (!iframeApiPromise) {
-    iframeApiPromise = new Promise((resolve) => {
-      const existingApi = (window as { Spotify?: unknown }).Spotify
-      if (existingApi) return resolve(existingApi as SpotifyIframeApi)
-      window.onSpotifyIframeApiReady = (api) => resolve(api)
-      const script = document.createElement('script')
-      script.src = IFRAME_API_SRC
-      script.async = true
-      document.body.appendChild(script)
-    })
-  }
-  return iframeApiPromise
-}
+import { EASE } from '@/lib/motion'
 
 const panelVariants: Variants = {
   hidden: {},
@@ -60,73 +14,15 @@ const partVariants: Variants = {
 }
 
 /**
- * Tourne-disque interactif, juste sous le hero — le bouton central pilote la
- * lecture réelle de Better Days via l'API iFrame officielle de Spotify
- * (le lecteur compact reste visible en dessous : contrôles natifs, et
- * attribution Spotify intacte, on ne fait pas semblant).
- *
- * Le script Spotify n'est chargé, et le contrôleur créé, qu'une fois la
- * section réellement visible — jamais avant, jamais pour rien.
+ * Juste sous le hero : la pochette de Better Days, en fiche technique façon
+ * tourne-disque. Pas de lecteur embarqué — la pochette renvoie directement
+ * vers Spotify.
  */
 export function TurntableSection() {
-  const reduce = usePrefersReducedMotion()
-  const sectionRef = useRef<HTMLDivElement>(null)
-  const mountRef = useRef<HTMLDivElement>(null)
-  const controllerRef = useRef<SpotifyController | null>(null)
-  const [status, setStatus] = useState<PlaybackStatus>('idle')
-  const [inView, setInView] = useState(false)
-
-  useEffect(() => {
-    const el = sectionRef.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setInView(true)
-          observer.disconnect()
-        }
-      },
-      { rootMargin: '20% 0px' }
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [])
-
-  useEffect(() => {
-    if (!inView || !mountRef.current) return
-    let cancelled = false
-    setStatus('loading')
-
-    loadSpotifyIframeApi().then((api) => {
-      if (cancelled || !mountRef.current) return
-      api.createController(
-        mountRef.current,
-        { uri: `spotify:track:${release.spotifyTrackId}`, width: '100%', height: '80' },
-        (controller) => {
-          if (cancelled) return
-          controllerRef.current = controller
-          controller.addListener('playback_update', (e) => {
-            setStatus(e.data.isPaused ? 'paused' : 'playing')
-          })
-          setStatus('ready')
-        }
-      )
-    })
-
-    return () => {
-      cancelled = true
-    }
-  }, [inView])
-
-  const playing = status === 'playing'
   const cover = resolveImage(release.coverKey)
 
-  const handleToggle = () => {
-    controllerRef.current?.togglePlay()
-  }
-
   return (
-    <section ref={sectionRef} className="py-lg md:py-xl" aria-labelledby="ecouter">
+    <section className="py-lg md:py-xl" aria-labelledby="ecouter">
       <div className="container-rylix">
         <div className="mb-10 flex items-center gap-4 md:mb-14">
           <span className="font-sans text-sm text-accent">01</span>
@@ -148,16 +44,17 @@ export function TurntableSection() {
             </h2>
             <p className="mt-4 max-w-prose text-fg-muted">{turntableSection.hint}</p>
 
-            {/* Lecteur Spotify compact — vrais contrôles, vraie attribution.
-                Le bouton du tourne-disque agit sur ce même contrôleur. */}
-            <div className="mt-8 overflow-hidden rounded-sm bg-navy-alt">
-              <div ref={mountRef} className="min-h-[80px]" />
-              {status === 'idle' && (
-                <p className="p-4 font-sans text-xs uppercase tracking-[0.1em] text-fg-muted/60">
-                  Chargement du lecteur…
-                </p>
-              )}
-            </div>
+            <a
+              href={release.spotifyUrl}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="link-quiet mt-8 inline-flex items-center gap-2 text-sm uppercase tracking-[0.1em]"
+            >
+              Écouter sur Spotify
+              <svg viewBox="0 0 24 24" aria-hidden className="h-3.5 w-3.5 stroke-current" fill="none">
+                <path d="M7 17L17 7M9 7h8v8" strokeWidth="1.25" />
+              </svg>
+            </a>
           </motion.div>
 
           <motion.div
@@ -191,57 +88,7 @@ export function TurntableSection() {
               </div>
 
               <motion.div variants={partVariants} className="w-full max-w-[280px]">
-                <Deck
-                  cover={cover?.src}
-                  playing={playing}
-                  loading={status === 'loading' || status === 'idle'}
-                  reduce={reduce}
-                />
-              </motion.div>
-
-              <motion.div variants={partVariants} className="flex items-center gap-7">
-                <div className="relative shrink-0">
-                  {/* Anneau qui respire en lecture */}
-                  {playing && !reduce && (
-                    <motion.span
-                      aria-hidden
-                      className="absolute inset-0 rounded-full border border-accent/60"
-                      animate={{ scale: [1, 1.4, 1], opacity: [0.55, 0, 0.55] }}
-                      transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }}
-                    />
-                  )}
-
-                  <motion.button
-                    type="button"
-                    onClick={handleToggle}
-                    disabled={status === 'idle' || status === 'loading'}
-                    aria-label={
-                      playing ? `Mettre en pause ${release.title}` : `Lire ${release.title}`
-                    }
-                    whileHover={reduce ? undefined : { scale: 1.08 }}
-                    whileTap={reduce ? undefined : { scale: 0.9 }}
-                    className="group relative flex h-[72px] w-[72px] items-center justify-center rounded-full
-                               border border-cream/15 bg-navy text-cream
-                               shadow-[inset_0_1px_1px_rgba(255,255,255,0.08),inset_0_-3px_8px_rgba(0,0,0,0.55)]
-                               transition-colors duration-500 ease-rylix hover:text-accent
-                               disabled:cursor-wait disabled:opacity-40"
-                  >
-                    {playing ? <PauseIcon /> : <PlayIcon />}
-                  </motion.button>
-
-                  {/* Voyant — s'allume en lecture */}
-                  <span
-                    aria-hidden
-                    className={`absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border border-navy
-                                transition-colors duration-500 ease-rylix ${
-                                  playing
-                                    ? 'bg-accent shadow-[0_0_8px_2px_rgba(217,255,67,0.55)]'
-                                    : 'bg-slate/50'
-                                }`}
-                  />
-                </div>
-
-                <EqualizerBars playing={playing && !reduce} />
+                <Cover cover={cover?.src} title={release.title} />
               </motion.div>
             </motion.div>
           </motion.div>
@@ -251,88 +98,21 @@ export function TurntableSection() {
   )
 }
 
-/**
- * La pochette de Better Days, carrée — plus de plateau ni de bras de lecture.
- * Elle respire légèrement en lecture, ce qui suffit à signaler que ça tourne.
- */
-function Deck({
-  cover,
-  playing,
-  loading,
-  reduce,
-}: {
-  cover?: string
-  playing: boolean
-  loading: boolean
-  reduce: boolean
-}) {
+/** La pochette de Better Days, carrée — plaque signalétique en fond. */
+function Cover({ cover, title }: { cover?: string; title: string }) {
   return (
-    <div className="relative aspect-square w-full max-w-[280px]">
-      <motion.div
-        animate={reduce ? undefined : { scale: playing ? 1.02 : 1 }}
-        transition={{ duration: 0.9, ease: EASE }}
-        className="h-full w-full overflow-hidden rounded-sm border border-slate/25 bg-navy-alt"
-      >
-        {cover ? (
-          <img
-            src={cover}
-            alt=""
-            className="photo h-full w-full object-cover"
-            loading="lazy"
-            decoding="async"
-          />
-        ) : (
-          <div className="h-full w-full bg-navy-alt" />
-        )}
-      </motion.div>
-
-      {loading && (
-        <span
-          aria-hidden
-          className="absolute inset-0 flex items-center justify-center bg-navy/50 font-sans text-[10px] uppercase tracking-[0.14em] text-fg-muted/70"
-        >
-          Connexion…
-        </span>
+    <div className="relative aspect-square w-full max-w-[280px] overflow-hidden rounded-sm border border-slate/25 bg-navy-alt">
+      {cover ? (
+        <img
+          src={cover}
+          alt={`Pochette de ${title}`}
+          className="photo h-full w-full object-cover"
+          loading="lazy"
+          decoding="async"
+        />
+      ) : (
+        <div className="h-full w-full bg-navy-alt" />
       )}
     </div>
-  )
-}
-
-/** Barres façon égaliseur — purement décoratives, calées sur l'état de lecture. */
-function EqualizerBars({ playing }: { playing: boolean }) {
-  const bars = [
-    { duration: 0.7, delay: 0 },
-    { duration: 0.9, delay: 0.1 },
-    { duration: 0.6, delay: 0.05 },
-    { duration: 1.05, delay: 0.15 },
-  ]
-
-  return (
-    <div aria-hidden className="flex h-8 items-end gap-1">
-      {bars.map((b, i) => (
-        <span
-          key={i}
-          className={`eq-bar w-1 rounded-full bg-accent ${playing ? 'is-playing' : ''}`}
-          style={{ animationDuration: `${b.duration}s`, animationDelay: `${b.delay}s` }}
-        />
-      ))}
-    </div>
-  )
-}
-
-function PlayIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden className="ml-0.5 h-5 w-5 fill-current">
-      <path d="M8 5.5v13l11-6.5-11-6.5Z" />
-    </svg>
-  )
-}
-
-function PauseIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden className="h-5 w-5 fill-current">
-      <rect x="7" y="5.5" width="3.4" height="13" rx="0.6" />
-      <rect x="13.6" y="5.5" width="3.4" height="13" rx="0.6" />
-    </svg>
   )
 }

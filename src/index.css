@@ -51,8 +51,8 @@
   body {
     @apply bg-navy font-sans text-cream antialiased;
     font-size: 1rem;
-    /* Syne est une police de titrage : on ouvre l'interligne et l'interlettrage
-       du texte courant pour garder une lecture confortable. */
+    /* Archivo a un empattement de titrage marqué : on ouvre l'interligne et
+       l'interlettrage du texte courant pour garder une lecture confortable. */
     line-height: 1.7;
     letter-spacing: 0.005em;
     font-weight: 400;
@@ -215,29 +215,5 @@
 
   .text-balance {
     text-wrap: balance;
-  }
-
-  /* Barres façon égaliseur, bouton du tourne-disque — hauteur pulsée,
-     durée/délai propres à chaque barre passés en style inline. */
-  .eq-bar {
-    height: 20%;
-    animation-name: rylix-eq;
-    animation-timing-function: ease-in-out;
-    animation-iteration-count: infinite;
-    animation-play-state: paused;
-  }
-
-  .eq-bar.is-playing {
-    animation-play-state: running;
-  }
-
-  @keyframes rylix-eq {
-    0%,
-    100% {
-      height: 20%;
-    }
-    50% {
-      height: 100%;
-    }
   }
 }

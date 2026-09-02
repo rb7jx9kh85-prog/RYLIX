@@ -75,3 +75,24 @@ export function usePrefersReducedMotion(): boolean {
 
   return reduced
 }
+
+/**
+ * En dessous du point de rupture `md` de Tailwind (768px). Sert à choisir une
+ * mise en scène distincte sur mobile plutôt qu'à rejouer la version bureau en
+ * plus petit — un geste de scroll détourné se sent juste sur trackpad, pas au
+ * doigt.
+ */
+export function useIsMobile(): boolean {
+  const [mobile, setMobile] = useState(() =>
+    typeof window === 'undefined' ? false : window.matchMedia('(max-width: 767px)').matches
+  )
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)')
+    const onChange = () => setMobile(mq.matches)
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+
+  return mobile
+}
