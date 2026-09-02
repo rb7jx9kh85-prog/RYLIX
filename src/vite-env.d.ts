@@ -12,3 +12,10 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv
 }
+
+/** SDK du bandeau de consentement cookies (Biskoui), chargé depuis index.html. */
+interface Window {
+  biskoui?: {
+    showBanner: () => void
+  }
+}

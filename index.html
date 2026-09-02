@@ -26,6 +26,20 @@
 
     <!-- L'embed Spotify n'est chargé que sur /musique -->
     <link rel="dns-prefetch" href="https://open.spotify.com" />
+
+    <!-- Bandeau de consentement cookies (Biskoui) -->
+    <script>
+      window.biskouiSettings = {
+        clientId: '986029',
+      }
+      ;(function (d, s) {
+        var t = d.getElementsByTagName(s)[0],
+          e = d.createElement(s)
+        e.async = true
+        e.src = 'https://static.biskoui.ch/sdk.js'
+        t.parentNode.insertBefore(e, t)
+      })(document, 'script')
+    </script>
   </head>
   <body>
     <div id="root"></div>
