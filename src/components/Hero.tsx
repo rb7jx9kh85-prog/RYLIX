@@ -347,7 +347,7 @@ function Wordmark({
     <Tag
       style={{ y, scale, opacity }}
       className={`pointer-events-none absolute inset-x-[3vw] top-[48%] flex items-center
-                  justify-between font-display font-extrabold uppercase leading-[0.7]
+                  justify-between font-display font-extrabold uppercase leading-[1.1]
                   text-cream md:inset-x-[2.2vw] md:top-[47%]
                   ${above ? 'z-[6]' : 'z-[1]'}`}
       {...(above ? { 'aria-label': 'RYLIX' } : { 'aria-hidden': true })}
@@ -362,8 +362,11 @@ function Wordmark({
             initial={reduce ? false : { y: '118%', rotate: 3 }}
             animate={{ y: '0%', rotate: 0 }}
             transition={intro(1.05, 0.38 + i * 0.045)}
-            // 17vw : la somme des cinq glyphes Syne 800 (~4.3em au total) tient
-            // alors dans la largeur du conteneur, sans rognage aux bords.
+            // 17vw : la somme des cinq glyphes Archivo 800 tient alors dans la
+            // largeur du conteneur, sans rognage aux bords. L'interligne du
+            // conteneur parent (leading-[0.92]) est calé sur la hauteur réelle
+            // du glyphe à cette graisse — plus serré, le haut et le bas des
+            // lettres se retrouvent rognés par l'overflow-hidden ci-dessous.
             className="inline-block text-[17vw] tracking-[-0.045em] md:text-[clamp(7rem,19vw,21rem)] md:tracking-[-0.06em]"
           >
             {letter}
