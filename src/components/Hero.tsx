@@ -45,8 +45,9 @@ const intro = (duration: number, delay: number) => ({ duration, delay, ease: EAS
  *
  * Chaque cadre superpose trois couches de mouvement indépendantes : la dérive
  * de scroll (conteneur externe), l'intro clip-path (figure), la parallaxe
- * pointeur (interne). Le mot est en mix-blend-difference : il s'inverse en
- * passant sur les cadres. Tout est statique sous prefers-reduced-motion.
+ * pointeur (interne). Le mot reste plein en toutes circonstances — le fondu
+ * entre ses deux exemplaires le fait passer derrière les cadres plutôt que de
+ * se mélanger avec eux. Tout est statique sous prefers-reduced-motion.
  */
 export function Hero() {
   const reduce = usePrefersReducedMotion()
@@ -347,7 +348,7 @@ function Wordmark({
       style={{ y, scale, opacity }}
       className={`pointer-events-none absolute inset-x-[3vw] top-[48%] flex items-center
                   justify-between font-display font-extrabold uppercase leading-[0.7]
-                  text-cream mix-blend-difference md:inset-x-[2.2vw] md:top-[47%]
+                  text-cream md:inset-x-[2.2vw] md:top-[47%]
                   ${above ? 'z-[6]' : 'z-[1]'}`}
       {...(above ? { 'aria-label': 'RYLIX' } : { 'aria-hidden': true })}
     >
