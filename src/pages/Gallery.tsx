@@ -4,7 +4,7 @@ import { Image } from '@/components/Image'
 import { PageHeader } from '@/components/PageHeader'
 import { Parallax, Reveal } from '@/components/PageTransition'
 import { Lightbox, type LightboxItem } from '@/components/Lightbox'
-import { creditFor, gallery, photographer } from '@/lib/content'
+import { creditFor, gallery, galleryVideos, photographer } from '@/lib/content'
 import { hasImage } from '@/lib/images'
 
 /** Grille asymétrique : chaque photo occupe une empreinte différente. */
@@ -56,7 +56,7 @@ export default function Gallery() {
       </PageHeader>
 
       <section className="container-rylix pb-lg md:pb-xl">
-        {photos.length === 0 ? (
+        {photos.length === 0 && galleryVideos.length === 0 ? (
           <p className="text-fg-muted">Aucune photo pour le moment.</p>
         ) : (
           <div className="grid grid-cols-1 gap-8 md:grid-cols-12 md:gap-6">
@@ -91,6 +91,42 @@ export default function Gallery() {
                 </Reveal>
               </Parallax>
             ))}
+
+            {/* Vidéos — même grille, lecture automatique muette en boucle. */}
+            {galleryVideos.map((video, vi) => {
+              const i = photos.length + vi
+              return (
+                <Parallax
+                  key={video.src}
+                  distance={i % 2 === 0 ? 34 : -34}
+                  className={spanClass[video.span] ?? spanClass.square}
+                >
+                  <Reveal delay={i * 0.06} className="flex h-full flex-col">
+                    <div className="block min-h-0 flex-1 overflow-hidden rounded-sm">
+                      <span className="sr-only">{video.alt}</span>
+                      <video
+                        src={video.src}
+                        poster={video.poster}
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        preload="metadata"
+                        aria-hidden="true"
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    {/* Pas de crédit par défaut ici : contrairement aux photos,
+                        l'auteur d'une vidéo n'est pas présumé. */}
+                    {video.credit && (
+                      <p className="mt-3 shrink-0 font-sans text-[10px] uppercase tracking-[0.12em] text-fg-muted/70">
+                        Vidéo — {creditFor(video.credit).name}
+                      </p>
+                    )}
+                  </Reveal>
+                </Parallax>
+              )
+            })}
           </div>
         )}
       </section>

@@ -384,6 +384,32 @@ export const gallery: GalleryPhoto[] = [
   },
 ]
 
+export type GalleryVideo = {
+  /** Chemin statique du fichier dans public/ (ex. '/images/clip.mp4') — pas de pipeline de traitement. */
+  src: string
+  /** Image affichée avant que la vidéo ne démarre. Chemin statique dans public/, optionnel. */
+  poster?: string
+  /** Texte alternatif factuel — accessibilité, pas de storytelling. */
+  alt: string
+  /** Empreinte dans la grille asymétrique — mêmes valeurs que `GalleryPhoto`. */
+  span: 'tall' | 'portrait' | 'square' | 'wide'
+  /** Auteur — omis si inconnu (pas de crédit par défaut, contrairement aux photos). */
+  credit?: PhotographerKey
+}
+
+/**
+ * Vidéos de la Galerie — lues automatiquement (muettes, en boucle) dans la
+ * même grille que les photos. Déposer le fichier dans public/ puis ajouter
+ * une entrée ici ; contrairement aux photos, aucun script à relancer.
+ */
+export const galleryVideos: GalleryVideo[] = [
+  {
+    src: '/images/d68aa570-0095-46cd-95c0-87c63c1e1609.mp4',
+    alt: 'Extrait vidéo de RYLIX.',
+    span: 'wide',
+  },
+]
+
 /**
  * Photos de l'onglet Studio — coulisses et sessions, dans le même esprit que
  * `gallery` ci-dessus (mêmes clés d'image, même règle : une entrée sans
