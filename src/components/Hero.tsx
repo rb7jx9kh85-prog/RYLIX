@@ -84,13 +84,6 @@ export function Hero() {
 
   const wordY = pct(0, -18)
   const wordScale = num(1, 0.88)
-  // Le logotype existe en deux exemplaires superposés — l'un au-dessus des
-  // cadres, l'autre dessous — et on fond de l'un vers l'autre. Un simple saut
-  // de z-index ferait disparaître d'un coup les lettres couvertes par le cadre
-  // qui arrive (le I et le X) ; le fondu croisé les fait passer derrière
-  // l'image progressivement, en gardant la même écriture, juste plus discrète.
-  const wordAbove = useTransform(progress, [0.16, 0.52], reduce ? [1, 1] : [1, 0])
-  const wordBelow = useTransform(progress, [0.16, 0.52], reduce ? [0, 0] : [0, 0.32])
 
   const chapterOneOpacity = useTransform(progress, [0.05, 0.3], reduce ? [1, 1] : [1, 0])
   const chapterOneY = pct(0, -12)
@@ -234,11 +227,10 @@ export function Hero() {
           </motion.div>
         </div>
 
-        {/* RYLIX — deux exemplaires superposés, l'un devant les cadres, l'autre
-            derrière. Le fondu de l'un vers l'autre fait glisser les lettres
-            couvertes par le cadre 02 derrière l'image, sans rupture. */}
-        <Wordmark layer="below" opacity={wordBelow} y={wordY} scale={wordScale} reduce={reduce} />
-        <Wordmark layer="above" opacity={wordAbove} y={wordY} scale={wordScale} reduce={reduce} />
+        {/* RYLIX — toujours plein, au premier plan : aucune transparence ne
+            vient jamais entamer les lettres, quelle que soit la position du
+            cadre 02 en dessous. */}
+        <Wordmark y={wordY} scale={wordScale} reduce={reduce} />
 
         {/* Accroche, haut gauche. Sous mouvement réduit, la présentation est
             empilée juste dessous : la chorégraphie qui la révèle au scroll est
@@ -319,38 +311,26 @@ export function Hero() {
 }
 
 /**
- * Le logotype, rendu à un niveau d'empilement donné. Les deux exemplaires
- * partagent exactement la même géométrie : seuls leur z-index et leur opacité
- * diffèrent, ce qui rend le fondu de l'un vers l'autre imperceptible en tant
- * que tel — on ne voit que le mot qui passe derrière l'image.
- *
- * Seul l'exemplaire de devant porte le rôle de titre ; celui du fond est
- * décoratif, pour ne pas annoncer deux fois « RYLIX » aux lecteurs d'écran.
+ * Le logotype — toujours plein, au premier plan (z-index le plus haut de la
+ * section) : aucune opacité réduite ne vient jamais le mélanger avec les
+ * photos derrière, quelle que soit la position du cadre 02.
  */
 function Wordmark({
-  layer,
-  opacity,
   y,
   scale,
   reduce,
 }: {
-  layer: 'above' | 'below'
-  opacity: MotionValue<number>
   y: MotionValue<string>
   scale: MotionValue<number>
   reduce: boolean
 }) {
-  const above = layer === 'above'
-  const Tag = above ? motion.h1 : motion.div
-
   return (
-    <Tag
-      style={{ y, scale, opacity }}
-      className={`pointer-events-none absolute inset-x-[3vw] top-[48%] flex items-center
-                  justify-between font-display font-extrabold uppercase leading-[1.1]
-                  text-cream md:inset-x-[2.2vw] md:top-[47%]
-                  ${above ? 'z-[6]' : 'z-[1]'}`}
-      {...(above ? { 'aria-label': 'RYLIX' } : { 'aria-hidden': true })}
+    <motion.h1
+      style={{ y, scale }}
+      className="pointer-events-none absolute inset-x-[3vw] top-[48%] z-[6] flex items-center
+                 justify-between font-display font-extrabold uppercase leading-[1.1]
+                 text-cream md:inset-x-[2.2vw] md:top-[47%]"
+      aria-label="RYLIX"
     >
       {LETTERS.map((letter, i) => (
         <span
@@ -364,7 +344,7 @@ function Wordmark({
             transition={intro(1.05, 0.38 + i * 0.045)}
             // 17vw : la somme des cinq glyphes Archivo 800 tient alors dans la
             // largeur du conteneur, sans rognage aux bords. L'interligne du
-            // conteneur parent (leading-[0.92]) est calé sur la hauteur réelle
+            // conteneur parent (leading-[1.1]) est calé sur la hauteur réelle
             // du glyphe à cette graisse — plus serré, le haut et le bas des
             // lettres se retrouvent rognés par l'overflow-hidden ci-dessous.
             className="inline-block text-[17vw] tracking-[-0.045em] md:text-[clamp(7rem,19vw,21rem)] md:tracking-[-0.06em]"
@@ -373,6 +353,6 @@ function Wordmark({
           </motion.span>
         </span>
       ))}
-    </Tag>
+    </motion.h1>
   )
 }
