@@ -15,9 +15,11 @@ const spanClass: Record<string, string> = {
   wide: 'md:col-span-7 aspect-[16/10]',
 }
 
+// La couleur du lecteur passe par l'URL de l'embed : le token CSS ne peut pas
+// l'atteindre, la valeur d'accent est donc recopiée ici à la main.
 const soundcloudEmbedSrc = `https://w.soundcloud.com/player/?url=${encodeURIComponent(
   soundcloud.profileUrl
-)}&color=%23d9ff43&auto_play=false&show_user=true&visual=false`
+)}&color=%23e0a661&auto_play=false&show_user=true&visual=false`
 
 export default function Studio() {
   const [index, setIndex] = useState<number | null>(null)
@@ -62,7 +64,7 @@ export default function Studio() {
                       alt={photo.alt}
                       sizes="(max-width: 768px) 92vw, 50vw"
                       className="h-full w-full"
-                      imgClassName="h-full w-full object-cover transition-transform duration-[1200ms] ease-rylix group-hover:scale-[1.04]"
+                      imgClassName="h-full w-full object-cover transition-transform duration-[300ms] ease-rylix group-hover:scale-[1.04]"
                     />
                   </button>
                   <p className="mt-3 shrink-0 font-sans text-[10px] uppercase tracking-[0.12em] text-fg-muted/70">

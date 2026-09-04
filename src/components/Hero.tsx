@@ -229,9 +229,9 @@ export function Hero() {
           </motion.div>
         </div>
 
-        {/* RYLIX — toujours plein, au premier plan : aucune transparence ne
-            vient jamais entamer les lettres, quelle que soit la position du
-            cadre 02 en dessous. */}
+        {/* RYLIX — au premier plan, à 80% d'opacité : la photo affleure à
+            travers les lettres sans que leur dessin soit jamais entamé,
+            quelle que soit la position du cadre 02 en dessous. */}
         <Wordmark y={wordY} scale={wordScale} reduce={reduce} />
 
         {/* Accroche, haut gauche. Sous mouvement réduit, la présentation est
@@ -311,9 +311,13 @@ export function Hero() {
 }
 
 /**
- * Le logotype — toujours plein, au premier plan (z-index le plus haut de la
- * section) : aucune opacité réduite ne vient jamais le mélanger avec les
- * photos derrière, quelle que soit la position du cadre 02.
+ * Le logotype, au premier plan (z-index le plus haut de la section) et posé à
+ * 80% d'opacité : la photo affleure à travers les lettres.
+ *
+ * Un simple canal alpha sur la couleur du texte, pas de mix-blend-mode ni de
+ * background-clip — ces deux-là inversaient ou entamaient le dessin des
+ * lettres selon ce qui passait dessous. Ici la silhouette reste intacte,
+ * quelle que soit la position du cadre 02.
  */
 function Wordmark({
   y,
@@ -329,7 +333,7 @@ function Wordmark({
       style={{ y, scale }}
       className="pointer-events-none absolute inset-x-[3vw] top-[48%] z-[6] flex items-center
                  justify-between font-display font-extrabold uppercase leading-[1.1]
-                 text-cream md:inset-x-[2.2vw] md:top-[47%]"
+                 text-cream/80 md:inset-x-[2.2vw] md:top-[47%]"
       aria-label="RYLIX"
     >
       {LETTERS.map((letter, i) => (

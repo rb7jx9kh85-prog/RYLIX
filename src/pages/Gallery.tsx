@@ -80,7 +80,7 @@ export default function Gallery() {
                       alt={photo.alt}
                       sizes="(max-width: 768px) 92vw, 50vw"
                       className="h-full w-full"
-                      imgClassName="h-full w-full object-cover transition-transform duration-[1200ms] ease-rylix group-hover:scale-[1.04]"
+                      imgClassName="h-full w-full object-cover transition-transform duration-[300ms] ease-rylix group-hover:scale-[1.04]"
                     />
                   </button>
                   {/* Crédit sous chaque photo, comme une légende d'édition —
