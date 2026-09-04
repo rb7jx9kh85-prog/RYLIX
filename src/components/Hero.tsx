@@ -144,8 +144,10 @@ export function Hero() {
         )}
 
         {/* Cadres photo */}
-        {/* Cadres : z-index géré cadre par cadre (le 02 passe devant le mot). */}
-        <div className="absolute inset-0" aria-hidden>
+        {/* Cadres : z-index géré cadre par cadre (le 02 passe devant le mot).
+            Le conteneur n'est pas masqué aux lecteurs d'écran : les deux
+            photos portent un texte alternatif descriptif (voir hero.*.alt). */}
+        <div className="absolute inset-0">
           {/* 01 — grand cadre : dérive scroll sur le conteneur, intro sur la
               figure, pointeur à l'intérieur — trois couches indépendantes. */}
           <motion.div
@@ -176,7 +178,7 @@ export function Hero() {
                     sizes="(max-width: 768px) 67vw, 38vw"
                     width={primary.width}
                     height={primary.height}
-                    alt=""
+                    alt={hero.primary.alt}
                     {...{ fetchpriority: 'high' }}
                     style={{ y: primaryImgY, objectPosition: 'center 48%' }}
                     className="photo h-[115%] w-full object-cover"
@@ -215,7 +217,7 @@ export function Hero() {
                     sizes="(max-width: 768px) 36vw, 21vw"
                     width={secondary.width}
                     height={secondary.height}
-                    alt=""
+                    alt={hero.secondary.alt}
                     {...{ fetchpriority: 'high' }}
                     style={{ y: secondaryImgY, objectPosition: 'center 46%' }}
                     className="photo h-[115%] w-full object-cover"
@@ -286,15 +288,14 @@ export function Hero() {
           </motion.div>
         )}
 
-        {/* Bandeau bas : repère / progression / coordonnées */}
+        {/* Bandeau bas : repère et progression */}
         <motion.div
           initial={reduce ? false : { opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={intro(0.8, 0.9)}
           className="absolute bottom-[18px] left-[18px] right-[18px] z-[12] grid
                      grid-cols-[auto,1fr] items-center gap-[18px] font-sans text-[9px] uppercase
-                     tracking-[0.1em] text-cream/80 md:bottom-6 md:left-[30px] md:right-[30px]
-                     md:grid-cols-[auto,1fr,auto]"
+                     tracking-[0.1em] text-cream/80 md:bottom-6 md:left-[30px] md:right-[30px]"
         >
           <span>{site.tagline}</span>
           <span className="h-px overflow-hidden bg-cream/25">
@@ -303,7 +304,6 @@ export function Hero() {
               className="block h-full w-full origin-left bg-accent"
             />
           </span>
-          <span className="hidden md:block">{hero.coordinates}</span>
         </motion.div>
       </div>
     </section>

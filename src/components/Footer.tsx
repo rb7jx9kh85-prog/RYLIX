@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { contactEmail, cookiePolicyUrl, hero, nav, site } from '@/lib/content'
+import { contactEmail, cookiePolicyUrl, nav, site } from '@/lib/content'
 import { SocialLinks } from './SocialLinks'
 
 export function Footer() {
@@ -34,7 +34,7 @@ export function Footer() {
         <SocialLinks />
       </div>
 
-      <div className="container-rylix flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 pb-8">
+      <div className="container-rylix flex flex-wrap items-baseline gap-x-6 gap-y-2 pb-8">
         <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
           <p className="text-sm text-fg-muted/70">
             © {new Date().getFullYear()} {site.name}
@@ -55,9 +55,6 @@ export function Footer() {
             Politique de cookies
           </a>
         </div>
-        <p className="font-sans text-[9px] uppercase tracking-[0.1em] text-fg-muted/60">
-          {hero.coordinates}
-        </p>
       </div>
     </footer>
   )

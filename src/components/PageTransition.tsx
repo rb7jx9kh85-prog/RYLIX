@@ -71,8 +71,13 @@ export function Reveal({
 }
 
 /**
- * Titre révélé mot à mot : chaque mot monte depuis sous une ligne de masque.
- * Le texte reste un seul nœud lisible pour les lecteurs d'écran.
+ * Titre révélé mot à mot : chaque mot monte de quelques pixels en gagnant son
+ * opacité pleine.
+ *
+ * Le texte n'existe qu'une fois dans le DOM — pas de copie `sr-only` doublant
+ * le titre visible — et son état de repos est déjà lisible (voir
+ * `wordVariants`) : la révélation est un agrément, jamais la condition pour
+ * que le titre s'affiche.
  */
 export function SplitText({
   text,
@@ -103,7 +108,6 @@ export function SplitText({
   return (
     <Tag className={className} id={id}>
       <motion.span
-        aria-hidden
         className="inline"
         variants={staggerVariants(stagger, delay)}
         initial="hidden"
@@ -113,12 +117,13 @@ export function SplitText({
         {words.map((word, i) => (
           <span
             key={`${word}-${i}`}
-            // overflow-hidden découpe le mot pendant sa montée ; le padding
-            // évite de rogner les jambages et les accents. max-w-full permet
-            // à overflow-wrap:break-word (porté par le titre) de vraiment
-            // contraindre un mot isolé trop large pour son conteneur — un
-            // inline-block sans plafond de largeur ignore la coupure.
-            className="inline-block max-w-full overflow-hidden pb-[0.12em] align-bottom"
+            // Pas de masque : la montée ne fait que quelques pixels, un
+            // overflow-hidden ne ferait que rogner jambages et accents sans
+            // rien apporter. max-w-full, lui, permet à overflow-wrap:break-word
+            // (porté par le titre) de vraiment contraindre un mot isolé trop
+            // large pour son conteneur — un inline-block sans plafond de
+            // largeur ignore la coupure.
+            className="inline-block max-w-full align-bottom"
           >
             <motion.span variants={wordVariants} className="inline-block">
               {word}
@@ -127,7 +132,6 @@ export function SplitText({
           </span>
         ))}
       </motion.span>
-      <span className="sr-only">{text}</span>
     </Tag>
   )
 }

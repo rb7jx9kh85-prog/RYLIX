@@ -1,4 +1,5 @@
 import { Seo } from '@/components/Seo'
+import { PageHeader } from '@/components/PageHeader'
 import { TurntableSection } from '@/components/TurntableSection'
 import { release, site } from '@/lib/content'
 
@@ -20,8 +21,10 @@ export default function Music() {
         jsonLd={jsonLd}
       />
 
+      <PageHeader eyebrow="Musique" title="Dernière sortie" />
+
       {/* Écouter — la pochette et la lecture Spotify dans un seul bloc. */}
-      <div className="pt-24 pb-lg md:pt-28 md:pb-xl">
+      <div className="pb-lg md:pb-xl">
         <TurntableSection />
       </div>
     </>

@@ -46,10 +46,17 @@ export const staggerVariants = (stagger = 0.06, delayChildren = 0): Variants => 
   visible: { transition: { staggerChildren: stagger, delayChildren } },
 })
 
-/** Enfant d'un conteneur cadencé — utilisé par les titres découpés en mots. */
+/**
+ * Enfant d'un conteneur cadencé — utilisé par les titres découpés en mots.
+ *
+ * L'état de repos reste lisible : quelques pixels de translation et une
+ * opacité partielle, jamais `opacity: 0`. Si la révélation ne se déclenche
+ * pas (observateur d'intersection en défaut, JS en erreur), le titre est
+ * toujours là — un h1 invisible vaut un h1 manquant.
+ */
 export const wordVariants: Variants = {
-  hidden: { opacity: 0, y: '110%' },
-  visible: { opacity: 1, y: '0%', transition: transition(DURATION.slow) },
+  hidden: { opacity: 0.6, y: 6 },
+  visible: { opacity: 1, y: 0, transition: transition(DURATION.slow) },
 }
 
 /** Marge de déclenchement commune aux révélations au scroll. */
