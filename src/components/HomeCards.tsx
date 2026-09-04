@@ -90,7 +90,7 @@ export function HomeCards() {
                 viewBox="0 0 24 24"
                 aria-hidden
                 fill="none"
-                className="h-4 w-4 shrink-0 stroke-slate transition-all duration-500 ease-rylix
+                className="h-4 w-4 shrink-0 stroke-slate transition-[transform,stroke] duration-200 ease-rylix
                            group-hover:translate-x-1 group-hover:stroke-accent"
               >
                 <path d="M7 17L17 7M9 7h8v8" strokeWidth="1.25" />
@@ -131,8 +131,8 @@ export function HomeCards() {
           aria-label="Cartes précédentes"
           disabled={!canScrollLeft}
           className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full
-                     border border-slate/30 bg-navy/80 text-cream backdrop-blur transition-all
-                     duration-300 ease-rylix hover:border-accent/60 hover:text-accent
+                     border border-slate/30 bg-navy/80 text-cream backdrop-blur transition-[border-color,color,opacity]
+                     duration-200 ease-rylix hover:border-accent/60 hover:text-accent
                      disabled:pointer-events-none disabled:opacity-0"
         >
           <svg viewBox="0 0 24 24" aria-hidden className="h-4 w-4 stroke-current" fill="none">
@@ -145,8 +145,8 @@ export function HomeCards() {
           aria-label="Cartes suivantes"
           disabled={!canScrollRight}
           className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full
-                     border border-slate/30 bg-navy/80 text-cream backdrop-blur transition-all
-                     duration-300 ease-rylix hover:border-accent/60 hover:text-accent
+                     border border-slate/30 bg-navy/80 text-cream backdrop-blur transition-[border-color,color,opacity]
+                     duration-200 ease-rylix hover:border-accent/60 hover:text-accent
                      disabled:pointer-events-none disabled:opacity-0"
         >
           <svg viewBox="0 0 24 24" aria-hidden className="h-4 w-4 stroke-current" fill="none">

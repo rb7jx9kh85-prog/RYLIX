@@ -1,15 +1,8 @@
-import { useEffect, useRef } from 'react'
-import {
-  motion,
-  useMotionValue,
-  useScroll,
-  useSpring,
-  useTransform,
-  type MotionValue,
-} from 'framer-motion'
+import { useRef } from 'react'
+import { motion, useScroll, useSpring, useTransform } from 'framer-motion'
 import { resolveImage } from '@/lib/images'
 import { hero, presentation, site } from '@/lib/content'
-import { EASE, usePrefersReducedMotion } from '@/lib/motion'
+import { usePrefersReducedMotion } from '@/lib/motion'
 
 const LETTERS = 'RYLIX'.split('')
 
@@ -23,31 +16,22 @@ const PRESENTATION_TEXT =
   'text-cream mix-blend-difference text-[clamp(14px,3.4vw,19px)] ' +
   'md:text-[clamp(15px,1.55vw,26px)]'
 
-/** Courbe d'intro commune — sortie franche, sans rebond. */
-const intro = (duration: number, delay: number) => ({ duration, delay, ease: EASE })
-
 /**
  * Hero éditorial en deux temps, épinglé sur 320svh — course longue pour
- * laisser le temps de lire le texte et d'observer les photos avant que le
- * cadre 02 ne prenne toute la place.
+ * laisser le temps de lire le texte et d'observer les photos.
  *
- * Temps 1 — à l'entrée : deux rideaux papier s'ouvrent verticalement, les
- * cadres se dévoilent par clip-path, les lettres de RYLIX montent une à une
- * derrière leur masque.
+ * Tout est visible dès le premier rendu : ni rideau d'ouverture, ni
+ * révélation progressive, ni dérive de parallaxe au scroll ou au pointeur.
+ * Les cadres, le logotype et l'accroche gardent la position et la taille
+ * qu'ils ont toujours eues — seule la mécanique d'entrée a disparu.
  *
- * Temps 2 — au défilement : le cadre 01 s'efface et laisse la place au texte
- * de présentation, qui apparaît dans la même zone ; le cadre 02 grandit,
- * passe devant le logotype, lequel s'estompe pour se poser en fond.
- *
- * En continu : les cadres dérivent à des vitesses différentes, leurs photos
- * glissent en sens inverse à l'intérieur (double parallaxe), et réagissent au
- * pointeur en sens opposés.
- *
- * Chaque cadre superpose trois couches de mouvement indépendantes : la dérive
- * de scroll (conteneur externe), l'intro clip-path (figure), la parallaxe
- * pointeur (interne). Le mot reste plein en toutes circonstances — le fondu
- * entre ses deux exemplaires le fait passer derrière les cadres plutôt que de
- * se mélanger avec eux. Tout est statique sous prefers-reduced-motion.
+ * Le seul mouvement qui subsiste est fonctionnel, pas décoratif : le cadre
+ * 01 et l'accroche du temps 1 s'effacent en fondu pendant que la
+ * présentation du temps 2 apparaît dans la même zone (le pinning réutilise
+ * le même espace d'écran pour deux temps du récit) — sans ce fondu les deux
+ * temps se superposeraient à l'écran. Ce fondu n'entraîne plus aucun
+ * déplacement : ni les cadres, ni le mot RYLIX, ni les textes ne
+ * translatent plus au scroll.
  */
 export function Hero() {
   const reduce = usePrefersReducedMotion()
@@ -60,55 +44,10 @@ export function Hero() {
   })
   const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 32, mass: 0.3 })
 
-  // --- Dérives liées au scroll (immobiles sous reduced-motion) ---
-  const pct = (from: number, to: number) =>
-    useTransform(progress, [0, 1], reduce ? [`${from}%`, `${from}%`] : [`${from}%`, `${to}%`])
-  const num = (from: number, to: number) =>
-    useTransform(progress, [0, 1], reduce ? [from, from] : [from, to])
-
-  // Cadre 01 — dérive puis s'efface : il laisse la place au texte de
-  // présentation, qui apparaît exactement dans la même zone.
-  const primaryX = pct(0, -30)
-  const primaryY = pct(0, -8)
-  const primaryScale = num(1, 0.78)
-  const primaryRotate = num(0, -2.2)
-  const primaryImgY = pct(0, 12)
+  // --- Fondu fonctionnel entre les deux temps (voir doc ci-dessus) ---
   const primaryOpacity = useTransform(progress, [0.18, 0.44], reduce ? [1, 1] : [1, 0])
-
-  // Cadre 02 — grandit et vient occuper la scène.
-  const secondaryX = pct(0, -47)
-  const secondaryY = pct(0, -4)
-  const secondaryScale = num(1, 1.5)
-  const secondaryRotate = num(2.5, 1.2)
-  const secondaryImgY = pct(0, -8)
-
-  const wordY = pct(0, -18)
-  const wordScale = num(1, 0.88)
-
   const chapterOneOpacity = useTransform(progress, [0.05, 0.3], reduce ? [1, 1] : [1, 0])
-  const chapterOneY = pct(0, -12)
   const presentationOpacity = useTransform(progress, [0.34, 0.58], reduce ? [0, 0] : [0, 1])
-  const presentationY = useTransform(progress, [0.34, 0.58], reduce ? [0, 0] : [28, 0])
-
-  // --- Parallaxe au pointeur, en sens opposés ---
-  const pointerX = useMotionValue(0)
-  const pointerY = useMotionValue(0)
-  const springPX = useSpring(pointerX, { stiffness: 60, damping: 20, mass: 0.4 })
-  const springPY = useSpring(pointerY, { stiffness: 60, damping: 20, mass: 0.4 })
-  const primaryPointerX = useTransform(springPX, (v) => v * 14)
-  const primaryPointerY = useTransform(springPY, (v) => v * 10)
-  const secondaryPointerX = useTransform(springPX, (v) => v * -10)
-  const secondaryPointerY = useTransform(springPY, (v) => v * -8)
-
-  useEffect(() => {
-    if (reduce) return
-    const onMove = (e: PointerEvent) => {
-      pointerX.set(e.clientX / window.innerWidth - 0.5)
-      pointerY.set(e.clientY / window.innerHeight - 0.5)
-    }
-    window.addEventListener('pointermove', onMove, { passive: true })
-    return () => window.removeEventListener('pointermove', onMove)
-  }, [reduce, pointerX, pointerY])
 
   const primary = resolveImage(hero.primary.imageKey)
   const secondary = resolveImage(hero.secondary.imageKey)
@@ -123,56 +62,22 @@ export function Hero() {
         {/* Grain pellicule */}
         <div className="grain-live" aria-hidden />
 
-        {/* Rideaux d'ouverture */}
-        {!reduce && (
-          <>
-            <motion.div
-              aria-hidden
-              initial={{ y: '0%' }}
-              animate={{ y: '-102%' }}
-              transition={intro(1.3, 0.1)}
-              className="pointer-events-none absolute left-0 top-0 z-30 h-[50.5%] w-full bg-cream"
-            />
-            <motion.div
-              aria-hidden
-              initial={{ y: '0%' }}
-              animate={{ y: '102%' }}
-              transition={intro(1.3, 0.1)}
-              className="pointer-events-none absolute bottom-0 left-0 z-30 h-[50.5%] w-full bg-cream"
-            />
-          </>
-        )}
-
         {/* Cadres photo */}
         {/* Cadres : z-index géré cadre par cadre (le 02 passe devant le mot).
             Le conteneur n'est pas masqué aux lecteurs d'écran : les deux
             photos portent un texte alternatif descriptif (voir hero.*.alt). */}
         <div className="absolute inset-0">
-          {/* 01 — grand cadre : dérive scroll sur le conteneur, intro sur la
-              figure, pointeur à l'intérieur — trois couches indépendantes. */}
+          {/* 01 — grand cadre. Fixe ; seule son opacité varie (voir doc plus
+              haut), pour laisser place au temps 2. */}
           <motion.div
-            style={{
-              x: primaryX,
-              y: primaryY,
-              scale: primaryScale,
-              rotate: primaryRotate,
-              opacity: primaryOpacity,
-            }}
+            style={{ opacity: primaryOpacity }}
             className="absolute left-[12vw] top-[18vh] z-[2] h-[58vh] w-[67vw]
                        md:left-[28vw] md:top-[13vh] md:h-[min(74vh,830px)] md:w-[min(38vw,610px)]"
           >
-            <motion.figure
-              initial={reduce ? false : { clipPath: 'inset(50% 0% 50% 0%)', scale: 1.12 }}
-              animate={{ clipPath: 'inset(0% 0% 0% 0%)', scale: 1 }}
-              transition={intro(1.7, 0.18)}
-              className="m-0 h-full w-full overflow-hidden bg-navy-alt shadow-[0_36px_90px_rgba(0,0,0,0.38)]"
-            >
-              <motion.div
-                style={{ x: primaryPointerX, y: primaryPointerY }}
-                className="h-full w-full"
-              >
+            <figure className="m-0 h-full w-full overflow-hidden bg-navy-alt shadow-[0_36px_90px_rgba(0,0,0,0.38)]">
+              <div className="h-full w-full">
                 {primary && (
-                  <motion.img
+                  <img
                     src={primary.src}
                     srcSet={primary.srcSet}
                     sizes="(max-width: 768px) 67vw, 38vw"
@@ -180,38 +85,24 @@ export function Hero() {
                     height={primary.height}
                     alt={hero.primary.alt}
                     {...{ fetchpriority: 'high' }}
-                    style={{ y: primaryImgY, objectPosition: 'center 48%' }}
+                    style={{ objectPosition: 'center 48%' }}
                     className="photo h-[115%] w-full object-cover"
                   />
                 )}
-              </motion.div>
+              </div>
               <span className="pointer-events-none absolute inset-0 bg-gradient-to-b from-navy/5 via-transparent to-navy/30" />
-            </motion.figure>
+            </figure>
           </motion.div>
 
-          {/* 02 — petit cadre incliné */}
-          <motion.div
-            style={{
-              x: secondaryX,
-              y: secondaryY,
-              scale: secondaryScale,
-              rotate: secondaryRotate,
-            }}
+          {/* 02 — petit cadre incliné. Fixe, aucune animation. */}
+          <div
             className="absolute left-[72vw] top-[32vh] z-[2] h-[35vh] w-[36vw]
                        md:top-[26vh] md:h-[min(50vh,570px)] md:w-[min(21vw,350px)]"
           >
-            <motion.figure
-              initial={reduce ? false : { clipPath: 'inset(100% 0% 0% 0%)', y: '12%' }}
-              animate={{ clipPath: 'inset(0% 0% 0% 0%)', y: '0%' }}
-              transition={intro(1.45, 0.48)}
-              className="m-0 h-full w-full overflow-hidden bg-navy-alt shadow-[0_36px_90px_rgba(0,0,0,0.38)]"
-            >
-              <motion.div
-                style={{ x: secondaryPointerX, y: secondaryPointerY }}
-                className="h-full w-full"
-              >
+            <figure className="m-0 h-full w-full overflow-hidden bg-navy-alt shadow-[0_36px_90px_rgba(0,0,0,0.38)]">
+              <div className="h-full w-full">
                 {secondary && (
-                  <motion.img
+                  <img
                     src={secondary.src}
                     srcSet={secondary.srcSet}
                     sizes="(max-width: 768px) 36vw, 21vw"
@@ -219,32 +110,52 @@ export function Hero() {
                     height={secondary.height}
                     alt={hero.secondary.alt}
                     {...{ fetchpriority: 'high' }}
-                    style={{ y: secondaryImgY, objectPosition: 'center 46%' }}
+                    style={{ objectPosition: 'center 46%' }}
                     className="photo h-[115%] w-full object-cover"
                   />
                 )}
-              </motion.div>
+              </div>
               <span className="pointer-events-none absolute inset-0 bg-gradient-to-b from-navy/5 via-transparent to-navy/30" />
-            </motion.figure>
-          </motion.div>
+            </figure>
+          </div>
         </div>
 
         {/* RYLIX — au premier plan, à 80% d'opacité : la photo affleure à
-            travers les lettres sans que leur dessin soit jamais entamé,
-            quelle que soit la position du cadre 02 en dessous. */}
-        <Wordmark y={wordY} scale={wordScale} reduce={reduce} />
-
-        {/* Accroche, haut gauche. Sous mouvement réduit, la présentation est
-            empilée juste dessous : la chorégraphie qui la révèle au scroll est
-            désactivée, elle doit rester atteignable autrement. */}
-        <motion.div
-          initial={reduce ? false : { opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={intro(0.8, 0.76)}
-          className="absolute left-[18px] right-[18px] top-[13%] z-10 md:left-[30px] md:right-auto md:top-[24%] md:max-w-[46vw]"
+            travers les lettres sans que leur dessin soit jamais entamé. Fixe,
+            aucune animation d'entrée. */}
+        <h1
+          className="pointer-events-none absolute inset-x-[3vw] top-[48%] z-[6] flex items-center
+                     justify-between font-display font-extrabold uppercase leading-[1.2]
+                     text-cream/80 md:inset-x-[2.2vw] md:top-[47%]"
+          aria-label="RYLIX"
         >
+          {LETTERS.map((letter, i) => (
+            <span
+              key={`${letter}-${i}`}
+              aria-hidden
+              className="inline-flex overflow-hidden px-[0.02em] py-[0.12em]"
+            >
+              <span
+                // 17vw : la somme des cinq glyphes Syne 800 tient alors dans la
+                // largeur du conteneur, sans rognage aux bords. L'interligne du
+                // conteneur parent (leading-[1.2]) est calé sur la hauteur réelle
+                // du glyphe à cette graisse — plus serré, le haut et le bas des
+                // lettres se retrouvent rognés par l'overflow-hidden ci-dessus.
+                className="inline-block text-[17vw] tracking-[-0.045em] md:text-[clamp(7rem,19vw,21rem)] md:tracking-[-0.06em]"
+              >
+                {letter}
+              </span>
+            </span>
+          ))}
+        </h1>
+
+        {/* Accroche, haut gauche. Visible d'emblée ; sous mouvement réduit,
+            la présentation est empilée juste dessous : la chorégraphie qui la
+            révèle au scroll est désactivée, elle doit rester atteignable
+            autrement. */}
+        <div className="absolute left-[18px] right-[18px] top-[13%] z-10 md:left-[30px] md:right-auto md:top-[24%] md:max-w-[46vw]">
           <motion.p
-            style={{ opacity: chapterOneOpacity, y: chapterOneY }}
+            style={{ opacity: chapterOneOpacity }}
             className="m-0 font-display text-[17px] font-bold leading-[1.05] tracking-[-0.02em]
                        text-cream md:text-[clamp(18px,1.5vw,26px)]"
           >
@@ -265,7 +176,7 @@ export function Hero() {
               ))}
             </div>
           )}
-        </motion.div>
+        </div>
 
         {/* Second temps — la présentation, là où était le cadre 01.
             Sous mouvement réduit elle est déjà rendue avec l'accroche.
@@ -275,7 +186,7 @@ export function Hero() {
             cadres, exactement comme RYLIX au premier temps. */}
         {!reduce && (
           <motion.div
-            style={{ opacity: presentationOpacity, y: presentationY }}
+            style={{ opacity: presentationOpacity }}
             className="pointer-events-none absolute inset-x-[18px] top-[17%] z-[9] max-w-[600px]
                        md:inset-x-auto md:left-[30px] md:top-[20%] md:max-w-[52vw]"
           >
@@ -288,11 +199,10 @@ export function Hero() {
           </motion.div>
         )}
 
-        {/* Bandeau bas : repère et progression */}
-        <motion.div
-          initial={reduce ? false : { opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={intro(0.8, 0.9)}
+        {/* Bandeau bas : repère et progression. Visible d'emblée ; la barre
+            de progression reste liée au scroll — c'est un indicateur
+            fonctionnel, pas une révélation. */}
+        <div
           className="absolute bottom-[18px] left-[18px] right-[18px] z-[12] grid
                      grid-cols-[auto,1fr] items-center gap-[18px] font-sans text-[9px] uppercase
                      tracking-[0.1em] text-cream/80 md:bottom-6 md:left-[30px] md:right-[30px]"
@@ -304,59 +214,8 @@ export function Hero() {
               className="block h-full w-full origin-left bg-accent"
             />
           </span>
-        </motion.div>
+        </div>
       </div>
     </section>
-  )
-}
-
-/**
- * Le logotype, au premier plan (z-index le plus haut de la section) et posé à
- * 80% d'opacité : la photo affleure à travers les lettres.
- *
- * Un simple canal alpha sur la couleur du texte, pas de mix-blend-mode ni de
- * background-clip — ces deux-là inversaient ou entamaient le dessin des
- * lettres selon ce qui passait dessous. Ici la silhouette reste intacte,
- * quelle que soit la position du cadre 02.
- */
-function Wordmark({
-  y,
-  scale,
-  reduce,
-}: {
-  y: MotionValue<string>
-  scale: MotionValue<number>
-  reduce: boolean
-}) {
-  return (
-    <motion.h1
-      style={{ y, scale }}
-      className="pointer-events-none absolute inset-x-[3vw] top-[48%] z-[6] flex items-center
-                 justify-between font-display font-extrabold uppercase leading-[1.2]
-                 text-cream/80 md:inset-x-[2.2vw] md:top-[47%]"
-      aria-label="RYLIX"
-    >
-      {LETTERS.map((letter, i) => (
-        <span
-          key={`${letter}-${i}`}
-          aria-hidden
-          className="inline-flex overflow-hidden px-[0.02em] py-[0.12em]"
-        >
-          <motion.span
-            initial={reduce ? false : { y: '118%', rotate: 3 }}
-            animate={{ y: '0%', rotate: 0 }}
-            transition={intro(1.05, 0.38 + i * 0.045)}
-            // 17vw : la somme des cinq glyphes Syne 800 tient alors dans la
-            // largeur du conteneur, sans rognage aux bords. L'interligne du
-            // conteneur parent (leading-[1.2]) est calé sur la hauteur réelle
-            // du glyphe à cette graisse — plus serré, le haut et le bas des
-            // lettres se retrouvent rognés par l'overflow-hidden ci-dessous.
-            className="inline-block text-[17vw] tracking-[-0.045em] md:text-[clamp(7rem,19vw,21rem)] md:tracking-[-0.06em]"
-          >
-            {letter}
-          </motion.span>
-        </span>
-      ))}
-    </motion.h1>
   )
 }
