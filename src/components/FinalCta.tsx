@@ -41,15 +41,7 @@ export function FinalCta() {
                              duration-700 ease-rylix group-hover:w-full"
                 />
 
-                <span className="relative flex min-w-0 items-baseline gap-4 md:gap-6">
-                  <span
-                    aria-hidden
-                    className="font-sans text-xs tabular-nums text-fg-muted/50
-                               transition-colors duration-300 ease-rylix group-hover:text-accent"
-                  >
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-
+                <span className="relative flex min-w-0 items-baseline">
                   {/* Pas d'overflow-hidden ici : « Regarder » est plus large
                       que la colonne sur mobile, il doit rétrécir avec le
                       clamp, pas se faire couper. */}

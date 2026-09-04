@@ -179,7 +179,7 @@ function CardBody({
           src={cover.src}
           srcSet={cover.srcSet}
           sizes="(max-width: 768px) 70vw, 22vw"
-          alt=""
+          alt={`Pochette de ${release.title}, ${release.type.toLowerCase()} de RYLIX.`}
           loading="lazy"
           decoding="async"
           className="photo h-full w-full object-cover transition-transform duration-[1200ms] ease-rylix group-hover:scale-[1.04]"
@@ -199,13 +199,15 @@ function CardBody({
 
     return (
       <div className="grid min-h-0 flex-1 grid-cols-2 grid-rows-2 gap-px border-t border-slate/20 bg-slate/20">
-        {photos.map(({ key, image }) => (
+        {photos.map(({ key, alt, image }) => (
           <img
             key={key}
             src={image!.src}
             srcSet={image!.srcSet}
             sizes="(max-width: 768px) 34vw, 11vw"
-            alt=""
+            // Le texte alternatif de la galerie, repris tel quel : ces
+            // vignettes sont les mêmes photos, au même titre descriptif.
+            alt={alt}
             loading="lazy"
             decoding="async"
             className="photo h-full w-full object-cover transition-transform duration-[1200ms] ease-rylix group-hover:scale-[1.06]"

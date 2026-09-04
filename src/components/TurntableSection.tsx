@@ -15,8 +15,7 @@ export function TurntableSection() {
   return (
     <section className="py-lg md:py-xl" aria-labelledby="ecouter">
       <div className="container-rylix">
-        <div className="mb-10 flex items-center gap-4 md:mb-14">
-          <span className="font-sans text-sm text-accent">01</span>
+        <div className="mb-10 flex items-center md:mb-14">
           <p id="ecouter" className="label">
             {turntableSection.eyebrow}
           </p>

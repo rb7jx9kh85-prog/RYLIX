@@ -109,8 +109,6 @@ export const hero = {
   } satisfies HeroFrame,
   /** Accroche en haut à gauche, une ligne par entrée. */
   intro: ['DJ et producteur'],
-  /** Coordonnées du Valais (Sion), affichées dans le bandeau bas. */
-  coordinates: '46°06′00″ N / 7°04′22″ E',
 } as const
 
 export type HomeCard = {
@@ -238,7 +236,7 @@ export type Social = { name: SocialName; url: string; handle: string }
 
 export const socials: Social[] = [
   { name: 'Instagram', url: 'https://www.instagram.com/rylix_music', handle: '@rylix_music' },
-  { name: 'TikTok', url: 'https://www.tiktok.com/@rylix.music1', handle: '@rylix.music1' },
+  { name: 'TikTok', url: 'https://www.tiktok.com/@rylix_music1', handle: '@rylix_music1' },
   { name: 'YouTube', url: 'https://www.youtube.com/@RYLIXStudio', handle: '@RYLIXStudio' },
   {
     name: 'Spotify',
