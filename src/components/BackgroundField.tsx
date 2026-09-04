@@ -2,8 +2,10 @@ import { useMemo, useRef } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
+// Les matériaux three.js ne lisent pas les tokens CSS : les couleurs de la
+// palette sont recopiées ici, à garder alignées sur src/index.css.
 const CREAM = '#f2f0e8'
-const ACCENT = '#d9ff43'
+const ACCENT = '#e0a661'
 const PALE = '#c8cbbc'
 
 /** Poussière en suspension, dérive lente sur trois axes. */

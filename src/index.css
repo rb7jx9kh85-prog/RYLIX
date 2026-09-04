@@ -6,14 +6,14 @@
 
 @layer base {
   :root {
-    /* Palette "Ink & Acid" — encre chaude, papier, accent acide.
+    /* Encre chaude, papier, accent ambré.
        Les noms de tokens historiques (navy/slate/green/pale/cream) sont
        conservés pour ne pas casser les classes existantes ; seules les
-       valeurs changent. green = l'accent acide. */
+       valeurs changent. green = l'accent, quelle que soit sa teinte. */
     --rylix-navy: #11120f; /* encre — fond principal */
     --rylix-navy-alt: #1a1c17; /* encre claire — fond alternatif */
     --rylix-slate: #6f7466; /* gris chaud — bordures, icônes */
-    --rylix-green: #d9ff43; /* jaune acide — accent */
+    --rylix-green: #e0a661; /* ambre doré — accent */
     --rylix-pale: #c8cbbc; /* papier grisé — texte secondaire */
     --rylix-cream: #f2f0e8; /* papier — texte principal */
 
@@ -22,7 +22,7 @@
     --rylix-navy-rgb: 17 18 15;
     --rylix-navy-alt-rgb: 26 28 23;
     --rylix-slate-rgb: 111 116 102;
-    --rylix-green-rgb: 217 255 67;
+    --rylix-green-rgb: 224 166 97;
     --rylix-pale-rgb: 200 203 188;
     --rylix-cream-rgb: 242 240 232;
 
@@ -174,11 +174,10 @@
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  /* Grain animé, façon pellicule — réservé au hero. L'élément déborde de 50%
-     pour que ses déplacements ne laissent jamais voir un bord. Animé sur les
-     écrans à pointeur fin uniquement : sur mobile le grain reste statique,
-     même rendu à l'œil, zéro travail d'animation. Figé partout sous
-     prefers-reduced-motion par la règle globale plus haut. */
+  /* Grain façon pellicule — réservé au hero. L'élément déborde de 50%, reliquat
+     de l'époque où il se déplaçait : la marge ne coûte rien et garde la texture
+     à couvert si le débordement resservait. Le grain est désormais figé, sans
+     animation nulle part. */
   .grain-live {
     position: absolute;
     inset: -50%;
@@ -186,31 +185,6 @@
     pointer-events: none;
     opacity: 0.045;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.9'/%3E%3C/svg%3E");
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .grain-live {
-      will-change: transform;
-      animation: rylix-grain 0.22s steps(2) infinite;
-    }
-  }
-
-  @keyframes rylix-grain {
-    0% {
-      transform: translate3d(0, 0, 0);
-    }
-    25% {
-      transform: translate3d(2%, -3%, 0);
-    }
-    50% {
-      transform: translate3d(-3%, 2%, 0);
-    }
-    75% {
-      transform: translate3d(3%, 4%, 0);
-    }
-    100% {
-      transform: translate3d(-2%, -2%, 0);
-    }
   }
 
   .text-balance {

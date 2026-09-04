@@ -182,7 +182,7 @@ function CardBody({
           alt={`Pochette de ${release.title}, ${release.type.toLowerCase()} de RYLIX.`}
           loading="lazy"
           decoding="async"
-          className="photo h-full w-full object-cover transition-transform duration-[1200ms] ease-rylix group-hover:scale-[1.04]"
+          className="photo h-full w-full object-cover transition-transform duration-[300ms] ease-rylix group-hover:scale-[1.04]"
         />
       </div>
     )
@@ -210,7 +210,7 @@ function CardBody({
             alt={alt}
             loading="lazy"
             decoding="async"
-            className="photo h-full w-full object-cover transition-transform duration-[1200ms] ease-rylix group-hover:scale-[1.06]"
+            className="photo h-full w-full object-cover transition-transform duration-[300ms] ease-rylix group-hover:scale-[1.06]"
           />
         ))}
       </div>
