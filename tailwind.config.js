@@ -22,10 +22,10 @@ export default {
         accent: token('green'),
         line: token('slate'),
       },
-      // Une seule famille sur tout le site : Archivo, du corps de texte au logotype.
+      // Une seule famille sur tout le site : Syne, du corps de texte au logotype.
       fontFamily: {
-        display: ['Archivo', 'system-ui', 'sans-serif'],
-        sans: ['Archivo', 'system-ui', 'sans-serif'],
+        display: ['Syne', 'system-ui', 'sans-serif'],
+        sans: ['Syne', 'system-ui', 'sans-serif'],
       },
       fontSize: {
         hero: ['clamp(2.75rem, 11vw, 9rem)', { lineHeight: '1', letterSpacing: '0.02em' }],

@@ -9,11 +9,10 @@ const CSS_OUT = path.resolve(
 )
 const UA =
   'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-const URL =
-  'https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400..900;1,400..900&display=swap'
+const URL = 'https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&display=swap'
 
 const KEEP = ['latin', 'latin-ext'] // ordre = ordre d'écriture des @font-face
-const WEIGHT_RANGE = { Archivo: '400 900' }
+const WEIGHT_RANGE = { Syne: '400 800' }
 
 const css = await (await fetch(URL, { headers: { 'User-Agent': UA } })).text()
 
@@ -53,7 +52,7 @@ for (const f of faces) {
   )
 }
 
-const header = `/* Police self-hostée — Archivo (Google Fonts, licence SIL Open Font License 1.1).\n   Fichier variable 400-900, sous-ensembles latin + latin-ext uniquement.\n   Aucune requête vers un domaine tiers au runtime. */\n\n`
+const header = `/* Police self-hostée — Syne (Google Fonts, licence SIL Open Font License 1.1).\n   Fichier variable 400-800, sous-ensembles latin + latin-ext uniquement.\n   Aucune requête vers un domaine tiers au runtime. */\n\n`
 await fs.mkdir(path.dirname(CSS_OUT), { recursive: true })
 await fs.writeFile(CSS_OUT, header + out.join('\n\n') + '\n')
 console.log('wrote', CSS_OUT, out.length, 'faces')
