@@ -51,8 +51,8 @@
   body {
     @apply bg-navy font-sans text-cream antialiased;
     font-size: 1rem;
-    /* Archivo a un empattement de titrage marqué : on ouvre l'interligne et
-       l'interlettrage du texte courant pour garder une lecture confortable. */
+    /* Syne est une police de titrage : on ouvre l'interligne et l'interlettrage
+       du texte courant pour garder une lecture confortable. */
     line-height: 1.7;
     letter-spacing: 0.005em;
     font-weight: 400;
