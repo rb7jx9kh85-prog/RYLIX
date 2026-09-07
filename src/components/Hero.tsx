@@ -45,9 +45,10 @@ const intro = (duration: number, delay: number) => ({ duration, delay, ease: EAS
  *
  * Chaque cadre superpose trois couches de mouvement indépendantes : la dérive
  * de scroll (conteneur externe), l'intro clip-path (figure), la parallaxe
- * pointeur (interne). Le mot reste plein en toutes circonstances — le fondu
- * entre ses deux exemplaires le fait passer derrière les cadres plutôt que de
- * se mélanger avec eux. Tout est statique sous prefers-reduced-motion.
+ * pointeur (interne). Le mot garde ses lettres pleines à 80% d'opacité en
+ * toutes circonstances — c'est le fondu entre ses deux exemplaires qui le
+ * fait passer derrière les cadres puis le texte, jamais un mélange sur les
+ * lettres elles-mêmes. Tout est statique sous prefers-reduced-motion.
  */
 export function Hero() {
   const reduce = usePrefersReducedMotion()
@@ -84,6 +85,15 @@ export function Hero() {
 
   const wordY = pct(0, -18)
   const wordScale = num(1, 0.88)
+  // Le mot existe en deux exemplaires superposés — l'un devant les cadres,
+  // l'autre dessous, plafonné à une opacité basse pour rester un filigrane une
+  // fois reculé — et on fond de l'un vers l'autre. Le texte de présentation
+  // apparaît au même endroit à partir de 0.34 : le mot doit avoir fini de
+  // reculer avant, sans quoi les deux se chevauchent en pleine lisibilité.
+  // Fenêtre vérifiée par mesure réelle du recouvrement avec le cadre 02 : à
+  // 0.2 déjà 50% du I et 61% du X sont couverts, à 0.34 c'est 77% et 67%.
+  const wordAbove = useTransform(progress, [0.2, 0.34], reduce ? [1, 1] : [1, 0])
+  const wordBelow = useTransform(progress, [0.2, 0.34], reduce ? [0, 0] : [0, 0.3])
 
   const chapterOneOpacity = useTransform(progress, [0.05, 0.3], reduce ? [1, 1] : [1, 0])
   const chapterOneY = pct(0, -12)
@@ -229,10 +239,13 @@ export function Hero() {
           </motion.div>
         </div>
 
-        {/* RYLIX — au premier plan, à 80% d'opacité : la photo affleure à
-            travers les lettres sans que leur dessin soit jamais entamé,
-            quelle que soit la position du cadre 02 en dessous. */}
-        <Wordmark y={wordY} scale={wordScale} reduce={reduce} />
+        {/* RYLIX — deux exemplaires superposés, l'un devant les cadres et le
+            texte, l'autre dessous. Chacun garde ses lettres à 80% d'opacité
+            (la photo affleure à travers, jamais leur dessin entamé) ; le
+            fondu entre les deux exemplaires les fait passer derrière la photo
+            qui grandit puis derrière le texte de présentation. */}
+        <Wordmark layer="below" opacity={wordBelow} y={wordY} scale={wordScale} reduce={reduce} />
+        <Wordmark layer="above" opacity={wordAbove} y={wordY} scale={wordScale} reduce={reduce} />
 
         {/* Accroche, haut gauche. Sous mouvement réduit, la présentation est
             empilée juste dessous : la chorégraphie qui la révèle au scroll est
@@ -311,30 +324,45 @@ export function Hero() {
 }
 
 /**
- * Le logotype, au premier plan (z-index le plus haut de la section) et posé à
- * 80% d'opacité : la photo affleure à travers les lettres.
+ * Le logotype, rendu à un niveau d'empilement donné. Les deux exemplaires
+ * partagent exactement la même géométrie : seuls leur z-index et leur opacité
+ * de groupe diffèrent, ce qui rend le fondu de l'un vers l'autre imperceptible
+ * en tant que tel — on ne voit que le mot qui passe derrière la photo.
  *
- * Un simple canal alpha sur la couleur du texte, pas de mix-blend-mode ni de
- * background-clip — ces deux-là inversaient ou entamaient le dessin des
- * lettres selon ce qui passait dessous. Ici la silhouette reste intacte,
- * quelle que soit la position du cadre 02.
+ * Chaque lettre garde son alpha de 80% en toutes circonstances (un simple
+ * canal sur la couleur du texte, pas de mix-blend-mode ni de background-clip
+ * — ces deux-là inversaient ou entamaient le dessin des lettres selon ce qui
+ * passait dessous) ; c'est l'opacité du groupe qui fait reculer le mot,
+ * jamais celle des lettres elles-mêmes, donc leur silhouette reste toujours
+ * intacte.
+ *
+ * Seul l'exemplaire de devant porte le rôle de titre ; celui du fond est
+ * décoratif, pour ne pas annoncer deux fois « RYLIX » aux lecteurs d'écran.
  */
 function Wordmark({
+  layer,
+  opacity,
   y,
   scale,
   reduce,
 }: {
+  layer: 'above' | 'below'
+  opacity: MotionValue<number>
   y: MotionValue<string>
   scale: MotionValue<number>
   reduce: boolean
 }) {
+  const above = layer === 'above'
+  const Tag = above ? motion.h1 : motion.div
+
   return (
-    <motion.h1
-      style={{ y, scale }}
-      className="pointer-events-none absolute inset-x-[3vw] top-[48%] z-[6] flex items-center
-                 justify-between font-display font-extrabold uppercase leading-[1.2]
-                 text-cream/80 md:inset-x-[2.2vw] md:top-[47%]"
-      aria-label="RYLIX"
+    <Tag
+      style={{ y, scale, opacity }}
+      className={`pointer-events-none absolute inset-x-[3vw] top-[48%] flex items-center
+                  justify-between font-display font-extrabold uppercase leading-[1.2]
+                  text-cream/80 md:inset-x-[2.2vw] md:top-[47%]
+                  ${above ? 'z-[6]' : 'z-[1]'}`}
+      {...(above ? { 'aria-label': 'RYLIX' } : { 'aria-hidden': true })}
     >
       {LETTERS.map((letter, i) => (
         <span
@@ -357,6 +385,6 @@ function Wordmark({
           </motion.span>
         </span>
       ))}
-    </motion.h1>
+    </Tag>
   )
 }
