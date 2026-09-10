@@ -61,7 +61,11 @@ export const artistName = {
  * plutôt qu'un paragraphe qui l'explique puis une rangée d'icônes séparée.
  */
 export const finalCta = [
-  { word: 'Écouter', platform: 'Spotify', url: 'https://open.spotify.com/artist/7J5z5bTji0fyEE3X0xhI3k' },
+  {
+    word: 'Écouter',
+    platform: 'Spotify',
+    url: 'https://open.spotify.com/artist/7J5z5bTji0fyEE3X0xhI3k',
+  },
   { word: 'Regarder', platform: 'YouTube', url: 'https://www.youtube.com/@RYLIXStudio' },
   { word: 'Suivre', platform: 'Instagram', url: 'https://www.instagram.com/rylix_music' },
 ] as const
@@ -71,7 +75,6 @@ export type NavItem = { label: string; to: string }
 export const nav: NavItem[] = [
   { label: 'Accueil', to: '/' },
   { label: 'Musique', to: '/musique' },
-  { label: 'Studio', to: '/studio' },
   { label: 'Galerie', to: '/galerie' },
   { label: 'Dates', to: '/dates' },
   { label: 'Parcours', to: '/parcours' },
@@ -147,14 +150,6 @@ export const homeCards: HomeCard[] = [
     span: 3,
   },
   {
-    to: '/studio',
-    label: 'Studio',
-    kind: 'list',
-    teaser: 'Coulisses et productions SoundCloud.',
-    lines: ['Photos du studio \u2014 \u00e0 venir.', '\u00c9coute directe via SoundCloud.'],
-    span: 3,
-  },
-  {
     to: '/galerie',
     label: 'Galerie',
     kind: 'mosaic',
@@ -211,24 +206,6 @@ export const release = {
 export const artist = {
   spotifyUrl: 'https://open.spotify.com/artist/7J5z5bTji0fyEE3X0xhI3k',
   imusicianUrl: 'https://music.imusician.pro/artist/rylix',
-} as const
-
-/**
- * Titres SoundCloud — productions non postées sur les autres plateformes.
- * Aperçu joué directement via le lecteur embarqué officiel SoundCloud.
- */
-export const soundcloud = {
-  eyebrow: 'SoundCloud',
-  title: 'Découvrez des titres sur SoundCloud',
-  body: 'Productions non postées sur les autres plateformes.',
-  profileUrl: 'https://soundcloud.com/rylix-s',
-} as const
-
-/** En-tête de l'onglet Studio — coulisses en photos et productions SoundCloud. */
-export const studio = {
-  eyebrow: 'Studio',
-  title: 'Dans le studio',
-  intro: 'Coulisses et sessions studio en images — les photos arrivent bientôt.',
 } as const
 
 export type SocialName = 'Instagram' | 'TikTok' | 'YouTube' | 'Spotify'
@@ -407,14 +384,6 @@ export const galleryVideos: GalleryVideo[] = [
     span: 'wide',
   },
 ]
-
-/**
- * Photos de l'onglet Studio — coulisses et sessions, dans le même esprit que
- * `gallery` ci-dessus (mêmes clés d'image, même règle : une entrée sans
- * fichier correspondant est ignorée à l'affichage plutôt que de casser le
- * build). Vide pour l'instant : les photos suivront.
- */
-export const studioPhotos: GalleryPhoto[] = []
 
 /**
  * Clé d'accès Web3Forms — publique par conception (comme un identifiant de

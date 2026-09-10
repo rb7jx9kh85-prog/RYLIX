@@ -15,12 +15,13 @@ const LETTERS = 'RYLIX'.split('')
 
 /**
  * Écriture de la présentation, calquée sur le logotype : capitales, graisse
- * display, et mix-blend-difference pour que le texte s'inverse en passant sur
- * les cadres photo au lieu de se poser dessus.
+ * display. Couleur pleine plutôt que mix-blend-difference — ce dernier
+ * inversait le texte selon ce qui passait dessous, le rendant tantôt
+ * illisible, tantôt délavé (même défaut déjà corrigé sur le logotype).
  */
 const PRESENTATION_TEXT =
   'm-0 font-display font-extrabold uppercase leading-[1.12] tracking-[-0.015em] ' +
-  'text-cream mix-blend-difference text-[clamp(14px,3.4vw,19px)] ' +
+  'text-cream text-[clamp(14px,3.4vw,19px)] ' +
   'md:text-[clamp(15px,1.55vw,26px)]'
 
 /** Courbe d'intro commune — sortie franche, sans rebond. */
@@ -283,9 +284,9 @@ export function Hero() {
         {/* Second temps — la présentation, là où était le cadre 01.
             Sous mouvement réduit elle est déjà rendue avec l'accroche.
 
-            Même écriture que le logotype : capitales, graisse display,
-            mix-blend-difference — le texte s'inverse en passant sur les
-            cadres, exactement comme RYLIX au premier temps. */}
+            Même écriture que le logotype : capitales, graisse display, mais
+            couleur pleine — contrairement au mot RYLIX, ce texte n'a pas
+            vocation à se fondre avec les photos, juste à rester lisible. */}
         {!reduce && (
           <motion.div
             style={{ opacity: presentationOpacity, y: presentationY }}
