@@ -19,7 +19,7 @@ const OUT_DIR = path.join(ROOT, 'public/images')
 const MANIFEST = path.join(ROOT, 'src/lib/images.generated.ts')
 
 const WIDTHS = [480, 768, 1200, 1920]
-const QUALITY = 78
+const QUALITY = 90
 
 const isImage = (f) => /\.(jpe?g|png|webp|tiff?)$/i.test(f)
 
