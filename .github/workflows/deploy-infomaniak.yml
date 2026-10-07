@@ -1,0 +1,37 @@
+name: Déployer sur Infomaniak
+
+# Se déclenche à chaque mise à jour de la branche de production. Construit le
+# site puis envoie le contenu de dist/ par rsync (SSH) vers l'hébergement
+# web Infomaniak. Voir DEPLOY.md pour la configuration des secrets requis.
+on:
+  push:
+    branches: [claude/rylix-design-tokens-yz5jhf]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+        env:
+          VITE_SITE_URL: https://rylix.ch
+
+      - name: Envoyer dist/ vers Infomaniak par SSH
+        uses: easingthemes/ssh-deploy@v5.1.1
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.INFOMANIAK_SSH_KEY }}
+          REMOTE_HOST: ${{ secrets.INFOMANIAK_SSH_HOST }}
+          REMOTE_USER: ${{ secrets.INFOMANIAK_SSH_USER }}
+          REMOTE_PORT: ${{ secrets.INFOMANIAK_SSH_PORT }}
+          TARGET: ${{ secrets.INFOMANIAK_REMOTE_DIR }}
+          SOURCE: dist/
+          ARGS: '-rlgoDzvc --delete'
