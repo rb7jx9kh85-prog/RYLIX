@@ -9,6 +9,8 @@ const Gallery = lazy(() => import('@/pages/Gallery'))
 const Dates = lazy(() => import('@/pages/Dates'))
 const Parcours = lazy(() => import('@/pages/Parcours'))
 const Contact = lazy(() => import('@/pages/Contact'))
+const MentionsLegales = lazy(() => import('@/pages/MentionsLegales'))
+const Confidentialite = lazy(() => import('@/pages/Confidentialite'))
 const NotFound = lazy(() => import('@/pages/NotFound'))
 
 /** Réserve la hauteur d'écran pendant le chargement d'une page — évite le saut. */
@@ -26,6 +28,8 @@ export default function App() {
         <Route path="dates" element={deferred(<Dates />)} />
         <Route path="parcours" element={deferred(<Parcours />)} />
         <Route path="contact" element={deferred(<Contact />)} />
+        <Route path="mentions-legales" element={deferred(<MentionsLegales />)} />
+        <Route path="confidentialite" element={deferred(<Confidentialite />)} />
         {/* Anciennes URL conservées : l'onglet Studio est retiré, /tournee a
             été renommée en /dates. */}
         <Route path="studio" element={<Navigate to="/" replace />} />
