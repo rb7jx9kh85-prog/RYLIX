@@ -1,0 +1,26 @@
+# Routage SPA : toute URL qui ne correspond pas à un fichier réel retombe sur
+# index.html, React Router prend le relais côté client. Équivalent Apache de
+# la règle "rewrites" de vercel.json.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# Cache long terme uniquement sur les fichiers versionnés par hash
+# (assets/fonts/images) — jamais sur index.html, qui doit rester à jour à
+# chaque déploiement. Même répartition que vercel.json.
+<IfModule mod_setenvif.c>
+  SetEnvIf Request_URI "^/(assets|fonts|images)/" RYLIX_LONG_CACHE
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header set Cache-Control "public, max-age=31536000, immutable" env=RYLIX_LONG_CACHE
+
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+</IfModule>
