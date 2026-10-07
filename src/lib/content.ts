@@ -34,7 +34,7 @@ export const presentation = {
   /** Titre de la section Présentation, sur l'accueil. */
   title: 'DJ producteur suisse',
   paragraphs: [
-    "Guitariste, DJ, producteur, je suis passionné de musique depuis mon enfance, que ce soit en écoutant ou en jouant — ça m'a toujours fait vibrer.",
+    'Guitariste, DJ, producteur : la musique me fait vibrer depuis mon enfance, que ce soit en écoutant ou en jouant.',
     "Mais j'ai assez vite eu l'envie de faire mes propres compositions, de créer quelque chose venant de moi. De vouloir faire vibrer les gens à leur tour.",
   ],
 } as const
@@ -399,3 +399,22 @@ export const contactEmail = import.meta.env.VITE_CONTACT_EMAIL || 'contact@rylix
 
 /** Politique de cookies, générée et hébergée par Biskoui. */
 export const cookiePolicyUrl = 'https://policies.biskoui.ch/986029'
+
+/** Liens de pied de page vers les pages légales. */
+export const legalNav: NavItem[] = [
+  { label: 'Mentions légales', to: '/mentions-legales' },
+  { label: 'Confidentialité', to: '/confidentialite' },
+]
+
+/**
+ * Identité de l'éditeur du site, pour la page Mentions légales.
+ * Champs non déductibles du code : à compléter avec les informations réelles
+ * de l'exploitant avant mise en ligne.
+ */
+export const legalEntity = {
+  publisherName:
+    '[À COMPLÉTER — nom complet et statut légal de l’exploitant du site, ex. « Jean Dupont, artiste indépendant »]',
+  address: '[À COMPLÉTER — adresse postale complète]',
+  /** Numéro IDE (Suisse) ou SIRET (France) si une activité est enregistrée. */
+  registrationId: '[À COMPLÉTER — numéro IDE ou SIRET si applicable, sinon laisser tel quel]',
+} as const
