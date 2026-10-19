@@ -9,7 +9,6 @@ const Gallery = lazy(() => import('@/pages/Gallery'))
 const Dates = lazy(() => import('@/pages/Dates'))
 const Parcours = lazy(() => import('@/pages/Parcours'))
 const Contact = lazy(() => import('@/pages/Contact'))
-const MentionsLegales = lazy(() => import('@/pages/MentionsLegales'))
 const Confidentialite = lazy(() => import('@/pages/Confidentialite'))
 const NotFound = lazy(() => import('@/pages/NotFound'))
 
@@ -28,11 +27,13 @@ export default function App() {
         <Route path="dates" element={deferred(<Dates />)} />
         <Route path="parcours" element={deferred(<Parcours />)} />
         <Route path="contact" element={deferred(<Contact />)} />
-        <Route path="mentions-legales" element={deferred(<MentionsLegales />)} />
         <Route path="confidentialite" element={deferred(<Confidentialite />)} />
         {/* Anciennes URL conservées : l'onglet Studio est retiré, /tournee a
-            été renommée en /dates. */}
+            été renommée en /dates. Mentions légales mise en pause (page
+            toujours dans src/pages/MentionsLegales.tsx) en attendant les
+            vraies informations de l'éditeur dans legalEntity, content.ts. */}
         <Route path="studio" element={<Navigate to="/" replace />} />
+        <Route path="mentions-legales" element={<Navigate to="/" replace />} />
         <Route path="tournee" element={<Navigate to="/dates" replace />} />
         <Route path="*" element={deferred(<NotFound />)} />
       </Route>
