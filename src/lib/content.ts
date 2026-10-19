@@ -400,11 +400,13 @@ export const contactEmail = import.meta.env.VITE_CONTACT_EMAIL || 'contact@rylix
 /** Politique de cookies, générée et hébergée par Biskoui. */
 export const cookiePolicyUrl = 'https://policies.biskoui.ch/986029'
 
-/** Liens de pied de page vers les pages légales. */
-export const legalNav: NavItem[] = [
-  { label: 'Mentions légales', to: '/mentions-legales' },
-  { label: 'Confidentialité', to: '/confidentialite' },
-]
+/**
+ * Liens de pied de page vers les pages légales. Mentions légales retirée
+ * temporairement : page et route conservées (voir App.tsx), simplement pas
+ * liées tant que legalEntity ci-dessous n'est pas renseigné avec les vraies
+ * informations de l'éditeur.
+ */
+export const legalNav: NavItem[] = [{ label: 'Confidentialité', to: '/confidentialite' }]
 
 /**
  * Identité de l'éditeur du site, pour la page Mentions légales.
