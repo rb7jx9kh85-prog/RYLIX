@@ -21,7 +21,7 @@ export function PageHeader({ eyebrow, title, children }: Props) {
         as="h1"
         text={title}
         delay={0.06}
-        className="text-balance font-display text-h1 font-extrabold uppercase"
+        className="break-words text-balance font-display text-h1 font-extrabold uppercase"
       />
       {children && (
         <Reveal delay={0.18}>
