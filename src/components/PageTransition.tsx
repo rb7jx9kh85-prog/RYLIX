@@ -125,7 +125,7 @@ export function SplitText({
             // largeur ignore la coupure.
             className="inline-block max-w-full align-bottom"
           >
-            <motion.span variants={wordVariants} className="inline-block">
+            <motion.span variants={wordVariants} className="inline-block max-w-full">
               {word}
               {i < words.length - 1 ? ' ' : ''}
             </motion.span>
