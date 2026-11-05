@@ -2,13 +2,13 @@
 
 ## En une phrase
 
-Un carnet de bord sobre et chaleureux pour un DJ producteur suisse : de l'encre, du papier, un accent ambré — et des photos réelles, pas une maquette.
+Un carnet de bord sobre et chaleureux pour un DJ producteur suisse : de l'encre, du papier, un accent sauge — et des photos réelles, pas une maquette.
 
 **Références retenues** : quentinmosimann.com et buntmusic.com, pour leur typographie assumée, leur minimalisme et leur ambiance de couleur — pas pour une structure de page précise à copier.
 
 ## Couleurs
 
-Palette encre / papier / ambre. Variables CSS dans `src/index.css` (`--rylix-*`), exposées comme tokens Tailwind dans `tailwind.config.js`. Aucune couleur écrite en dur dans les composants.
+Palette encre / papier / sauge. Variables CSS dans `src/index.css` (`--rylix-*`), exposées comme tokens Tailwind dans `tailwind.config.js`. Aucune couleur écrite en dur dans les composants.
 
 | Rôle                            | Token                              | Valeur    |
 | ------------------------------- | ---------------------------------- | --------- |
@@ -16,10 +16,10 @@ Palette encre / papier / ambre. Variables CSS dans `src/index.css` (`--rylix-*`)
 | Fond alternatif (encre claire)  | `--rylix-navy-alt` / `bg-navy-alt` | `#1a1c17` |
 | Texte principal (papier)        | `--rylix-cream` / `text-cream`     | `#f2f0e8` |
 | Texte secondaire (papier grisé) | `--rylix-pale` / `text-pale`       | `#c8cbbc` |
-| Neutre (bordures, icônes)       | `--rylix-slate` / `text-slate`     | `#6f7466` |
-| **Accent** (ambre doré)         | `--rylix-green` / `text-accent`    | `#e0a661` |
+| Neutre (bordures, icônes)       | `--rylix-slate` / `text-slate`     | `#6d7864` |
+| **Accent** (vert sauge)         | `--rylix-green` / `text-accent`    | `#92a26f` |
 
-L'accent est la seule couleur vive du site : sélection de texte, remplissage des boutons au survol, filet de progression de scroll, surbrillance d'un élément actif. Il ne décore jamais un fond entier.
+L'accent est repris des herbes hautes qui traversent les photos du hero et de la galerie — pas une couleur choisie au hasard. C'est la seule couleur vive du site : sélection de texte, remplissage des boutons au survol, filet de progression de scroll, surbrillance d'un élément actif. Il ne décore jamais un fond entier.
 
 Aucun dégradé décoratif. Les quelques `bg-gradient-to-b` existants (vignettage photo du hero, fond de carte du lecteur, halo très léger en mobile) restent dans la palette ci-dessus et servent un effet physique (lumière, vignette) — jamais un aplat violet/bleu/rose de template.
 
