@@ -28,9 +28,9 @@ const PRESENTATION_TEXT =
 const intro = (duration: number, delay: number) => ({ duration, delay, ease: EASE })
 
 /**
- * Hero éditorial en deux temps, épinglé sur 320svh — course longue pour
- * laisser le temps de lire le texte et d'observer les photos avant que le
- * cadre 02 ne prenne toute la place.
+ * Hero éditorial en deux temps, épinglé sur 150svh — volontairement court
+ * pour que la section Écouter (dernière sortie) reste à un scroll court,
+ * pas à trois écrans de distance.
  *
  * Temps 1 — à l'entrée : deux rideaux papier s'ouvrent verticalement, les
  * cadres se dévoilent par clip-path, les lettres de RYLIX montent une à une
@@ -127,7 +127,7 @@ export function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative h-[320svh] min-h-[1900px] bg-navy"
+      className="relative h-[150svh] min-h-[900px] bg-navy"
       aria-label="RYLIX — introduction"
     >
       <div className="sticky top-0 isolate h-[100svh] min-h-[640px] overflow-hidden bg-navy">
