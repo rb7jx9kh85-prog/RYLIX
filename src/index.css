@@ -6,14 +6,14 @@
 
 @layer base {
   :root {
-    /* Encre chaude, papier, accent ambré.
+    /* Encre chaude, papier, accent sauge.
        Les noms de tokens historiques (navy/slate/green/pale/cream) sont
        conservés pour ne pas casser les classes existantes ; seules les
        valeurs changent. green = l'accent, quelle que soit sa teinte. */
     --rylix-navy: #11120f; /* encre — fond principal */
     --rylix-navy-alt: #1a1c17; /* encre claire — fond alternatif */
-    --rylix-slate: #6f7466; /* gris chaud — bordures, icônes */
-    --rylix-green: #e0a661; /* ambre doré — accent */
+    --rylix-slate: #6d7864; /* gris sauge — bordures, icônes */
+    --rylix-green: #92a26f; /* vert sauge — accent, pris dans les herbes hautes des photos */
     --rylix-pale: #c8cbbc; /* papier grisé — texte secondaire */
     --rylix-cream: #f2f0e8; /* papier — texte principal */
 
@@ -21,8 +21,8 @@
        modificateurs d'opacité (text-cream/80, border-slate/20, ...). */
     --rylix-navy-rgb: 17 18 15;
     --rylix-navy-alt-rgb: 26 28 23;
-    --rylix-slate-rgb: 111 116 102;
-    --rylix-green-rgb: 224 166 97;
+    --rylix-slate-rgb: 109 120 100;
+    --rylix-green-rgb: 146 162 111;
     --rylix-pale-rgb: 200 203 188;
     --rylix-cream-rgb: 242 240 232;
 
