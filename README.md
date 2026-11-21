@@ -2,7 +2,7 @@
 
 Site artiste de RYLIX, DJ et producteur suisse (Valais). Site statique multipage, sans backend.
 
-- **Stack** : Vite + React 18 + TypeScript, React Router v6, Tailwind CSS, Framer Motion, Lenis
+- **Stack** : Vite + React 18 + TypeScript, React Router v6, Tailwind CSS, Framer Motion
 - **Hébergement** : Vercel (statique, `dist/`)
 - **Formulaire** : Web3Forms (aucun serveur à maintenir)
 - **Aucune clé secrète côté client** — voir [Variables d'environnement](#variables-denvironnement)
@@ -77,22 +77,18 @@ export const tourDates: TourDate[] = [
 Les dates passées sont masquées automatiquement. Liste vide → la page affiche
 « Aucune date confirmée pour le moment. »
 
-### Modifier les aperçus de l'accueil
+### Structure de l'accueil
 
-Les cinq entrées de l'accueil — sortie, galerie, dates, parcours, contact —
-sont sur une seule ligne, définie par `homeCards` (`src/lib/content.ts`) et
-rendue par `src/components/HomeCards.tsx`. La bande glisse latéralement au fil
-du scroll vertical, et reste glissable au doigt.
+`src/pages/Home.tsx`, de haut en bas, comme sur un site officiel d'artiste :
 
-- `kind: 'cover'` — la pochette de la dernière sortie
-- `kind: 'mosaic'` — les vignettes de la galerie
-- `kind: 'list'` — des lignes d'infos ; celles des dates et du parcours sont
-  dérivées des listes réelles (`linesFor`), pas recopiées
-- `span` (2/3/4) règle la largeur : les cartes visuelles sont resserrées, les
-  cartes de texte plus larges
-
-Toutes les cartes ont le titre en tête : dans une bande qu'on parcourt
-latéralement, les intitulés doivent se lire sur une seule ligne de regard.
+1. **Hero** (`src/components/Hero.tsx`) : photo plein écran (`hero` dans
+   `src/lib/content.ts`), nom, métier, lien vers la dernière sortie
+2. **Dernier single** (`src/components/ReleaseSection.tsx`, aussi sur `/musique`) :
+   pochette, date, liens vers chaque plateforme, lecteur Spotify chargé au clic
+3. **Biographie** : texte de `presentation` et une photo créditée
+4. **Dates** : les quatre prochaines, lues en direct dans l'admin
+5. **Photos** : quatre photos de la galerie (`GALLERY_PREVIEW`)
+6. **Booking et contact** : email, réseaux, lien vers le formulaire
 
 ### Ajouter une entrée au parcours
 
@@ -253,7 +249,7 @@ consomme, ce qui rend possible les modificateurs d'opacité (`text-cream/80`).
   400/500 pour le texte courant, 700/800 pour les titres. Syne étant une police
   de titrage, l'interligne et l'interlettrage du texte courant sont ouverts dans
   la couche `base` de `src/index.css` pour rester lisibles.
-- **Photos** : `filter: saturate(0.72) contrast(1.04) brightness(0.92)` via la classe `.photo` — désaturation douce, accordée au grain pellicule du hero
+- **Photos** : `filter: saturate(0.72) contrast(1.04) brightness(0.92)` via la classe `.photo` — désaturation douce
 - **Animations** : fondu + translation courte uniquement ; `prefers-reduced-motion` respecté
 
 La police est self-hostée (`public/fonts/`, sous-ensembles latin + latin-ext, fichier
@@ -265,39 +261,18 @@ Tout le vocabulaire d'animation est centralisé dans `src/lib/motion.ts` : une s
 courbe (`cubic-bezier(0.22, 1, 0.36, 1)`), trois durées. Les pages n'écrivent pas
 de valeur d'animation en dur.
 
-- défilement amorti (Lenis), désactivé sous `prefers-reduced-motion`
-- révélations au scroll jouées une fois, titres révélés mot à mot derrière un masque
-- parallaxe sur le hero, la section présentation et les tuiles de galerie
-- filet d'avancement de lecture en haut de page, header qui s'efface en descendant
+- défilement natif du navigateur, sans amorti ni effet détourné
+- révélations au scroll jouées une fois, titres de page révélés mot à mot
+- header qui s'efface en descendant et revient en remontant
 - survols : fond du CTA qui monte, filet de lien qui se trace, lignes qui se décalent
 
 #### Le hero
 
-`src/components/Hero.tsx` — section épinglée sur 230svh, entièrement en
-Framer Motion :
+`src/components/Hero.tsx` : une photo, un fondu à l'arrivée, rien au scroll.
 
-**Temps 1 — à l'entrée** : deux rideaux papier s'ouvrent, les cadres photo se
-dévoilent par clip-path, les lettres de RYLIX montent une à une derrière leur
-masque.
-
-**Temps 2 — au défilement** : le cadre 01 s'efface et laisse la place au texte
-de présentation, qui apparaît dans la même zone ; le cadre 02 grandit et passe
-devant le logotype, lequel s'estompe pour se poser en fond.
-
-En continu : les cadres dérivent à des vitesses différentes, leurs photos
-glissent en sens inverse à l'intérieur (double parallaxe), et réagissent au
-pointeur en sens opposés. Le mot est en `mix-blend-difference` : il s'inverse
-en passant sur les cadres.
-
-- taille du logotype : `17vw` sur mobile (les cinq glyphes Syne 800 tiennent
-  alors dans la largeur, sans rognage), `clamp(7rem,19vw,21rem)` au-delà
-- grain pellicule animé (écrans à pointeur fin uniquement), statique ailleurs
-- sous `prefers-reduced-motion` la scène est statique et **complète** : la
-  présentation, sinon révélée au scroll, est empilée sous l'accroche
-
-Le contenu du hero (images des cadres, accroche, pastilles, coordonnées) est
-dans `hero` (`src/lib/content.ts`) ; le texte de présentation dans
-`presentation`.
+- mobile : la photo (portrait) couvre l'écran, le nom est posé en bas
+- bureau : la photo occupe la droite et se fond dans l'encre, le texte est à gauche
+- photo, texte alternatif et cadrage dans `hero` (`src/lib/content.ts`)
 
 ## Performance
 
@@ -305,4 +280,4 @@ dans `hero` (`src/lib/content.ts`) ; le texte de présentation dans
 - Dimensions intrinsèques sur chaque `<img>` + placeholder LQIP inliné → pas de layout shift
 - Polices préchargées, `font-display: swap`
 - Pages secondaires chargées en `React.lazy` ; React et Framer Motion en chunks séparés
-- Le player Spotify n'est chargé que sur `/musique`, en `loading="lazy"`
+- Le lecteur Spotify n'est chargé qu'au clic sur « Écouter ici »

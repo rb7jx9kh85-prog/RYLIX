@@ -155,38 +155,13 @@
     @apply h-px w-full border-0 bg-slate/25;
   }
 
-  /* Traitement photo unifié — désaturation douce, contraste léger,
-     cohérent avec le grain argentique du hero. */
+  /* Traitement photo unifié — désaturation douce, contraste léger. */
   .photo {
     filter: saturate(0.72) contrast(1.04) brightness(0.92);
   }
 }
 
 @layer utilities {
-  /* Grain statique — overlay discret sur les sections photo */
-  .grain::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.16;
-    mix-blend-mode: overlay;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
-
-  /* Grain façon pellicule — réservé au hero. L'élément déborde de 50%, reliquat
-     de l'époque où il se déplaçait : la marge ne coûte rien et garde la texture
-     à couvert si le débordement resservait. Le grain est désormais figé, sans
-     animation nulle part. */
-  .grain-live {
-    position: absolute;
-    inset: -50%;
-    z-index: 20;
-    pointer-events: none;
-    opacity: 0.045;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.9'/%3E%3C/svg%3E");
-  }
-
   .text-balance {
     text-wrap: balance;
   }

@@ -3,8 +3,6 @@ import { Outlet, useLocation } from 'react-router-dom'
 import { Header } from './Header'
 import { Footer } from './Footer'
 import { PageTransition } from './PageTransition'
-import { ScrollProgress } from './ScrollProgress'
-import { useSmoothScroll } from '@/lib/useSmoothScroll'
 
 /** Remet la page en haut à chaque navigation (React Router ne le fait pas). */
 function ScrollToTop() {
@@ -17,7 +15,6 @@ function ScrollToTop() {
 
 export function Layout() {
   const { pathname } = useLocation()
-  useSmoothScroll()
 
   return (
     <>
@@ -28,7 +25,6 @@ export function Layout() {
       >
         Aller au contenu
       </a>
-      <ScrollProgress />
       <Header />
       <main id="contenu" className="min-h-screen">
         <PageTransition key={pathname}>

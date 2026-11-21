@@ -43,7 +43,7 @@ Graisses utilisées : 400 (texte courant), 500 (labels), 700/800 (titres h1-h3, 
 
 **Un seul rayon d'arrondi pour tout le site : `rounded-sm` (4px)** — boutons, cartes, champs de formulaire, images, badges.
 
-Exception unique, fonctionnelle et non décorative : les deux flèches rondes de navigation d'`HomeCards` (`rounded-full`) sont des boutons-icônes circulaires, pas des boutons texte en pilule. Aucun autre `rounded-full`, `rounded-xl/2xl/3xl` n'est permis ailleurs.
+Exception unique, fonctionnelle et non décorative : le bouton lecture rond du hero (`rounded-full`), un bouton-icône circulaire, pas un bouton texte en pilule. Aucun autre `rounded-full`, `rounded-xl/2xl/3xl` n'est permis ailleurs.
 
 Grille d'espacement régulière, base 0.5rem (`tailwind.config.js`) :
 
@@ -57,7 +57,7 @@ Grille d'espacement régulière, base 0.5rem (`tailwind.config.js`) :
 
 ## Icônes
 
-Un seul jeu : des traits dessinés à la main, en SVG inline, `viewBox="0 0 24 24"`, `fill="none"`, trait de `1.25` à `1.5`px (ex. flèches de `HomeCards`, `Contact`, `FinalCta`, `SocialLinks`). Pas de librairie d'icônes tierce, pas de style mixte (traits fins partout, jamais de remplissage plein ni d'icône "glyphe" à côté).
+Un seul jeu : des traits dessinés à la main, en SVG inline, `viewBox="0 0 24 24"`, `fill="none"`, trait de `1.25` à `1.5`px (ex. flèche de `Contact`, bouton lecture du hero). Pas de librairie d'icônes tierce, pas de style mixte (traits fins partout, jamais de remplissage plein ni d'icône "glyphe" à côté).
 
 **Aucun emoji dans l'interface.** Zéro exception.
 
@@ -72,9 +72,9 @@ Animations autorisées :
 
 - apparition douce au scroll (fondu + léger décalage vertical, une seule fois — `revealVariants`) ;
 - retour visuel au survol et au clic (couleur, trait qui se dessine, remplissage qui monte) ;
-- la parallaxe discrète déjà calibrée du hero (pointeur, défilement) — amplitude mesurée, jamais exagérée.
+- un simple fondu à l'arrivée sur le hero.
 
-Interdit : rebond, curseur personnalisé, survol qui change la mise en page, chargement artificiellement ralenti.
+Interdit : rebond, parallaxe, 3D, scroll détourné ou amorti, curseur personnalisé, survol qui change la mise en page, chargement artificiellement ralenti.
 
 `prefers-reduced-motion` est respecté partout (CSS global + hook `usePrefersReducedMotion`) : c'est une contrainte du système à chaque nouvelle animation, pas une case à cocher après coup.
 
