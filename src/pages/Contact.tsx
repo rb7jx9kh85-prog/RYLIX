@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import { Link } from 'react-router-dom'
 import { Seo } from '@/components/Seo'
 import { PageHeader } from '@/components/PageHeader'
 import { Reveal } from '@/components/PageTransition'
@@ -125,6 +126,13 @@ export default function Contact() {
                   {status === 'error' && <span className="text-pale">{error}</span>}
                 </p>
               </div>
+
+              <p className="m-0 text-xs text-fg-muted/80">
+                Nom, email et message servent uniquement à répondre à la demande.{' '}
+                <Link to="/confidentialite" className="link-quiet">
+                  Confidentialité
+                </Link>
+              </p>
             </form>
           </Reveal>
 
