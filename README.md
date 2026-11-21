@@ -271,7 +271,8 @@ de valeur d'animation en dur.
 `src/components/Hero.tsx` : une photo, un fondu à l'arrivée, rien au scroll.
 
 - mobile : la photo (portrait) couvre l'écran, le nom est posé en bas
-- bureau : la photo occupe la droite et se fond dans l'encre, le texte est à gauche
+- bureau : la photo est centrée, ses bords se fondent dans la même photo très floutée
+  qui remplit les côtés ; nom, métier et dernier single centrés en bas
 - photo, texte alternatif et cadrage dans `hero` (`src/lib/content.ts`)
 
 ## Performance
