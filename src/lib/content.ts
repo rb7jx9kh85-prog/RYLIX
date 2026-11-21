@@ -31,7 +31,7 @@ export const presentation = {
   /** Titre de la section Biographie, sur l'accueil. */
   title: 'DJ et producteur',
   paragraphs: [
-    "Guitariste, DJ, producteur : la musique fait vibrer RYLIX depuis l'enfance, qu'il l'écoute ou qu'il la joue.",
+    "Guitariste, DJ, producteur : la musique l'a fait vibrer depuis l'enfance, qu'il l'écoute ou qu'il la joue.",
     'Très vite, il a eu envie de composer ses propres morceaux, de créer quelque chose qui vienne de lui. Et de faire vibrer les gens à leur tour.',
   ],
 } as const
