@@ -101,6 +101,13 @@ export const images = {
     height: 5120,
     placeholder: 'data:image/webp;base64,UklGRl4AAABXRUJQVlA4IFIAAACQAwCdASoQABUAPwlwsFArpiSisAgBcCEJQBOgArLgFkrqUxnAAPhS0+gmyWDw+1f+gVYZoHCo94ssousAIqq1XZ5tow299KAFN+xjGxmzQAAA',
   },
+  'rylix-wildstrubel': {
+    src: '/images/rylix-wildstrubel-1500.webp',
+    srcSet: '/images/rylix-wildstrubel-480.webp 480w, /images/rylix-wildstrubel-768.webp 768w, /images/rylix-wildstrubel-1200.webp 1200w, /images/rylix-wildstrubel-1500.webp 1500w',
+    width: 1500,
+    height: 2000,
+    placeholder: 'data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAABQBACdASoQABUAPwlur0+rpiQiMAgBcCEJbACxG1ABw7zVEwJe3EAwYYJAAPotqdvhA5kqw1xOoK3svO9+/bMAeByIcl2DJWkXnrfhF9X8aNYphBJQAA==',
+  },
 } satisfies Record<string, GeneratedImage>
 
 export type ImageKey = keyof typeof images

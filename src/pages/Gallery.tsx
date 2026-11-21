@@ -2,18 +2,10 @@ import { useState } from 'react'
 import { Seo } from '@/components/Seo'
 import { Image } from '@/components/Image'
 import { PageHeader } from '@/components/PageHeader'
-import { Parallax, Reveal } from '@/components/PageTransition'
+import { Reveal } from '@/components/PageTransition'
 import { Lightbox, type LightboxItem } from '@/components/Lightbox'
 import { creditFor, gallery, galleryVideos, photographer } from '@/lib/content'
 import { hasImage } from '@/lib/images'
-
-/** Grille asymétrique : chaque photo occupe une empreinte différente. */
-const spanClass: Record<string, string> = {
-  tall: 'md:col-span-5 aspect-[3/4]',
-  portrait: 'md:col-span-7 aspect-[3/4]',
-  square: 'md:col-span-5 aspect-square',
-  wide: 'md:col-span-7 aspect-[16/10]',
-}
 
 export default function Gallery() {
   const [index, setIndex] = useState<number | null>(null)
@@ -29,7 +21,7 @@ export default function Gallery() {
 
   // Les auteurs autres que celui par défaut, cités une fois dans l'en-tête.
   const otherCredits = [
-    ...new Set(photos.filter((p) => p.credit).map((p) => creditFor(p.credit).name)),
+    ...new Set(photos.filter((p) => p.credit).map((p) => creditFor(p.credit)?.name)),
   ]
 
   return (
@@ -53,80 +45,86 @@ export default function Gallery() {
       </PageHeader>
 
       <section className="container-rylix pb-lg md:pb-xl">
-        {photos.length === 0 && galleryVideos.length === 0 ? (
+        {photos.length === 0 ? (
           <p className="text-fg-muted">Aucune photo pour le moment.</p>
         ) : (
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-12 md:gap-6">
+          <div className="columns-1 gap-4 sm:columns-2 lg:columns-3">
+            {/* Colonnes simples : chaque photo garde son format d'origine,
+                sans recadrage ni trou dans la grille. */}
             {photos.map((photo, i) => (
-              <Parallax
-                key={photo.key}
-                // Les tuiles paires dérivent vers le haut, les impaires vers le bas :
-                // la grille respire au scroll sans jamais se désaligner.
-                distance={i % 2 === 0 ? 34 : -34}
-                className={spanClass[photo.span] ?? spanClass.square}
-              >
-                <Reveal delay={i * 0.06} className="flex h-full flex-col">
-                  <button
-                    type="button"
-                    onClick={() => setIndex(i)}
-                    className="group block min-h-0 flex-1 overflow-hidden rounded-sm"
-                  >
-                    <span className="sr-only">Agrandir : {photo.alt}</span>
-                    <Image
-                      imageKey={photo.key}
-                      alt={photo.alt}
-                      sizes="(max-width: 768px) 92vw, 50vw"
-                      className="h-full w-full"
-                      imgClassName="h-full w-full object-cover transition-transform duration-[300ms] ease-rylix group-hover:scale-[1.04]"
-                    />
-                  </button>
-                  {/* Crédit sous chaque photo, comme une légende d'édition —
-                      l'auteur varie d'une série à l'autre. */}
-                  <p className="mt-3 shrink-0 font-sans text-[10px] uppercase tracking-[0.12em] text-fg-muted/70">
-                    Photo — {creditFor(photo.credit).name}
-                  </p>
-                </Reveal>
-              </Parallax>
-            ))}
-
-            {/* Vidéos — même grille, lecture automatique muette en boucle. */}
-            {galleryVideos.map((video, vi) => {
-              const i = photos.length + vi
-              return (
-                <Parallax
-                  key={video.src}
-                  distance={i % 2 === 0 ? 34 : -34}
-                  className={spanClass[video.span] ?? spanClass.square}
+              <Reveal key={photo.key} delay={(i % 2) * 0.06} className="mb-6 break-inside-avoid">
+                <button
+                  type="button"
+                  onClick={() => setIndex(i)}
+                  className="group block w-full overflow-hidden rounded-sm"
                 >
-                  <Reveal delay={i * 0.06} className="flex h-full flex-col">
-                    <div className="block min-h-0 flex-1 overflow-hidden rounded-sm">
-                      <span className="sr-only">{video.alt}</span>
-                      <video
-                        src={video.src}
-                        poster={video.poster}
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                        preload="metadata"
-                        aria-hidden="true"
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                    {/* Pas de crédit par défaut ici : contrairement aux photos,
-                        l'auteur d'une vidéo n'est pas présumé. */}
-                    {video.credit && (
-                      <p className="mt-3 shrink-0 font-sans text-[10px] uppercase tracking-[0.12em] text-fg-muted/70">
-                        Vidéo — {creditFor(video.credit).name}
-                      </p>
-                    )}
-                  </Reveal>
-                </Parallax>
-              )
-            })}
+                  <span className="sr-only">Agrandir : {photo.alt}</span>
+                  <Image
+                    imageKey={photo.key}
+                    alt={photo.alt}
+                    sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 92vw"
+                    className="w-full"
+                    imgClassName="h-auto w-full transition-transform duration-[300ms] ease-rylix group-hover:scale-[1.04]"
+                  />
+                </button>
+                {/* Crédit sous chaque photo, comme une légende d'édition —
+                      l'auteur varie d'une série à l'autre. */}
+                {photo.credit !== null && (
+                  <p className="mt-3 shrink-0 font-sans text-[10px] uppercase tracking-[0.12em] text-fg-muted/70">
+                    Photo — {creditFor(photo.credit)?.name}
+                  </p>
+                )}
+              </Reveal>
+            ))}
           </div>
         )}
       </section>
+
+      {galleryVideos.length > 0 && (
+        <section className="container-rylix pb-lg md:pb-xl" aria-labelledby="videos">
+          <Reveal>
+            <h2
+              id="videos"
+              className="mb-6 border-b border-slate/20 pb-4 font-display text-h2 font-extrabold uppercase text-cream md:mb-8"
+            >
+              Vidéos
+            </h2>
+          </Reveal>
+          {/* Petites vignettes : muettes et en boucle, son activable via les
+              contrôles natifs. Une verticale prend une colonne, une
+              horizontale deux. */}
+          <ul className="grid grid-cols-2 items-start gap-3 md:grid-cols-4 md:gap-4">
+            {galleryVideos.map((video, i) => (
+              <li
+                key={video.src}
+                className={video.format === 'horizontal' ? 'col-span-2' : 'col-span-1'}
+              >
+                <Reveal delay={i * 0.06}>
+                  <video
+                    src={video.src}
+                    poster={video.poster}
+                    aria-label={video.alt}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    controls
+                    preload="metadata"
+                    className={`w-full rounded-sm bg-navy-alt object-cover ${
+                      video.format === 'horizontal' ? 'aspect-video' : 'aspect-[9/16]'
+                    }`}
+                  />
+                  {video.credit && (
+                    <p className="mt-3 font-sans text-[10px] uppercase tracking-[0.12em] text-fg-muted/70">
+                      Vidéo — {creditFor(video.credit)?.name}
+                    </p>
+                  )}
+                </Reveal>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <Lightbox items={items} index={index} onClose={() => setIndex(null)} onNavigate={setIndex} />
     </>
