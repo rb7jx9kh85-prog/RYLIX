@@ -16,9 +16,8 @@ export const site = {
    */
   tagline: 'DJ et producteur',
   /** Suffixe du <title> de l'accueil — sans tiret pour éviter un double séparateur. */
-  titleSuffix: 'DJ et producteur, Valais',
-  description:
-    'RYLIX est un DJ et producteur suisse originaire du Valais. Better Days, son premier single, est disponible.',
+  titleSuffix: 'DJ et producteur',
+  description: 'RYLIX est DJ et producteur. Better Days, son premier single, est disponible.',
 } as const
 
 /**
@@ -30,10 +29,10 @@ export const site = {
 export const presentation = {
   eyebrow: 'Présentation',
   /** Titre de la section Biographie, sur l'accueil. */
-  title: 'DJ producteur suisse',
+  title: 'DJ et producteur',
   paragraphs: [
-    'Guitariste, DJ, producteur : la musique me fait vibrer depuis mon enfance, que ce soit en écoutant ou en jouant.',
-    "Mais j'ai assez vite eu l'envie de faire mes propres compositions, de créer quelque chose venant de moi. De vouloir faire vibrer les gens à leur tour.",
+    "Guitariste, DJ, producteur : la musique fait vibrer RYLIX depuis l'enfance, qu'il l'écoute ou qu'il la joue.",
+    'Très vite, il a eu envie de composer ses propres morceaux, de créer quelque chose qui vienne de lui. Et de faire vibrer les gens à leur tour.',
   ],
 } as const
 
@@ -55,7 +54,7 @@ export const nav: NavItem[] = [
 export const hero = {
   imageKey: 'image-1',
   desktopImageKey: 'hero-paysage',
-  alt: 'RYLIX de profil devant un massif alpin valaisan, lumière de fin de journée.',
+  alt: 'RYLIX de profil devant un massif alpin, lumière de fin de journée.',
 } as const
 
 export type Platform = { name: string; url: string }
@@ -173,12 +172,12 @@ export type GalleryPhoto = {
 export const gallery: GalleryPhoto[] = [
   {
     key: 'image-1',
-    alt: 'RYLIX de profil devant un massif alpin valaisan, lumière de fin de journée.',
+    alt: 'RYLIX de profil devant un massif alpin, lumière de fin de journée.',
     span: 'tall',
   },
   {
     key: 'image-2',
-    alt: 'RYLIX de profil au pied d’une tour médiévale, drapeaux suisse et valaisan en haut.',
+    alt: 'RYLIX de profil au pied d’une tour médiévale, drapeaux en haut.',
     span: 'portrait',
   },
   {
@@ -193,13 +192,13 @@ export const gallery: GalleryPhoto[] = [
   },
   {
     key: 'rylix-dj-exterieur',
-    alt: 'RYLIX aux platines en extérieur, terrasse du Miroir de l’Argentine, Valais.',
+    alt: 'RYLIX aux platines en extérieur, terrasse du Miroir de l’Argentine.',
     span: 'portrait',
     credit: 'anne-sophie-fioretto',
   },
   {
     key: 'imagin-chalet',
-    alt: 'Chalet Miroir de l’Argentine et massif alpin, lors d’un événement Ima’Gin en Valais.',
+    alt: 'Chalet Miroir de l’Argentine et massif alpin, lors d’un événement Ima’Gin.',
     span: 'wide',
     credit: 'anne-sophie-fioretto',
   },
@@ -211,7 +210,7 @@ export const gallery: GalleryPhoto[] = [
   },
   {
     key: 'imagin-affiche',
-    alt: 'Affiche Ima’Gin Suisse, gin alpin, devant les montagnes valaisannes.',
+    alt: 'Affiche Ima’Gin, gin alpin, devant les montagnes.',
     span: 'square',
     credit: 'anne-sophie-fioretto',
   },
@@ -223,13 +222,13 @@ export const gallery: GalleryPhoto[] = [
   },
   {
     key: 'imagin-ballon',
-    alt: 'Ballon publicitaire Ima’Gin au-dessus des chalets, Valais.',
+    alt: 'Ballon publicitaire Ima’Gin au-dessus des chalets.',
     span: 'wide',
     credit: 'anne-sophie-fioretto',
   },
   {
     key: 'imagin-crepuscule',
-    alt: 'Ciel crépusculaire au-dessus des sapins et de la lune, Valais.',
+    alt: 'Ciel crépusculaire au-dessus des sapins et de la lune.',
     span: 'square',
     credit: 'anne-sophie-fioretto',
   },

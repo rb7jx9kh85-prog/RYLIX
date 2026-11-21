@@ -2,7 +2,7 @@
 
 ## En une phrase
 
-Un carnet de bord sobre et chaleureux pour un DJ producteur suisse : de l'encre, du papier, un accent sauge — et des photos réelles, pas une maquette.
+Un carnet de bord sobre et chaleureux pour un DJ producteur : de l'encre, du papier, un accent sauge — et des photos réelles, pas une maquette.
 
 **Références retenues** : quentinmosimann.com et buntmusic.com, pour leur typographie assumée, leur minimalisme et leur ambiance de couleur — pas pour une structure de page précise à copier.
 
@@ -80,7 +80,7 @@ Interdit : rebond, parallaxe, 3D, scroll détourné ou amorti, curseur personnal
 
 ## Ton des textes
 
-Ni tutoiement ni vouvoiement envers le visiteur : les intitulés restent factuels ou à l'infinitif/impératif court (« Écouter », « Envoyer », « Voir »), jamais une adresse directe (« Découvre... », « Abonnez-vous... »). La voix à la première personne n'apparaît que quand RYLIX parle de lui-même (bio, citation sur l'origine du nom) — jamais pour interpeller le visiteur.
+Ni tutoiement ni vouvoiement envers le visiteur : les intitulés restent factuels ou à l'infinitif/impératif court (« Écouter », « Envoyer », « Voir »), jamais une adresse directe (« Découvre... », « Abonnez-vous... »). La bio est écrite à la troisième personne (« il »), comme sur un site officiel d'artiste : jamais de « je ».
 
 Phrases courtes, un fait par phrase. Zéro tiret long utilisé comme ponctuation de style à l'intérieur d'une phrase ou d'un paragraphe. Exception bornée : le tiret long reste autorisé comme séparateur label/valeur dans une ligne de métadonnées structurée (titre de page « Photos — RYLIX », légende de crédit « Photo — Nom », ligne date+lieu) — jamais pour créer une pause dramatique dans une phrase.
 

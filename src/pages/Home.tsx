@@ -25,7 +25,6 @@ const jsonLd = {
   description: site.description,
   url: site.url,
   genre: 'Electronic',
-  foundingLocation: { '@type': 'Place', name: 'Valais, Suisse' },
   sameAs: socials.map((s) => s.url).concat(artist.imusicianUrl),
 }
 
