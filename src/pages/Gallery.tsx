@@ -1,11 +1,26 @@
 import { useState } from 'react'
 import { Seo } from '@/components/Seo'
-import { Image } from '@/components/Image'
 import { PageHeader } from '@/components/PageHeader'
 import { Reveal } from '@/components/PageTransition'
 import { Lightbox, type LightboxItem } from '@/components/Lightbox'
 import { creditFor, gallery, galleryVideos, photographer } from '@/lib/content'
-import { hasImage } from '@/lib/images'
+import { hasImage, resolveImage } from '@/lib/images'
+
+/**
+ * Taille (part de la largeur de la case) et alignement vertical de chaque
+ * photo, repris en boucle. Volontairement irrégulier, comme une planche
+ * de tirages posée à la main.
+ */
+const LAYOUT: { scale: number; align: string }[] = [
+  { scale: 1, align: 'items-start' },
+  { scale: 0.78, align: 'items-end' },
+  { scale: 0.9, align: 'items-center' },
+  { scale: 0.84, align: 'items-center' },
+  { scale: 0.76, align: 'items-end' },
+  { scale: 1, align: 'items-start' },
+  { scale: 0.84, align: 'items-center' },
+  { scale: 0.94, align: 'items-end' },
+]
 
 export default function Gallery() {
   const [index, setIndex] = useState<number | null>(null)
@@ -26,7 +41,7 @@ export default function Gallery() {
 
   return (
     <>
-      <Seo title="Photos" description="Identité visuelle de RYLIX — photographies alpines." />
+      <Seo title="Photos" description="Photos de RYLIX : portraits et sets." />
 
       <PageHeader eyebrow="Galerie" title="Photos">
         <p>
@@ -48,35 +63,42 @@ export default function Gallery() {
         {photos.length === 0 ? (
           <p className="text-fg-muted">Aucune photo pour le moment.</p>
         ) : (
-          <div className="columns-1 gap-4 sm:columns-2 lg:columns-3">
-            {/* Colonnes simples : chaque photo garde son format d'origine,
-                sans recadrage ni trou dans la grille. */}
-            {photos.map((photo, i) => (
-              <Reveal key={photo.key} delay={(i % 2) * 0.06} className="mb-6 break-inside-avoid">
-                <button
-                  type="button"
-                  onClick={() => setIndex(i)}
-                  className="group block w-full overflow-hidden rounded-sm"
-                >
-                  <span className="sr-only">Agrandir : {photo.alt}</span>
-                  <Image
-                    imageKey={photo.key}
-                    alt={photo.alt}
-                    sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 92vw"
-                    className="w-full"
-                    imgClassName="h-auto w-full transition-transform duration-[300ms] ease-rylix group-hover:scale-[1.04]"
-                  />
-                </button>
-                {/* Crédit sous chaque photo, comme une légende d'édition —
-                      l'auteur varie d'une série à l'autre. */}
-                {photo.credit !== null && (
-                  <p className="mt-3 shrink-0 font-sans text-[10px] uppercase tracking-[0.12em] text-fg-muted/70">
-                    Photo — {creditFor(photo.credit)?.name}
-                  </p>
-                )}
-              </Reveal>
-            ))}
-          </div>
+          // Planche contact : 4 colonnes (2 sur mobile), chaque case a la même
+          // hauteur, la photo y garde son format d'origine. Tailles et
+          // alignements varient d'une case à l'autre pour casser la grille sans
+          // jamais laisser de rangée incomplète.
+          <ul className="grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-4 md:gap-x-8 md:gap-y-14">
+            {photos.map((photo, i) => {
+              const img = resolveImage(photo.key)
+              if (!img) return null
+              const { scale, align } = LAYOUT[i % LAYOUT.length]
+              return (
+                <li key={photo.key} className={`flex aspect-[3/4] justify-center ${align}`}>
+                  <Reveal delay={(i % 4) * 0.05} className="flex h-full w-full justify-center">
+                    <button
+                      type="button"
+                      onClick={() => setIndex(i)}
+                      className={`group flex h-full justify-center ${align}`}
+                      style={{ width: `${scale * 100}%` }}
+                    >
+                      <span className="sr-only">Agrandir : {photo.alt}</span>
+                      <img
+                        src={img.src}
+                        srcSet={img.srcSet}
+                        sizes="(min-width: 768px) 22vw, 45vw"
+                        width={img.width}
+                        height={img.height}
+                        alt={photo.alt}
+                        loading="lazy"
+                        decoding="async"
+                        className="photo h-auto max-h-full w-auto max-w-full rounded-sm transition-opacity duration-300 ease-rylix group-hover:opacity-85"
+                      />
+                    </button>
+                  </Reveal>
+                </li>
+              )
+            })}
+          </ul>
         )}
       </section>
 
@@ -90,14 +112,14 @@ export default function Gallery() {
               Vidéos
             </h2>
           </Reveal>
-          {/* Petites vignettes : muettes et en boucle, son activable via les
-              contrôles natifs. Une verticale prend une colonne, une
-              horizontale deux. */}
-          <ul className="grid grid-cols-2 items-start gap-3 md:grid-cols-4 md:gap-4">
+          {/* Même hauteur pour toutes les vidéos, côte à côte et centrées :
+              une verticale et une horizontale tiennent sur une rangée.
+              Muettes et en boucle, son activable via les contrôles natifs. */}
+          <ul className="flex flex-wrap items-end justify-center gap-4 md:gap-8">
             {galleryVideos.map((video, i) => (
               <li
                 key={video.src}
-                className={video.format === 'horizontal' ? 'col-span-2' : 'col-span-1'}
+                className={video.format === 'horizontal' ? 'w-full md:w-auto' : ''}
               >
                 <Reveal delay={i * 0.06}>
                   <video
@@ -110,8 +132,10 @@ export default function Gallery() {
                     playsInline
                     controls
                     preload="metadata"
-                    className={`w-full rounded-sm bg-navy-alt object-cover ${
-                      video.format === 'horizontal' ? 'aspect-video' : 'aspect-[9/16]'
+                    className={`rounded-sm bg-navy-alt object-cover ${
+                      video.format === 'horizontal'
+                        ? 'aspect-video w-full md:h-[26rem] md:w-auto'
+                        : 'aspect-[9/16] h-[26rem]'
                     }`}
                   />
                   {video.credit && (

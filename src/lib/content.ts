@@ -177,31 +177,13 @@ export const gallery: GalleryPhoto[] = [
     alt: 'RYLIX de profil devant un massif alpin, lumière de fin de journée.',
   },
   {
-    key: 'image-2',
-    alt: 'RYLIX de profil au pied d’une tour médiévale, drapeaux en haut.',
-  },
-  {
-    key: 'image-3',
-    alt: 'RYLIX assis devant un mur de pierres sèches, à travers les herbes hautes.',
-  },
-  {
-    key: 'image-4',
-    alt: 'RYLIX assis, aperçu à travers des herbes hautes.',
-  },
-  {
-    key: 'rylix-dj-exterieur',
-    alt: 'RYLIX aux platines en extérieur, terrasse du Miroir de l’Argentine.',
-    credit: 'anne-sophie-fioretto',
-  },
-  {
-    key: 'imagin-chalet',
-    alt: 'Chalet Miroir de l’Argentine et massif alpin, lors d’un événement Ima’Gin.',
-    credit: 'anne-sophie-fioretto',
-  },
-  {
     key: 'rylix-dj-1',
     alt: 'RYLIX aux platines, casque audio, contrôleur DJ Pioneer.',
     credit: 'anne-sophie-fioretto',
+  },
+  {
+    key: 'image-2',
+    alt: 'RYLIX de profil au pied d’une tour médiévale, drapeaux en haut.',
   },
   {
     key: 'rylix-wildstrubel',
@@ -209,23 +191,21 @@ export const gallery: GalleryPhoto[] = [
     credit: null,
   },
   {
-    key: 'imagin-affiche',
-    alt: 'Affiche Ima’Gin, gin alpin, devant les montagnes.',
+    key: 'image-3',
+    alt: 'RYLIX assis devant un mur de pierres sèches, à travers les herbes hautes.',
+  },
+  {
+    key: 'rylix-dj-exterieur',
+    alt: 'RYLIX aux platines en extérieur, terrasse du Miroir de l’Argentine.',
     credit: 'anne-sophie-fioretto',
+  },
+  {
+    key: 'image-4',
+    alt: 'RYLIX assis, aperçu à travers des herbes hautes.',
   },
   {
     key: 'rylix-dj-2',
     alt: 'RYLIX aux platines, casquette Ima’Gin, contrôleur DJ Hercules, noir et blanc.',
-    credit: 'anne-sophie-fioretto',
-  },
-  {
-    key: 'imagin-ballon',
-    alt: 'Ballon publicitaire Ima’Gin au-dessus des chalets.',
-    credit: 'anne-sophie-fioretto',
-  },
-  {
-    key: 'imagin-crepuscule',
-    alt: 'Ciel crépusculaire au-dessus des sapins et de la lune.',
     credit: 'anne-sophie-fioretto',
   },
 ]

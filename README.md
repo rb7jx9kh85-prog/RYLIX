@@ -119,7 +119,7 @@ pochette dans `assets/photos/`, puis `npm run images`.
 { key: 'nom-du-fichier-sans-extension', alt: 'Description factuelle.' }
 ```
 
-La galerie est en colonnes : chaque photo garde son format d'origine. Auteur inconnu : `credit: null` (aucun crédit affiché).
+La galerie est une planche contact de 4 colonnes (2 sur mobile) : chaque photo garde son format, taille et alignement varient selon `LAYOUT` (`src/pages/Gallery.tsx`). Garder un nombre de photos multiple de 4 pour que la dernière rangée soit pleine. Seules les photos où RYLIX apparaît y figurent. Auteur inconnu : `credit: null` (aucun crédit affiché).
 
 ### Visuels en place
 
@@ -129,7 +129,7 @@ La galerie est en colonnes : chaque photo garde son format d'origine. Auteur inc
 | `hero-paysage.jpg` | Hero (bureau) — généré par `scripts/compose-hero.mjs` |
 | `image-2.jpg`, `image-3.jpg`, `image-4.jpg` | Galerie |
 | `rylix-wildstrubel.jpg` | Galerie — Wildstrubel by UTMB 2026 (auteur inconnu, non crédité) |
-| `imagin-chalet.jpg`, `imagin-affiche.jpg`, `imagin-ballon.jpg`, `imagin-crepuscule.jpg`, `rylix-dj-1.jpg`, `rylix-dj-2.jpg`, `rylix-dj-exterieur.jpg` | Galerie — événement Ima'Gin |
+| `rylix-dj-1.jpg`, `rylix-dj-2.jpg`, `rylix-dj-exterieur.jpg` | Galerie — événement Ima'Gin |
 | `better-days-cover.png` | Pochette : accueil, `/musique`, image Open Graph |
 
 Toutes les photos sont créditées à leur auteur. L'auteur par défaut est
