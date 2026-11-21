@@ -3,8 +3,6 @@ dist
 dist-ssr
 .vercel
 
-# Contenu Firestore récupéré au build (scripts/fetch-firestore-content.mjs)
-src/lib/content.generated.ts
 
 # Environnement — ne jamais committer de valeurs réelles
 .env

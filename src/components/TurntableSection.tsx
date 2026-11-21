@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { release, turntableSection } from '@/lib/content'
 import { resolveImage } from '@/lib/images'
@@ -49,24 +50,56 @@ export function TurntableSection() {
             >
               <Cover cover={cover?.src} title={release.title} />
 
-              {/* Lecteur Spotify compact — vrais contrôles, vraie attribution. */}
-              <div className="overflow-hidden rounded-sm bg-navy-alt">
-                <iframe
-                  title={`Lecteur Spotify — ${release.title}`}
-                  src={`https://open.spotify.com/embed/track/${release.spotifyTrackId}`}
-                  width="100%"
-                  height="152"
-                  frameBorder="0"
-                  loading="lazy"
-                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                  className="block w-full"
-                />
-              </div>
+              <SpotifyPlayer />
             </div>
           </motion.div>
         </div>
       </div>
     </section>
+  )
+}
+
+/**
+ * Le lecteur Spotify dépose ses propres cookies : il n'est chargé qu'au clic,
+ * jamais à l'affichage de la page. La hauteur est réservée d'avance pour que
+ * rien ne saute quand l'iframe arrive.
+ */
+function SpotifyPlayer() {
+  const [loaded, setLoaded] = useState(false)
+
+  if (loaded) {
+    return (
+      <div className="overflow-hidden rounded-sm bg-navy-alt">
+        <iframe
+          title={`Lecteur Spotify — ${release.title}`}
+          src={`https://open.spotify.com/embed/track/${release.spotifyTrackId}?autoplay=1`}
+          width="100%"
+          height="152"
+          frameBorder="0"
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          className="block w-full"
+        />
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex h-[152px] flex-col items-center justify-center gap-3 rounded-sm border border-slate/25 bg-navy-alt px-4 text-center">
+      <button type="button" className="btn" onClick={() => setLoaded(true)}>
+        Écouter ici
+      </button>
+      <p className="m-0 text-xs text-fg-muted/80">
+        Charge le lecteur Spotify, qui dépose ses propres cookies.{' '}
+        <a
+          href={release.spotifyUrl}
+          target="_blank"
+          rel="noreferrer noopener"
+          className="link-quiet"
+        >
+          Ouvrir dans Spotify
+        </a>
+      </p>
+    </div>
   )
 }
 

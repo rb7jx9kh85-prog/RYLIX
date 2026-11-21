@@ -281,13 +281,11 @@ export type GalleryPhoto = {
 }
 
 /**
- * Dates et parcours restent gérés depuis l'admin RYLIX
- * (https://rylix-admin.vercel.app, Firebase Firestore) et lus en direct via
- * le SDK Firebase — voir src/lib/useFirestoreCollection.ts.
+ * Dates et parcours restent gérés depuis l'admin RYLIX (Firestore) et lus en
+ * direct à chaque chargement — voir src/lib/useFirestoreCollection.ts.
  *
  * La galerie, elle, est déclarée ici : ce sont des fichiers commités dans le
- * dépôt (assets/photos/), pas un contenu administrable en direct — pas de
- * dépendance Firebase pour l'afficher.
+ * dépôt (assets/photos/), pas un contenu administrable en direct.
  *
  * Une entrée dont l'image n'existe pas encore dans le manifeste est ignorée
  * à l'affichage : la déclarer ici avant d'avoir déposé le fichier ne casse

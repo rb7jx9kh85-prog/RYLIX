@@ -145,9 +145,9 @@ dans la lightbox. Le `alt` de chaque entrée reste une description de l'image,
 pour les lecteurs d'écran.
 
 La galerie est déclarée dans `gallery` (`src/lib/content.ts`), pas administrée
-en direct : contrairement aux dates et au parcours (Firestore, admin RYLIX),
-ce sont des fichiers commités dans le dépôt — la page `/galerie` et
-l'aperçu mosaïque de l'accueil n'ont donc aucune dépendance au SDK Firebase.
+en direct : contrairement aux dates et au parcours (Firestore, admin RYLIX,
+lus via l'API REST publique, sans SDK ni clé), ce sont des fichiers commités
+dans le dépôt.
 
 Une entrée de galerie dont l'image n'existe pas dans le manifeste n'est pas
 affichée : on peut donc déclarer un visuel avant de l'avoir, il apparaîtra dès que le fichier sera déposé et
