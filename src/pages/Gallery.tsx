@@ -119,7 +119,11 @@ export default function Gallery() {
             {galleryVideos.map((video, i) => (
               <li
                 key={video.src}
-                className={video.format === 'horizontal' ? 'w-full md:w-auto' : ''}
+                className={
+                  video.format === 'horizontal'
+                    ? 'w-full md:w-auto'
+                    : 'w-[calc(50%-0.5rem)] md:w-auto'
+                }
               >
                 <Reveal delay={i * 0.06}>
                   <video
@@ -134,8 +138,8 @@ export default function Gallery() {
                     preload="metadata"
                     className={`rounded-sm bg-navy-alt object-cover ${
                       video.format === 'horizontal'
-                        ? 'aspect-video w-full md:h-[26rem] md:w-auto'
-                        : 'aspect-[9/16] h-[26rem]'
+                        ? 'aspect-video w-full md:h-[28rem] md:w-auto'
+                        : 'aspect-[9/16] w-full md:h-[28rem] md:w-auto'
                     }`}
                   />
                   {video.credit && (

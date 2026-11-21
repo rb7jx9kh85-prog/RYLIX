@@ -240,10 +240,10 @@ export const galleryVideos: GalleryVideo[] = [
     format: 'vertical',
   },
   {
-    src: '/videos/extrait-1.mp4',
-    poster: '/videos/extrait-1.jpg',
-    alt: 'Extrait vidéo de RYLIX.',
-    format: 'horizontal',
+    src: '/videos/guitare-terrasse.mp4',
+    poster: '/videos/guitare-terrasse.jpg',
+    alt: 'RYLIX à la guitare avec un autre musicien, sur une terrasse en montagne.',
+    format: 'vertical',
   },
 ]
 
