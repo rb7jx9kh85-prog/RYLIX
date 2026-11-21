@@ -82,7 +82,7 @@ Les dates passées sont masquées automatiquement. Liste vide → la page affich
 `src/pages/Home.tsx`, de haut en bas, comme sur un site officiel d'artiste :
 
 1. **Hero** (`src/components/Hero.tsx`) : photo plein écran (`hero` dans
-   `src/lib/content.ts`), nom, métier, lien vers la dernière sortie
+   `src/lib/content.ts`), nom et métier
 2. **Dernier single** (`src/components/ReleaseSection.tsx`, aussi sur `/musique`) :
    pochette, date, liens vers chaque plateforme, lecteur Spotify chargé au clic
 3. **Biographie** : texte de `presentation` et une photo créditée
@@ -275,7 +275,7 @@ de valeur d'animation en dur.
   intacte au centre ; seuls les côtés sont un décor de montagnes généré
   (`assets/hero/fond-montagnes.jpg`), flouté de plus en plus vers les bords.
   Assemblage : `node scripts/compose-hero.mjs` puis `npm run images`.
-- nom, métier et dernier single centrés en bas
+- nom et métier centrés en bas
 - photos et texte alternatif dans `hero` (`src/lib/content.ts`)
 
 ## Performance
