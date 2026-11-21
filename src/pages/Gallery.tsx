@@ -34,10 +34,7 @@ export default function Gallery() {
 
   return (
     <>
-      <Seo
-        title="Photos"
-        description="Identité visuelle de RYLIX — photographies alpines, Valais."
-      />
+      <Seo title="Photos" description="Identité visuelle de RYLIX — photographies alpines." />
 
       <PageHeader eyebrow="Galerie" title="Photos">
         <p>
