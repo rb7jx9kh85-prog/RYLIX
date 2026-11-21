@@ -5,8 +5,8 @@ import { resolveImage } from '@/lib/images'
 export type LightboxItem = {
   key: string
   alt: string
-  /** Auteur de la photo — varie d'une série à l'autre. */
-  credit: { name: string; url?: string }
+  /** Auteur de la photo — varie d'une série à l'autre ; null si inconnu. */
+  credit: { name: string; url?: string } | null
 }
 
 type Props = {
@@ -141,22 +141,24 @@ export function Lightbox({ items, index, onClose, onNavigate }: Props) {
             {/* La légende porte le crédit, pas la description : celle-ci est
                 déjà dans l'attribut alt, à destination des lecteurs d'écran. */}
             <figcaption className="flex items-center justify-center gap-3 text-center text-sm text-fg-muted/70">
-              <span>
-                Photo —{' '}
-                {item.credit.url ? (
-                  <a
-                    href={item.credit.url}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    className="link-quiet"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {item.credit.name}
-                  </a>
-                ) : (
-                  item.credit.name
-                )}
-              </span>
+              {item.credit && (
+                <span>
+                  Photo —{' '}
+                  {item.credit.url ? (
+                    <a
+                      href={item.credit.url}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="link-quiet"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {item.credit.name}
+                    </a>
+                  ) : (
+                    item.credit.name
+                  )}
+                </span>
+              )}
               {items.length > 1 && (
                 <span className="tabular-nums text-fg-muted/60">
                   {(index ?? 0) + 1} / {items.length}

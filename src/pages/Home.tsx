@@ -90,7 +90,9 @@ function Bio() {
               sizes="(min-width: 768px) 40vw, 100vw"
               className="aspect-[4/5] w-full rounded-sm"
             />
-            <figcaption className="mt-2 text-xs text-fg-muted/70">Photo {credit.name}</figcaption>
+            {credit && (
+              <figcaption className="mt-2 text-xs text-fg-muted/70">Photo {credit.name}</figcaption>
+            )}
           </figure>
         </Reveal>
 

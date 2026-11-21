@@ -140,8 +140,12 @@ export const photographers = {
 
 export type PhotographerKey = keyof typeof photographers
 
-/** Crédit affiché pour une photo — auteur par défaut si rien n'est déclaré. */
-export function creditFor(credit?: PhotographerKey): { name: string; url?: string } {
+/**
+ * Crédit affiché pour une photo : auteur par défaut si rien n'est déclaré,
+ * aucun crédit si `null` (auteur inconnu, rien n'est inventé).
+ */
+export function creditFor(credit?: PhotographerKey | null): { name: string; url?: string } | null {
+  if (credit === null) return null
   if (credit && credit in photographers) return photographers[credit]
   return { name: photographer.name, url: photographer.url }
 }
@@ -151,10 +155,8 @@ export type GalleryPhoto = {
   key: string
   /** Texte alternatif factuel — accessibilité, pas de storytelling. */
   alt: string
-  /** Empreinte dans la grille asymétrique. */
-  span: 'tall' | 'portrait' | 'square' | 'wide'
-  /** Auteur, si ce n'est pas celui par défaut (voir `photographers`). */
-  credit?: PhotographerKey
+  /** Auteur, si ce n'est pas celui par défaut (voir `photographers`). `null` : auteur inconnu, pas de crédit affiché. */
+  credit?: PhotographerKey | null
 }
 
 /**
@@ -173,90 +175,75 @@ export const gallery: GalleryPhoto[] = [
   {
     key: 'image-1',
     alt: 'RYLIX de profil devant un massif alpin, lumière de fin de journée.',
-    span: 'tall',
-  },
-  {
-    key: 'image-2',
-    alt: 'RYLIX de profil au pied d’une tour médiévale, drapeaux en haut.',
-    span: 'portrait',
-  },
-  {
-    key: 'image-3',
-    alt: 'RYLIX assis devant un mur de pierres sèches, à travers les herbes hautes.',
-    span: 'wide',
-  },
-  {
-    key: 'image-4',
-    alt: 'RYLIX assis, aperçu à travers des herbes hautes.',
-    span: 'portrait',
-  },
-  {
-    key: 'rylix-dj-exterieur',
-    alt: 'RYLIX aux platines en extérieur, terrasse du Miroir de l’Argentine.',
-    span: 'portrait',
-    credit: 'anne-sophie-fioretto',
-  },
-  {
-    key: 'imagin-chalet',
-    alt: 'Chalet Miroir de l’Argentine et massif alpin, lors d’un événement Ima’Gin.',
-    span: 'wide',
-    credit: 'anne-sophie-fioretto',
   },
   {
     key: 'rylix-dj-1',
     alt: 'RYLIX aux platines, casque audio, contrôleur DJ Pioneer.',
-    span: 'tall',
     credit: 'anne-sophie-fioretto',
   },
   {
-    key: 'imagin-affiche',
-    alt: 'Affiche Ima’Gin, gin alpin, devant les montagnes.',
-    span: 'square',
+    key: 'image-2',
+    alt: 'RYLIX de profil au pied d’une tour médiévale, drapeaux en haut.',
+  },
+  {
+    key: 'rylix-wildstrubel',
+    alt: 'RYLIX aux platines sous un abri en bois, casque autour du cou, pendant le Wildstrubel by UTMB.',
+    credit: null,
+  },
+  {
+    key: 'image-3',
+    alt: 'RYLIX assis devant un mur de pierres sèches, à travers les herbes hautes.',
+  },
+  {
+    key: 'rylix-dj-exterieur',
+    alt: 'RYLIX aux platines en extérieur, terrasse du Miroir de l’Argentine.',
     credit: 'anne-sophie-fioretto',
+  },
+  {
+    key: 'image-4',
+    alt: 'RYLIX assis, aperçu à travers des herbes hautes.',
   },
   {
     key: 'rylix-dj-2',
     alt: 'RYLIX aux platines, casquette Ima’Gin, contrôleur DJ Hercules, noir et blanc.',
-    span: 'portrait',
-    credit: 'anne-sophie-fioretto',
-  },
-  {
-    key: 'imagin-ballon',
-    alt: 'Ballon publicitaire Ima’Gin au-dessus des chalets.',
-    span: 'wide',
-    credit: 'anne-sophie-fioretto',
-  },
-  {
-    key: 'imagin-crepuscule',
-    alt: 'Ciel crépusculaire au-dessus des sapins et de la lune.',
-    span: 'square',
     credit: 'anne-sophie-fioretto',
   },
 ]
 
 export type GalleryVideo = {
-  /** Chemin statique du fichier dans public/ (ex. '/images/clip.mp4') — pas de pipeline de traitement. */
+  /**
+   * Chemin statique dans public/videos/ (ex. '/videos/clip.mp4'). Hors de
+   * public/images/, que `npm run images` vide et régénère à chaque passage.
+   */
   src: string
   /** Image affichée avant que la vidéo ne démarre. Chemin statique dans public/, optionnel. */
   poster?: string
   /** Texte alternatif factuel — accessibilité, pas de storytelling. */
   alt: string
-  /** Empreinte dans la grille asymétrique — mêmes valeurs que `GalleryPhoto`. */
-  span: 'tall' | 'portrait' | 'square' | 'wide'
+  /** Sens de la vidéo : fixe le cadre de la vignette. */
+  format: 'vertical' | 'horizontal'
   /** Auteur — omis si inconnu (pas de crédit par défaut, contrairement aux photos). */
   credit?: PhotographerKey
 }
 
 /**
- * Vidéos de la Galerie — lues automatiquement (muettes, en boucle) dans la
- * même grille que les photos. Déposer le fichier dans public/ puis ajouter
- * une entrée ici ; contrairement aux photos, aucun script à relancer.
+ * Vidéos de la Galerie, dans leur propre petite section sous les photos :
+ * lecture automatique muette en boucle, son activable via les contrôles.
+ * Déposer le fichier (H.264, ~720p) dans public/videos/ puis ajouter une
+ * entrée ici ; aucun script à relancer.
  */
 export const galleryVideos: GalleryVideo[] = [
   {
-    src: '/images/d68aa570-0095-46cd-95c0-87c63c1e1609.mp4',
-    alt: 'Extrait vidéo de RYLIX.',
-    span: 'wide',
+    src: '/videos/wildstrubel-2026.mp4',
+    poster: '/videos/wildstrubel-2026.jpg',
+    alt: 'Vue depuis la cabine DJ de RYLIX au Wildstrubel by UTMB : enceinte, transats sur la pelouse.',
+    format: 'vertical',
+  },
+  {
+    src: '/videos/guitare-terrasse.mp4',
+    poster: '/videos/guitare-terrasse.jpg',
+    alt: 'RYLIX à la guitare avec un autre musicien, sur une terrasse en montagne.',
+    format: 'vertical',
   },
 ]
 
