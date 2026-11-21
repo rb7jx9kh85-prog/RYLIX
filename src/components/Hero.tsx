@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
-import { Image } from './Image'
 import { hero, release, site } from '@/lib/content'
+import { resolveImage } from '@/lib/images'
 import { EASE, usePrefersReducedMotion } from '@/lib/motion'
 
 /**
@@ -10,6 +10,8 @@ import { EASE, usePrefersReducedMotion } from '@/lib/motion'
  */
 export function Hero() {
   const reduce = usePrefersReducedMotion()
+  const portrait = resolveImage(hero.imageKey)
+  const landscape = resolveImage(hero.desktopImageKey)
   const fade = (delay: number) => ({
     initial: { opacity: 0, y: reduce ? 0 : 16 },
     animate: { opacity: 1, y: 0 },
@@ -18,34 +20,24 @@ export function Hero() {
 
   return (
     <section className="relative h-[100svh] min-h-[560px] overflow-hidden bg-navy">
-      {/* Bureau : la même photo, très floutée, remplit toute la largeur. Les
-          côtés gardent ainsi les bleus et gris des montagnes au lieu d'un
-          aplat noir. */}
-      <div aria-hidden className="absolute inset-0 hidden md:block">
-        <Image
-          imageKey={hero.imageKey}
-          alt=""
-          sizes="60vw"
-          objectPosition="50% 30%"
-          className="absolute inset-0"
-          imgClassName="h-full w-full scale-110 object-cover blur-2xl"
-        />
-      </div>
-
-      {/* La photo nette. Mobile : plein écran. Bureau : centrée, ses deux
-          bords s'effacent progressivement dans le fond flouté. */}
-      <div className="absolute inset-0 md:left-1/2 md:right-auto md:w-[min(90vw,110vh)] md:-translate-x-1/2 md:[-webkit-mask-image:linear-gradient(to_right,transparent,#000_30%,#000_70%,transparent)] md:[mask-image:linear-gradient(to_right,transparent,#000_30%,#000_70%,transparent)]">
-        <Image
-          imageKey={hero.imageKey}
-          alt={hero.alt}
-          sizes="(min-width: 768px) 90vw, 100vw"
-          priority
-          objectPosition={hero.objectPosition}
-          className="absolute inset-0"
-          // Bureau : cadrage plus bas pour que le visage reste au-dessus du nom.
-          imgClassName="h-full w-full object-cover md:![object-position:50%_62%]"
-        />
-      </div>
+      {/* Deux cadrages de la même photo : portrait sur mobile, paysage sur
+          bureau. La version paysage garde la photo d'origine au centre ; seuls
+          les côtés (montagnes) ont été prolongés. Le navigateur ne télécharge
+          que celle qui correspond à l'écran. */}
+      {portrait && landscape && (
+        <picture>
+          <source media="(min-width: 768px)" srcSet={landscape.srcSet} sizes="100vw" />
+          <img
+            src={portrait.src}
+            srcSet={portrait.srcSet}
+            sizes="100vw"
+            alt={hero.alt}
+            {...{ fetchpriority: 'high' }}
+            decoding="async"
+            className="photo absolute inset-0 h-full w-full object-cover object-[50%_40%] md:object-center"
+          />
+        </picture>
+      )}
 
       {/* Lisibilité du menu en haut et du nom en bas, sans noircir la photo. */}
       <div

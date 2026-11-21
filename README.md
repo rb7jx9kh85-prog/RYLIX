@@ -271,9 +271,12 @@ de valeur d'animation en dur.
 `src/components/Hero.tsx` : une photo, un fondu à l'arrivée, rien au scroll.
 
 - mobile : la photo (portrait) couvre l'écran, le nom est posé en bas
-- bureau : la photo est centrée, ses bords se fondent dans la même photo très floutée
-  qui remplit les côtés ; nom, métier et dernier single centrés en bas
-- photo, texte alternatif et cadrage dans `hero` (`src/lib/content.ts`)
+- bureau : `hero-paysage`, la même photo au format 16:9. La photo d'origine est
+  intacte au centre ; seuls les côtés sont un décor de montagnes généré
+  (`assets/hero/fond-montagnes.jpg`), flouté de plus en plus vers les bords.
+  Assemblage : `node scripts/compose-hero.mjs` puis `npm run images`.
+- nom, métier et dernier single centrés en bas
+- photos et texte alternatif dans `hero` (`src/lib/content.ts`)
 
 ## Performance
 

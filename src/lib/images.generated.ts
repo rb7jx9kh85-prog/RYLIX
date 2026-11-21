@@ -17,6 +17,13 @@ export const images = {
     height: 3000,
     placeholder: 'data:image/webp;base64,UklGRkgAAABXRUJQVlA4IDwAAADQAQCdASoQABAAA8BmJbACdAEOouzP4AD+5yFSp0lqd5jGttvjq5GELZsTtSgRbn9mkOeMlvrlOE5oAAA=',
   },
+  'hero-paysage': {
+    src: '/images/hero-paysage-1920.webp',
+    srcSet: '/images/hero-paysage-480.webp 480w, /images/hero-paysage-768.webp 768w, /images/hero-paysage-1200.webp 1200w, /images/hero-paysage-1920.webp 1920w',
+    width: 2560,
+    height: 1440,
+    placeholder: 'data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAADwAQCdASoQAAkAA8BmJYwCdAD2OG+OuwAA/I7Xx2O363+lXyK1wNCB7vITIAAA',
+  },
   'image-1': {
     src: '/images/image-1-1920.webp',
     srcSet: '/images/image-1-480.webp 480w, /images/image-1-768.webp 768w, /images/image-1-1200.webp 1200w, /images/image-1-1920.webp 1920w',

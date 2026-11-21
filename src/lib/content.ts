@@ -47,12 +47,15 @@ export const nav: NavItem[] = [
   { label: 'Contact', to: '/contact' },
 ]
 
-/** Photo plein écran de l'accueil. */
+/**
+ * Photo plein écran de l'accueil. Sur bureau, `desktopImageKey` : la même
+ * photo, intacte au centre, dont les côtés ont été prolongés (montagnes
+ * générées puis floutées comme l'arrière-plan d'origine) pour tenir en 16:9.
+ */
 export const hero = {
   imageKey: 'image-1',
+  desktopImageKey: 'hero-paysage',
   alt: 'RYLIX de profil devant un massif alpin valaisan, lumière de fin de journée.',
-  /** Cadrage : le visage reste dans le champ en paysage comme en portrait. */
-  objectPosition: '50% 40%',
 } as const
 
 export type Platform = { name: string; url: string }
