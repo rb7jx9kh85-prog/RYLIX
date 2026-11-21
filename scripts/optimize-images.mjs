@@ -29,8 +29,12 @@ if (files.length === 0) {
   process.exit(1)
 }
 
-await fs.rm(OUT_DIR, { recursive: true, force: true })
+// Ne supprime que les variantes WebP générées par ce script : public/images/
+// contient aussi des fichiers ajoutés à la main (ex. la vidéo de galerie .mp4).
 await fs.mkdir(OUT_DIR, { recursive: true })
+for (const f of await fs.readdir(OUT_DIR)) {
+  if (f.endsWith('.webp')) await fs.rm(path.join(OUT_DIR, f), { force: true })
+}
 
 const entries = []
 
