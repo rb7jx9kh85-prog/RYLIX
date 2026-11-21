@@ -60,32 +60,30 @@ export function Header() {
             : 'border-b border-transparent'
         }`}
       >
-        <div className="container-rylix flex h-16 items-center justify-between md:h-20">
+        {/* Bureau : logo à gauche, menu au centre, réseaux à droite. */}
+        <div className="container-rylix flex h-16 items-center justify-between md:grid md:h-20 md:grid-cols-[1fr_auto_1fr]">
           <Link
             to="/"
-            className="font-display text-lg font-extrabold uppercase tracking-[0.18em] text-cream transition-colors duration-300 hover:text-pale md:text-xl"
-            aria-label="RYLIX — accueil"
+            className="justify-self-start font-display text-lg font-extrabold uppercase tracking-[0.18em] text-cream transition-colors duration-300 hover:text-pale md:text-xl"
+            aria-label="RYLIX, accueil"
           >
             RYLIX
           </Link>
 
           <nav aria-label="Navigation principale" className="hidden md:block">
-            <ul className="flex items-center gap-7 lg:gap-9">
+            <ul className="flex items-center gap-7 lg:gap-10">
               {nav.map((item) => (
                 <li key={item.to}>
-                  {/* `end` sur l'accueil : sans lui, "/" étant préfixe de
-                      toutes les routes, l'onglet resterait actif partout. */}
-                  <NavLink to={item.to} end={item.to === '/'} className="group relative block py-1">
+                  <NavLink to={item.to} className="group relative block py-1">
                     {({ isActive }) => (
                       <>
                         <span
                           className={`label transition-colors duration-300 ease-rylix group-hover:text-cream ${
-                            isActive ? 'text-cream' : ''
+                            isActive ? 'text-cream' : 'text-pale'
                           }`}
                         >
                           {item.label}
                         </span>
-                        {/* Filet qui se trace au survol, et reste tracé sur la page active */}
                         <span
                           aria-hidden
                           className={`absolute -bottom-0.5 left-0 block h-px w-full origin-left
@@ -101,6 +99,8 @@ export function Header() {
               ))}
             </ul>
           </nav>
+
+          <SocialLinks className="hidden justify-self-end md:flex" />
 
           <button
             ref={toggleRef}
@@ -165,7 +165,6 @@ export function Header() {
                       <NavLink
                         ref={i === 0 ? firstLinkRef : undefined}
                         to={item.to}
-                        end={item.to === '/'}
                         className={({ isActive }) =>
                           `group flex items-baseline gap-3 py-4 font-display text-[clamp(1.85rem,8.3vw,2.85rem)]
                          font-extrabold uppercase leading-[0.95] tracking-[-0.03em] ${

@@ -22,16 +22,14 @@ export const site = {
 } as const
 
 /**
- * Présentation de l'artiste — reprise dans le second temps du hero (première
- * ligne seulement, à la place du cadre qui s'efface) et en entier dans la
- * section Présentation de l'accueil.
+ * Présentation de l'artiste, affichée dans la section Biographie de l'accueil.
  *
  * Le texte est découpé en paragraphes plutôt qu'en un bloc unique : c'est ce
  * qui le rend lisible aussi bien sur mobile que sur grand écran.
  */
 export const presentation = {
   eyebrow: 'Présentation',
-  /** Titre de la section Présentation, sur l'accueil. */
+  /** Titre de la section Biographie, sur l'accueil. */
   title: 'DJ producteur suisse',
   paragraphs: [
     'Guitariste, DJ, producteur : la musique me fait vibrer depuis mon enfance, que ce soit en écoutant ou en jouant.',
@@ -39,41 +37,9 @@ export const presentation = {
   ],
 } as const
 
-/** Section tourne-disque — juste sous le hero. */
-export const turntableSection = {
-  eyebrow: 'Écouter',
-  hint: 'Lecture directe, via Spotify.',
-} as const
-
-/**
- * Origine du nom d'artiste — petite note citée en bas de la section Explorer.
- * Texte de l'artiste, à la première personne.
- */
-export const artistName = {
-  eyebrow: 'Le nom',
-  quote: '',
-} as const
-
-/**
- * Clôture graphique, juste avant le footer.
- *
- * Chaque mot est lui-même le lien : le verbe annonce ce qu'on trouve au bout,
- * plutôt qu'un paragraphe qui l'explique puis une rangée d'icônes séparée.
- */
-export const finalCta = [
-  {
-    word: 'Écouter',
-    platform: 'Spotify',
-    url: 'https://open.spotify.com/artist/7J5z5bTji0fyEE3X0xhI3k',
-  },
-  { word: 'Regarder', platform: 'YouTube', url: 'https://www.youtube.com/@RYLIXStudio' },
-  { word: 'Suivre', platform: 'Instagram', url: 'https://www.instagram.com/rylix_music' },
-] as const
-
 export type NavItem = { label: string; to: string }
 
 export const nav: NavItem[] = [
-  { label: 'Accueil', to: '/' },
   { label: 'Musique', to: '/musique' },
   { label: 'Galerie', to: '/galerie' },
   { label: 'Dates', to: '/dates' },
@@ -81,104 +47,16 @@ export const nav: NavItem[] = [
   { label: 'Contact', to: '/contact' },
 ]
 
-export type HeroFrame = {
-  /** Clé dans src/lib/images.generated.ts */
-  imageKey: string
-  alt: string
-  /** Numéro affiché dans le coin du cadre. */
-  index: string
-}
-
 /**
- * Hero éditorial en deux temps, sur une section épinglée.
- *
- *  1. les deux cadres photo se dévoilent, RYLIX est étalé au premier plan
- *  2. au scroll, le cadre de gauche s'efface et laisse la place au texte de
- *     présentation ; le cadre de droite grandit et passe devant le logotype,
- *     qui s'estompe en fond
+ * Photo plein écran de l'accueil. Sur bureau, `desktopImageKey` : la même
+ * photo, intacte au centre, dont les côtés ont été prolongés (montagnes
+ * générées puis floutées comme l'arrière-plan d'origine) pour tenir en 16:9.
  */
 export const hero = {
-  /** Grand cadre, centre-gauche — s'efface au profit de la présentation. */
-  primary: {
-    imageKey: 'image-3',
-    alt: 'RYLIX assis devant un mur de pierres sèches, à travers les herbes hautes.',
-    index: '01',
-  } satisfies HeroFrame,
-  /** Petit cadre, droite — grandit et passe au premier plan. */
-  secondary: {
-    imageKey: 'image-4',
-    alt: 'RYLIX assis, aperçu à travers des herbes hautes.',
-    index: '02',
-  } satisfies HeroFrame,
-  /** Accroche en haut à gauche, une ligne par entrée. */
-  intro: ['DJ et producteur'],
+  imageKey: 'image-1',
+  desktopImageKey: 'hero-paysage',
+  alt: 'RYLIX de profil devant un massif alpin valaisan, lumière de fin de journée.',
 } as const
-
-export type HomeCard = {
-  to: string
-  label: string
-  /**
-   * Ce que l'aperçu montre :
-   *  - `cover`  : la pochette de la dernière sortie
-   *  - `mosaic` : les vignettes de la galerie
-   *  - `list`   : les infos clés de l'onglet, en lignes
-   */
-  kind: 'cover' | 'mosaic' | 'list'
-  /** Une ligne factuelle, sous le titre. */
-  teaser: string
-  /** Lignes affichées pour `kind: 'list'`. Vide -> le teaser suffit. */
-  lines?: string[]
-  /** Largeur relative de la carte sur grand écran. */
-  span: 2 | 3 | 4
-}
-
-/**
- * Les cinq entrées du site, sur une seule ligne : la sortie ouvre, les onglets
- * suivent. Les cartes visuelles (sortie, galerie) sont resserrées, les cartes
- * de texte plus larges — les tailles suivent la densité réelle du contenu
- * plutôt qu'une grille uniforme.
- *
- * Le contenu des cartes dates et parcours est dérivé des listes réelles à
- * l'affichage (voir src/components/HomeCards.tsx), pas recopié ici.
- */
-export const homeCards: HomeCard[] = [
-  {
-    to: '/musique',
-    label: 'Musique',
-    kind: 'cover',
-    teaser: 'Better Days \u2014 premier single.',
-    span: 3,
-  },
-  {
-    to: '/galerie',
-    label: 'Galerie',
-    kind: 'mosaic',
-    teaser: 'Photographies alpines, Valais.',
-    span: 2,
-  },
-  {
-    to: '/dates',
-    label: 'Dates',
-    kind: 'list',
-    teaser: 'Prochaines dates.',
-    span: 4,
-  },
-  {
-    to: '/parcours',
-    label: 'Parcours',
-    kind: 'list',
-    teaser: 'Lieux, \u00e9v\u00e9nements et marques.',
-    span: 4,
-  },
-  {
-    to: '/contact',
-    label: 'Contact',
-    kind: 'list',
-    teaser: 'Bookings, collaborations.',
-    lines: ['contact@rylix.ch', 'Instagram \u00b7 TikTok \u00b7 YouTube \u00b7 Spotify'],
-    span: 2,
-  },
-]
 
 export type Platform = { name: string; url: string }
 
