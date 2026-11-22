@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { resolveImage } from '@/lib/images'
+import type { Credit } from '@/lib/content'
+import { CreditName } from './CreditName'
 
 export type LightboxItem = {
   key: string
   alt: string
   /** Auteur de la photo — varie d'une série à l'autre ; null si inconnu. */
-  credit: { name: string; url?: string } | null
+  credit: Credit | null
 }
 
 type Props = {
@@ -143,20 +145,7 @@ export function Lightbox({ items, index, onClose, onNavigate }: Props) {
             <figcaption className="flex items-center justify-center gap-3 text-center text-sm text-fg-muted/70">
               {item.credit && (
                 <span>
-                  Photo —{' '}
-                  {item.credit.url ? (
-                    <a
-                      href={item.credit.url}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      className="link-quiet"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {item.credit.name}
-                    </a>
-                  ) : (
-                    item.credit.name
-                  )}
+                  Photo — <CreditName credit={item.credit} />
                 </span>
               )}
               {items.length > 1 && (

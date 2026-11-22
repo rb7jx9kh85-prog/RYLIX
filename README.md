@@ -129,12 +129,12 @@ La galerie est une planche contact de 4 colonnes (2 sur mobile) : chaque photo g
 | `rylix-dj-1.jpg`, `rylix-dj-2.jpg`, `rylix-dj-exterieur.jpg` | Galerie — événement Ima'Gin |
 | `better-days-cover.png` | Pochette : accueil, `/musique`, image Open Graph |
 
-Toutes les photos sont créditées à leur auteur. L'auteur par défaut est
-`photographer` ; une entrée de galerie porte `credit: '<clé>'` (voir
-`photographers`) quand la photo est de quelqu'un d'autre — c'est le cas de la
-série Ima'Gin, d'Anne Sophie Fioretto. Voir `photographer` dans
-`src/lib/content.ts` : le crédit s'affiche sous chaque photo de la galerie et
-dans la lightbox. Le `alt` de chaque entrée reste une description de l'image,
+Les photos sont créditées à leur auteur, sauf `credit: null` (auteur inconnu). L'auteur
+par défaut est `photographer` ; une entrée de galerie porte `credit: '<clé>'` (voir
+`photographers`) quand la photo est de quelqu'un d'autre, comme la série Ima'Gin d'Anne
+Sophie Fioretto. Un auteur peut avoir une structure (`org`, avec son site) : c'est elle
+qui porte le lien, pas le nom de la personne. Le crédit s'affiche dans l'en-tête de la
+galerie et dans la lightbox. Le `alt` de chaque entrée reste une description de l'image,
 pour les lecteurs d'écran.
 
 La galerie est déclarée dans `gallery` (`src/lib/content.ts`), pas administrée
