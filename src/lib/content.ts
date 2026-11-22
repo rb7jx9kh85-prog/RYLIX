@@ -31,8 +31,9 @@ export const presentation = {
   /** Titre de la section Biographie, sur l'accueil. */
   title: 'DJ et producteur',
   paragraphs: [
-    "Guitariste, DJ, producteur : la musique l'a fait vibrer depuis l'enfance, qu'il l'écoute ou qu'il la joue.",
-    'Très vite, il a eu envie de composer ses propres morceaux, de créer quelque chose qui vienne de lui. Et de faire vibrer les gens à leur tour.',
+    "La musique l'a fait vibrer depuis l'enfance, qu'il l'écoute ou qu'il la joue. Pendant six ans, il a étudié la guitare à l'École de Jazz et de Musique Actuelle (EJMA). Entre-temps, il a appris la batterie en autodidacte.",
+    "C'est grâce à l'EJMA qu'il a fait ses débuts sur scène. Cette expérience l'a poussé à jouer aussi avec d'autres groupes, en dehors de l'école.",
+    "Depuis l'automne 2025, il se consacre entièrement à la musique assistée par ordinateur (MAO) et au DJ. Il collabore avec d'autres artistes, toujours avec la même envie : faire vibrer les gens à leur tour.",
   ],
 } as const
 
@@ -66,7 +67,6 @@ export const release = {
   releasedAt: '2026-07-31',
   /** Clé dans src/lib/images.generated.ts */
   coverKey: 'better-days-cover',
-  spotifyTrackId: '7tMcpnveczqSb8D1BJ8Zy3',
   spotifyUrl: 'https://open.spotify.com/track/7tMcpnveczqSb8D1BJ8Zy3',
   platforms: [
     { name: 'Spotify', url: 'https://open.spotify.com/track/7tMcpnveczqSb8D1BJ8Zy3' },
