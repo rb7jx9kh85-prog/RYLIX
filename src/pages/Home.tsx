@@ -59,7 +59,7 @@ function SectionHead({
   more?: string
 }) {
   return (
-    <div className="mb-8 flex items-end justify-between gap-6 border-b border-slate/20 pb-4 md:mb-10">
+    <div className="mb-8 flex items-baseline justify-between gap-6 border-b border-slate/20 pb-4 md:mb-10">
       <h2
         id={id}
         className="font-display text-[clamp(1.75rem,4vw,2.75rem)] font-extrabold uppercase leading-none tracking-[-0.02em] text-cream"
@@ -144,18 +144,22 @@ function DatesPreview() {
             </p>
           </Reveal>
         ) : (
-          <ol className="flex flex-col">
+          // Le filet de l'en-tête sert de bord supérieur : la marge négative
+          // annule sa marge basse, la première ligne garde le même écart que
+          // les suivantes. La dernière colonne a une largeur fixe pour que
+          // le lieu reste aligné, qu'il y ait un bouton Billets ou non.
+          <ol className="-mt-8 flex flex-col md:-mt-10">
             {upcoming.map((d) => (
               <li
                 key={`${d.date}-${d.venue}`}
-                className="grid grid-cols-[5.5rem_1fr] items-baseline gap-x-6 gap-y-1 border-b border-slate/20 py-5 md:grid-cols-[9rem_1fr_1fr_auto] md:items-center"
+                className="grid grid-cols-[6.5rem_1fr] items-baseline gap-x-5 gap-y-1 border-b border-slate/20 py-5 md:grid-cols-[10rem_1fr_1fr_8rem] md:gap-x-6 md:py-6"
               >
                 <time
                   dateTime={d.date}
-                  className="font-display text-lg font-bold uppercase text-cream"
+                  className="row-span-2 whitespace-nowrap font-display text-lg font-bold uppercase leading-snug text-cream md:row-span-1"
                 >
                   {formatShortDate(d.date)}
-                  <span className="ml-2 font-sans text-sm font-normal text-fg-muted/70">
+                  <span className="block font-sans text-sm font-normal tabular-nums text-fg-muted/70 md:ml-2 md:inline">
                     {getYear(d.date)}
                   </span>
                 </time>
@@ -166,7 +170,7 @@ function DatesPreview() {
                     href={d.ticketUrl}
                     target="_blank"
                     rel="noreferrer noopener"
-                    className="btn col-start-2 mt-3 justify-self-start md:col-start-auto md:mt-0"
+                    className="btn col-start-2 mt-3 justify-self-start md:col-start-auto md:mt-0 md:justify-self-end"
                   >
                     Billets
                   </a>

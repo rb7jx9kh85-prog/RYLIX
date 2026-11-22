@@ -20,10 +20,13 @@ export function Header() {
   // Le header s'efface en descendant et revient dès qu'on remonte : la page
   // garde toute sa hauteur pendant la lecture, la navigation reste à portée.
   useMotionValueEvent(scrollY, 'change', (y) => {
-    const previous = scrollY.getPrevious() ?? 0
+    const delta = y - (scrollY.getPrevious() ?? 0)
     setScrolled(y > 24)
     if (open) return
-    setHidden(y > 160 && y > previous)
+    // Seuil de quelques pixels : l'inertie du défilement (iOS surtout) ne
+    // fait plus clignoter le header sur place.
+    if (Math.abs(delta) < 6) return
+    setHidden(y > 160 && delta > 0)
   })
 
   useEffect(() => {
@@ -151,7 +154,7 @@ export function Header() {
                 {nav.map((item, i) => (
                   <li
                     key={item.to}
-                    className="overflow-hidden border-b border-slate/15 first:border-t"
+                    className="overflow-hidden border-b border-slate/20 first:border-t"
                   >
                     <motion.div
                       initial={reduce ? { opacity: 0 } : { y: '110%', opacity: 0 }}

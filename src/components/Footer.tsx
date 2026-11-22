@@ -4,7 +4,7 @@ import { SocialLinks } from './SocialLinks'
 
 export function Footer() {
   return (
-    <footer className="mt-lg border-t border-slate/20">
+    <footer className="border-t border-slate/20">
       <div className="container-rylix flex flex-col gap-8 py-10 md:flex-row md:items-center md:justify-between md:py-12">
         <div className="flex flex-col gap-2">
           <Link

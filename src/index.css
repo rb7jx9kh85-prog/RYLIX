@@ -95,7 +95,8 @@
 
   /* Label majuscule espacé — nav, tags, sur-titres */
   .label {
-    @apply font-sans text-label font-medium uppercase tracking-[0.14em] text-fg-muted;
+    @apply font-sans text-label font-medium uppercase tracking-[0.14em] text-fg-muted
+           transition-colors duration-300 ease-rylix;
   }
 
   /* Lien texte discret — le filet se trace de gauche à droite au survol */
@@ -154,13 +155,13 @@
 
   .btn-quiet {
     @apply inline-flex items-center gap-2 font-sans text-label font-medium uppercase
-           tracking-[0.14em] text-fg-muted transition-colors duration-200 ease-rylix
+           tracking-[0.14em] text-fg-muted transition-colors duration-300 ease-rylix
            hover:text-cream;
   }
 
   /* Filet de séparation */
   .rule {
-    @apply h-px w-full border-0 bg-slate/25;
+    @apply h-px w-full border-0 bg-slate/20;
   }
 
   /* Traitement photo unifié — désaturation douce, contraste léger. */

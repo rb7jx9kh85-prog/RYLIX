@@ -68,10 +68,15 @@ export default function Dates() {
                 <Reveal delay={i * 0.05}>
                   <div className="flex flex-col gap-2 py-6 md:flex-row md:items-baseline md:gap-8 md:py-8">
                     <div className="flex shrink-0 items-baseline gap-3 md:w-40">
-                      <time dateTime={d.date} className="font-display text-h3 font-bold text-cream">
+                      <time
+                        dateTime={d.date}
+                        className="whitespace-nowrap font-display text-h3 font-bold uppercase text-cream"
+                      >
                         {formatShortDate(d.date)}
                       </time>
-                      <span className="text-sm text-fg-muted/70">{getYear(d.date)}</span>
+                      <span className="text-sm tabular-nums text-fg-muted/70">
+                        {getYear(d.date)}
+                      </span>
                     </div>
 
                     <div className="flex-1">
