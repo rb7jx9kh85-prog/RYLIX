@@ -19,13 +19,11 @@ export function Hero() {
   })
 
   return (
-    <section className="relative h-[78svh] min-h-[480px] overflow-hidden bg-navy md:h-[100svh] md:min-h-[560px]">
+    <section className="relative h-[100svh] min-h-[560px] overflow-hidden bg-navy">
       {/* Deux cadrages de la même photo : portrait sur mobile, paysage sur
           bureau. La version paysage garde la photo d'origine au centre ; seuls
           les côtés (montagnes) ont été prolongés. Le navigateur ne télécharge
-          que celle qui correspond à l'écran. Sur mobile, la photo dépasse du
-          cadre par le haut (ancrée en bas) : le ciel est rogné et le nom
-          remonte avec la section. */}
+          que celle qui correspond à l'écran. */}
       {portrait && landscape && (
         <picture>
           <source media="(min-width: 768px)" srcSet={landscape.srcSet} sizes="100vw" />
@@ -36,7 +34,7 @@ export function Hero() {
             alt={hero.alt}
             {...{ fetchpriority: 'high' }}
             decoding="async"
-            className="photo absolute inset-x-0 bottom-0 h-[122%] w-full object-cover object-[50%_40%] md:inset-0 md:h-full md:object-center"
+            className="photo absolute inset-0 h-full w-full object-cover object-[50%_40%] md:object-center"
           />
         </picture>
       )}
@@ -47,7 +45,7 @@ export function Hero() {
         className="absolute inset-0 bg-gradient-to-b from-navy/70 via-navy/0 via-30% to-navy md:from-navy/65 md:via-transparent md:via-50% md:to-navy/90"
       />
 
-      <div className="container-rylix relative flex h-full flex-col justify-end pb-14 md:pb-20">
+      <div className="container-rylix relative flex h-full flex-col justify-end pb-28 md:pb-20">
         <div className="flex flex-col gap-8 md:items-center md:gap-10 md:text-center">
           <div>
             <motion.h1
