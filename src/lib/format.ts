@@ -48,10 +48,11 @@ const MONTHS = [
 
 /**
  * Rang chronologique d'une période saisie à la main dans l'admin (« Septembre
- * 2026 », « Mars », « 2026 »), pour classer le parcours du plus récent au plus
- * ancien. Le mois s'écrit en toutes lettres ; sans année, celle de l'ajout
- * dans l'admin fait foi ; sans mois, l'entrée passe avant les entrées datées
- * de la même année.
+ * 2026 », « sept. 2026 », « Mars », « 2026 »), pour classer le parcours du plus
+ * récent au plus ancien. Le mois s'écrit en toutes lettres ou abrégé (au moins
+ * trois lettres, sans ambiguïté : « juil. » oui, « jui » non) ; sans année,
+ * celle de l'ajout dans l'admin fait foi ; sans mois, l'entrée passe avant les
+ * entrées datées de la même année.
  */
 export function periodRank(period = '', createdAt?: string): number {
   const text = period
@@ -60,6 +61,14 @@ export function periodRank(period = '', createdAt?: string): number {
     .toLowerCase()
   const addedIn = createdAt ? new Date(createdAt).getUTCFullYear() : NaN
   const year = Number(text.match(/\b(20\d{2})\b/)?.[1]) || addedIn || new Date().getUTCFullYear()
-  const month = MONTHS.findIndex((name) => text.includes(name))
+
+  let month = -1
+  for (const word of text.match(/[a-z]{3,}/g) ?? []) {
+    const matches = MONTHS.flatMap((name, i) => (name.startsWith(word) ? [i] : []))
+    if (matches.length === 1) {
+      month = matches[0]
+      break
+    }
+  }
   return year * 12 + (month === -1 ? 11 : month)
 }
