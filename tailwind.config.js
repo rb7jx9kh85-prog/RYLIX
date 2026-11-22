@@ -29,7 +29,8 @@ export default {
       },
       fontSize: {
         hero: ['clamp(2.75rem, 11vw, 9rem)', { lineHeight: '1', letterSpacing: '0.02em' }],
-        h1: ['clamp(2rem, 5vw, 3.25rem)', { lineHeight: '1.1', letterSpacing: '-0.01em' }],
+        // 7vw : « ÉVÉNEMENTS » tient sur une ligne dès 360 px de large, sans césure.
+        h1: ['clamp(1.5rem, 7vw, 3.25rem)', { lineHeight: '1.08', letterSpacing: '-0.01em' }],
         h2: ['clamp(1.5rem, 3vw, 2rem)', { lineHeight: '1.15' }],
         h3: ['clamp(1.125rem, 2vw, 1.375rem)', { lineHeight: '1.25' }],
         label: ['0.75rem', { lineHeight: '1.2', letterSpacing: '0.14em' }],

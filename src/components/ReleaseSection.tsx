@@ -40,14 +40,12 @@ export function ReleaseSection() {
                   href={p.url}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="group flex items-center justify-between py-3.5"
+                  className="group flex items-center justify-between gap-6 py-4"
                 >
-                  <span className="font-medium text-cream transition-colors duration-200 group-hover:text-accent">
+                  <span className="font-medium text-cream transition-colors duration-300 ease-rylix group-hover:text-accent">
                     {p.name}
                   </span>
-                  <span className="label transition-colors duration-200 group-hover:text-cream">
-                    Écouter
-                  </span>
+                  <span className="label group-hover:text-cream">Écouter</span>
                 </a>
               </li>
             ))}

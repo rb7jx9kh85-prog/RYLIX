@@ -27,7 +27,7 @@ export function SocialLinks({ variant = 'inline', className = '' }: Props) {
               href={s.url}
               target="_blank"
               rel="noreferrer noopener"
-              className="group flex items-center gap-4 py-4 transition-colors duration-200 ease-rylix"
+              className="group flex items-center gap-4 py-4"
             >
               <svg
                 viewBox="0 0 24 24"
@@ -37,7 +37,7 @@ export function SocialLinks({ variant = 'inline', className = '' }: Props) {
               >
                 <path d={paths[s.name]} />
               </svg>
-              <span className="font-medium text-cream transition-colors duration-200 group-hover:text-pale">
+              <span className="font-medium text-cream transition-colors duration-300 ease-rylix group-hover:text-pale">
                 {s.name}
               </span>
               <span className="ml-auto font-sans text-sm text-fg-muted/70">{s.handle}</span>
@@ -52,19 +52,14 @@ export function SocialLinks({ variant = 'inline', className = '' }: Props) {
     <ul className={`flex items-center gap-5 ${className}`}>
       {socials.map((s) => (
         <li key={s.name}>
-          <a
-            href={s.url}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="block transition-transform duration-300 ease-rylix hover:-translate-y-0.5 hover:scale-110"
-          >
+          <a href={s.url} target="_blank" rel="noreferrer noopener" className="group block p-0.5">
             <span className="sr-only">
               {s.name} — {s.handle}
             </span>
             <svg
               viewBox="0 0 24 24"
               aria-hidden
-              className="h-[18px] w-[18px] fill-slate transition-colors duration-200 hover:fill-pale"
+              className="h-[18px] w-[18px] fill-slate transition-colors duration-300 ease-rylix group-hover:fill-pale"
             >
               <path d={paths[s.name]} />
             </svg>

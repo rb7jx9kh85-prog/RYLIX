@@ -181,7 +181,7 @@ export function RuleReveal({ className = '' }: { className?: string }) {
 
   return (
     <motion.hr
-      className={`h-px w-full origin-left border-0 bg-slate/25 ${className}`}
+      className={`h-px w-full origin-left border-0 bg-slate/20 ${className}`}
       initial={{ scaleX: reduce ? 1 : 0 }}
       whileInView={{ scaleX: 1 }}
       viewport={VIEWPORT}
