@@ -175,3 +175,21 @@
     text-wrap: balance;
   }
 }
+
+/* Hors des couches Tailwind : `.biskoui-cookie-banner` vient du script Biskoui,
+   absent du code du site, et Tailwind retirerait la règle du build.
+   Tant que le bandeau de consentement est affiché, le bas de la page reste
+   accessible : sans cette marge, il recouvre le pied de page et son lien
+   « Confidentialité » sur mobile et tablette. La marge disparaît dès que le
+   visiteur a fait son choix. */
+@media (max-width: 767px) {
+  body:has(.biskoui-cookie-banner) {
+    padding-bottom: 17rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1279px) {
+  body:has(.biskoui-cookie-banner) {
+    padding-bottom: 24rem;
+  }
+}
