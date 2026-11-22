@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { Seo } from '@/components/Seo'
 import { PageHeader } from '@/components/PageHeader'
 import { Reveal } from '@/components/PageTransition'
-import { contactEmail, cookiePolicyUrl, site } from '@/lib/content'
+import { contactEmail, site } from '@/lib/content'
 
 function Block({
   title,
@@ -71,26 +71,8 @@ export default function Confidentialite() {
 
         <Block title="Cookies" delay={0.16}>
           <p>
-            Le site ne dépose lui-même aucun cookie publicitaire ou de mesure d'audience. Le bandeau
-            affiché à la première visite est géré par le prestataire suisse Biskoui, qui enregistre
-            le choix exprimé.{' '}
-            <a
-              href={cookiePolicyUrl}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="link-quiet"
-            >
-              Politique de cookies
-            </a>{' '}
-            ou{' '}
-            <button
-              type="button"
-              onClick={() => window.biskoui?.showBanner()}
-              className="link-quiet"
-            >
-              modifier les préférences
-            </button>
-            .
+            Le site ne dépose lui-même aucun cookie et n'utilise ni mesure d'audience, ni publicité,
+            ni traceur. Il n'a donc pas de bandeau de consentement.
           </p>
         </Block>
 

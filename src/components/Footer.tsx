@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { contactEmail, cookiePolicyUrl, legalNav, nav, site } from '@/lib/content'
+import { contactEmail, legalNav, nav, site } from '@/lib/content'
 import { SocialLinks } from './SocialLinks'
 
 export function Footer() {
@@ -39,21 +39,6 @@ export function Footer() {
           <p className="text-sm text-fg-muted/70">
             © {new Date().getFullYear()} {site.name}
           </p>
-          <button
-            type="button"
-            onClick={() => window.biskoui?.showBanner()}
-            className="link-quiet text-sm text-fg-muted/70"
-          >
-            Paramètres de confidentialité
-          </button>
-          <a
-            href={cookiePolicyUrl}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="link-quiet text-sm text-fg-muted/70"
-          >
-            Politique de cookies
-          </a>
           {legalNav.map((item) => (
             <Link key={item.to} to={item.to} className="link-quiet text-sm text-fg-muted/70">
               {item.label}
