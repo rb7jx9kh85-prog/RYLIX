@@ -84,7 +84,7 @@ Les dates passées sont masquées automatiquement. Liste vide → la page affich
 1. **Hero** (`src/components/Hero.tsx`) : photo plein écran (`hero` dans
    `src/lib/content.ts`), nom et métier
 2. **Dernier single** (`src/components/ReleaseSection.tsx`, aussi sur `/musique`) :
-   pochette, date, liens vers chaque plateforme, lecteur Spotify chargé au clic
+   pochette, date, liens vers chaque plateforme
 3. **Biographie** : texte de `presentation` et une photo créditée
 4. **Dates** : les quatre prochaines, lues en direct dans l'admin
 5. **Photos** : quatre photos de la galerie (`GALLERY_PREVIEW`)
@@ -106,7 +106,7 @@ export const parcours: ParcoursEntry[] = [
 
 ### Ajouter une sortie
 
-Renseigner `release` (titre, date, `spotifyTrackId`, liens plateformes) et déposer la
+Renseigner `release` (titre, date, liens plateformes) et déposer la
 pochette dans `assets/photos/`, puis `npm run images`.
 
 ### Ajouter des photos à la galerie
@@ -284,4 +284,4 @@ de valeur d'animation en dur.
 - Dimensions intrinsèques sur chaque `<img>` + placeholder LQIP inliné → pas de layout shift
 - Polices préchargées, `font-display: swap`
 - Pages secondaires chargées en `React.lazy` ; React et Framer Motion en chunks séparés
-- Le lecteur Spotify n'est chargé qu'au clic sur « Écouter ici »
+- Aucun lecteur ni script tiers sur les pages : les plateformes d'écoute sont de simples liens

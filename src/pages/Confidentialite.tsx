@@ -69,23 +69,7 @@ export default function Confidentialite() {
           </p>
         </Block>
 
-        <Block title="Lecteur Spotify" delay={0.16}>
-          <p>
-            Le lecteur Spotify n'est chargé qu'après un clic sur « Écouter ici ». Spotify AB (Suède)
-            dépose alors ses propres cookies, selon sa{' '}
-            <a
-              href="https://www.spotify.com/legal/privacy-policy/"
-              target="_blank"
-              rel="noreferrer noopener"
-              className="link-quiet"
-            >
-              politique de confidentialité
-            </a>
-            . Sans ce clic, aucune donnée n'est transmise à Spotify.
-          </p>
-        </Block>
-
-        <Block title="Cookies" delay={0.2}>
+        <Block title="Cookies" delay={0.16}>
           <p>
             Le site ne dépose lui-même aucun cookie publicitaire ou de mesure d'audience. Le bandeau
             affiché à la première visite est géré par le prestataire suisse Biskoui, qui enregistre
@@ -110,7 +94,7 @@ export default function Confidentialite() {
           </p>
         </Block>
 
-        <Block title="Transferts hors de Suisse et de l'UE" delay={0.24}>
+        <Block title="Transferts hors de Suisse et de l'UE" delay={0.2}>
           <p>
             Vercel et Google sont des entreprises établies aux États-Unis. Les transferts de données
             vers ces prestataires sont encadrés par leurs garanties contractuelles (Data Privacy
@@ -118,7 +102,7 @@ export default function Confidentialite() {
           </p>
         </Block>
 
-        <Block title="Droits" delay={0.28}>
+        <Block title="Droits" delay={0.24}>
           <p>
             L'accès, la correction, l'effacement ou l'opposition au traitement des données peuvent
             être demandés par email à{' '}

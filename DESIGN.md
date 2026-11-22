@@ -21,7 +21,7 @@ Palette encre / papier / sauge. Variables CSS dans `src/index.css` (`--rylix-*`)
 
 L'accent est repris des herbes hautes qui traversent les photos du hero et de la galerie — pas une couleur choisie au hasard. C'est la seule couleur vive du site : sélection de texte, remplissage des boutons au survol, filet de progression de scroll, surbrillance d'un élément actif. Il ne décore jamais un fond entier.
 
-Aucun dégradé décoratif. Les quelques `bg-gradient-to-b` existants (vignettage photo du hero, fond de carte du lecteur, halo très léger en mobile) restent dans la palette ci-dessus et servent un effet physique (lumière, vignette) — jamais un aplat violet/bleu/rose de template.
+Aucun dégradé décoratif. Les quelques `bg-gradient-to-b` existants (vignettage photo du hero, halo très léger en mobile) restent dans la palette ci-dessus et servent un effet physique (lumière, vignette) — jamais un aplat violet/bleu/rose de template.
 
 ## Typographie
 

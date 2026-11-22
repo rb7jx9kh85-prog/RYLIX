@@ -1,12 +1,11 @@
-import { useState } from 'react'
 import { Image } from './Image'
 import { Reveal } from './PageTransition'
 import { release } from '@/lib/content'
 import { formatReleaseDate } from '@/lib/format'
 
 /**
- * La dernière sortie : pochette, titre, date, liens vers chaque plateforme et
- * lecteur Spotify chargé au clic. Sert sur l'accueil et sur la page Musique.
+ * La dernière sortie : pochette, titre, date et liens vers chaque plateforme.
+ * Sert sur l'accueil et sur la page Musique.
  */
 export function ReleaseSection() {
   return (
@@ -53,48 +52,8 @@ export function ReleaseSection() {
               </li>
             ))}
           </ul>
-
-          <div className="mt-8">
-            <SpotifyPlayer />
-          </div>
         </Reveal>
       </div>
     </section>
-  )
-}
-
-/**
- * Le lecteur Spotify dépose ses propres cookies : il n'est chargé qu'au clic,
- * jamais à l'affichage de la page. La hauteur est réservée d'avance pour que
- * rien ne saute quand l'iframe arrive.
- */
-function SpotifyPlayer() {
-  const [loaded, setLoaded] = useState(false)
-
-  if (loaded) {
-    return (
-      <div className="overflow-hidden rounded-sm bg-navy-alt">
-        <iframe
-          title={`Lecteur Spotify, ${release.title}`}
-          src={`https://open.spotify.com/embed/track/${release.spotifyTrackId}?autoplay=1`}
-          width="100%"
-          height="152"
-          frameBorder="0"
-          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-          className="block w-full"
-        />
-      </div>
-    )
-  }
-
-  return (
-    <div className="flex h-[152px] flex-col items-start justify-center gap-3 rounded-sm bg-navy-alt px-6">
-      <button type="button" className="btn" onClick={() => setLoaded(true)}>
-        Écouter ici
-      </button>
-      <p className="m-0 text-xs text-fg-muted/80">
-        Charge le lecteur Spotify, qui dépose ses propres cookies.
-      </p>
-    </div>
   )
 }
