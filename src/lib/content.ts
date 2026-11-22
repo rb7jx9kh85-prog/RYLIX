@@ -115,9 +115,15 @@ export type ParcoursEntry = {
   role: string
   /** Localité, si connue. */
   location?: string
-  /** Année ou période — omise tant qu'elle n'est pas confirmée. */
+  /**
+   * Période en texte libre : « Septembre 2026 », « Mars » ou « 2026 ». Elle
+   * fixe l'ordre de la page (voir `periodRank`) ; omise tant qu'elle n'est
+   * pas confirmée.
+   */
   period?: string
   url?: string
+  /** Date d'ajout dans l'admin (ISO), posée par Firestore. */
+  createdAt?: string
 }
 
 /**

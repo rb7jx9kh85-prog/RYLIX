@@ -2,13 +2,16 @@ import { Seo } from '@/components/Seo'
 import { PageHeader } from '@/components/PageHeader'
 import { Reveal, RuleReveal } from '@/components/PageTransition'
 import { site, type ParcoursEntry } from '@/lib/content'
+import { periodRank } from '@/lib/format'
 import { useFirestoreCollection } from '@/lib/useFirestoreCollection'
 
 export default function Parcours() {
-  const { items: parcours } = useFirestoreCollection<ParcoursEntry>(
-    'parcours',
-    'createdAt',
-    'desc',
+  const { items } = useFirestoreCollection<ParcoursEntry>('parcours', 'createdAt', 'desc')
+
+  // Du plus récent au plus ancien d'après la période. À période égale, le
+  // dernier ajouté passe en premier (ordre du serveur, le tri est stable).
+  const parcours = [...items].sort(
+    (a, b) => periodRank(b.period, b.createdAt) - periodRank(a.period, a.createdAt)
   )
 
   const jsonLd =

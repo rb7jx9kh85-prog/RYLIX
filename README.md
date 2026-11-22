@@ -92,17 +92,14 @@ Les dates passées sont masquées automatiquement. Liste vide → la page affich
 
 ### Ajouter une entrée au parcours
 
-```ts
-export const parcours: ParcoursEntry[] = [
-  {
-    title: "Ima'Gin Suisse",
-    role: 'Événements pour la marque',
-    location: 'Les Voëttes, Valais',
-    period: '2026',          // facultatif
-    url: 'https://ima-gin.swiss/',
-  },
-]
-```
+Depuis l'admin RYLIX (collection `parcours`), sans nouveau build : titre, rôle, lieu,
+période, lien. La page classe du plus récent au plus ancien d'après le champ
+**Période** (`periodRank`, `src/lib/format.ts`) :
+
+- `Septembre 2026` ou `sept. 2026`, ou le mois seul (`Mars`, l'année de l'ajout fait foi) ;
+  abréviation d'au moins trois lettres, sans ambiguïté (`juil.` oui, `jui` non)
+- `2026` sans mois : l'entrée passe avant les entrées datées de la même année
+- à période égale, la dernière ajoutée passe en premier
 
 ### Ajouter une sortie
 
