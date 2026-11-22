@@ -56,7 +56,7 @@ export default function MentionsLegales() {
           <h2 className="label mb-3">Crédits photographiques</h2>
           <p className="max-w-prose text-fg-muted">
             Sauf mention contraire sous une photo, les visuels du site sont réalisés par{' '}
-            {photographer.name} ({photographer.studio}).
+            {photographer.name} ({photographer.org.name}).
             <br />
             Autres photographes crédités sur la Galerie :{' '}
             {Object.values(photographers)

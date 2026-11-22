@@ -80,6 +80,14 @@
 }
 
 @layer components {
+  /* Bouton rond « préférences » que Biskoui laisse en bas de l'écran après le
+     choix : il cachait du contenu, surtout sur mobile. Le choix se rouvre
+     depuis le pied de page (« Paramètres de confidentialité »). Le bandeau
+     de la première visite, lui, reste affiché. */
+  #biskoui-mount > div[role='button'] {
+    display: none !important;
+  }
+
   /* Conteneur de page standard */
   .container-rylix {
     @apply mx-auto w-full max-w-content px-6 md:px-10;

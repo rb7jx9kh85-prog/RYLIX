@@ -3,7 +3,8 @@ import { Seo } from '@/components/Seo'
 import { PageHeader } from '@/components/PageHeader'
 import { Reveal } from '@/components/PageTransition'
 import { Lightbox, type LightboxItem } from '@/components/Lightbox'
-import { creditFor, gallery, galleryVideos, photographer } from '@/lib/content'
+import { CreditName } from '@/components/CreditName'
+import { creditFor, gallery, galleryVideos } from '@/lib/content'
 import { hasImage, resolveImage } from '@/lib/images'
 
 /**
@@ -34,10 +35,11 @@ export default function Gallery() {
     credit: creditFor(p.credit),
   }))
 
-  // Les auteurs autres que celui par défaut, cités une fois dans l'en-tête.
-  const otherCredits = [
-    ...new Set(photos.filter((p) => p.credit).map((p) => creditFor(p.credit)?.name)),
-  ]
+  // Les auteurs des photos affichées, cités une fois chacun dans l'en-tête.
+  const credits = [...new Set(photos.map((p) => p.credit))].flatMap((key) => {
+    const credit = creditFor(key)
+    return credit ? [credit] : []
+  })
 
   return (
     <>
@@ -46,16 +48,13 @@ export default function Gallery() {
       <PageHeader eyebrow="Galerie" title="Photos">
         <p>
           Photographies —{' '}
-          <a
-            href={photographer.url}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="link-quiet"
-          >
-            {photographer.name}
-          </a>
-          , {photographer.studio}
-          {otherCredits.length > 0 && <> et {otherCredits.join(', ')}</>}.
+          {credits.map((credit, i) => (
+            <span key={credit.name}>
+              {i > 0 && (i === credits.length - 1 ? ' et ' : ', ')}
+              <CreditName credit={credit} />
+            </span>
+          ))}
+          .
         </p>
       </PageHeader>
 

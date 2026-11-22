@@ -39,13 +39,13 @@ export function Footer() {
           <p className="text-sm text-fg-muted/70">
             © {new Date().getFullYear()} {site.name}
           </p>
-          <a
-            href="javascript:void(0);"
+          <button
+            type="button"
             onClick={() => window.biskoui?.showBanner()}
             className="link-quiet text-sm text-fg-muted/70"
           >
             Paramètres de confidentialité
-          </a>
+          </button>
           <a
             href={cookiePolicyUrl}
             target="_blank"

@@ -130,19 +130,27 @@ export type ParcoursEntry = {
  * Auteur par défaut des photographies du site — crédité sous chaque visuel
  * qui ne déclare pas son propre `credit`.
  */
+export type Credit = {
+  name: string
+  /** Studio ou structure de l'auteur, avec son site : c'est elle qui porte le lien. */
+  org?: { name: string; url: string }
+}
+
 export const photographer = {
   name: 'Noah Gabioud',
-  studio: 'Aloa Photography',
-  url: 'https://www.aloa-photography.ch',
-} as const
+  org: { name: 'Aloa Photography', url: 'https://www.aloa-photography.ch' },
+} as const satisfies Credit
 
 /**
  * Autres photographes. Une entrée de galerie porte `credit: '<clé>'` pour
  * être créditée à quelqu'un d'autre que `photographer`.
  */
 export const photographers = {
-  'anne-sophie-fioretto': { name: 'Anne Sophie Fioretto' },
-} as const
+  'anne-sophie-fioretto': {
+    name: 'Anne Sophie Fioretto',
+    org: { name: "Ima'Gin Swiss", url: 'https://ima-gin.swiss' },
+  },
+} as const satisfies Record<string, Credit>
 
 export type PhotographerKey = keyof typeof photographers
 
@@ -150,10 +158,10 @@ export type PhotographerKey = keyof typeof photographers
  * Crédit affiché pour une photo : auteur par défaut si rien n'est déclaré,
  * aucun crédit si `null` (auteur inconnu, rien n'est inventé).
  */
-export function creditFor(credit?: PhotographerKey | null): { name: string; url?: string } | null {
+export function creditFor(credit?: PhotographerKey | null): Credit | null {
   if (credit === null) return null
   if (credit && credit in photographers) return photographers[credit]
-  return { name: photographer.name, url: photographer.url }
+  return photographer
 }
 
 export type GalleryPhoto = {
