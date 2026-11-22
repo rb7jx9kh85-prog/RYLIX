@@ -39,13 +39,6 @@ export function Footer() {
           <p className="text-sm text-fg-muted/70">
             © {new Date().getFullYear()} {site.name}
           </p>
-          <button
-            type="button"
-            onClick={() => window.biskoui?.showBanner()}
-            className="link-quiet text-sm text-fg-muted/70"
-          >
-            Paramètres de confidentialité
-          </button>
           {legalNav.map((item) => (
             <Link key={item.to} to={item.to} className="link-quiet text-sm text-fg-muted/70">
               {item.label}
