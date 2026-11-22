@@ -45,7 +45,7 @@ export function Hero() {
         className="absolute inset-0 bg-gradient-to-b from-navy/70 via-navy/0 via-30% to-navy md:from-navy/65 md:via-transparent md:via-50% md:to-navy/90"
       />
 
-      <div className="container-rylix relative flex h-full flex-col justify-end pb-14 md:pb-20">
+      <div className="container-rylix relative flex h-full flex-col justify-end pb-28 md:pb-20">
         <div className="flex flex-col gap-8 md:items-center md:gap-10 md:text-center">
           <div>
             <motion.h1
