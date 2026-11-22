@@ -32,7 +32,7 @@ export const presentation = {
   title: 'DJ et producteur',
   paragraphs: [
     "La musique l'a fait vibrer depuis l'enfance, qu'il l'écoute ou qu'il la joue. Pendant six ans, il a fait de la guitare à l'École de Jazz et de Musique Actuelle (EJMA). Entre-temps, il a appris la batterie en autodidacte.",
-    "C'est grâce à l'EJMA qu'il a fait ses débuts sur scène. Cette expérience l'a poussé à faire de la guitare avec d'autres groupes, en dehors de ce cadre.",
+    "C'est grâce à l'EJMA qu'il a fait ses débuts sur scène. Cette expérience lui a permis de jouer avec d'autres groupes, en dehors de ce cadre.",
     "Depuis l'automne 2025, il se consacre entièrement à la musique assistée par ordinateur (MAO) et au DJ. Il collabore avec d'autres artistes, toujours avec la même envie : faire vibrer les gens à leur tour.",
   ],
 } as const
